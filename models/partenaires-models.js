@@ -37,12 +37,15 @@ const PartenaireModels = new Schema({
 
     photoExterieur : [{
         type: Schema.Types.ObjectId,
-        ref: "media"
+        ref: "media",
+        default : []
     }],
 
     photoInterne : [{
         type: Schema.Types.ObjectId,
-        ref: "media"
+        ref: "media",
+        default : []
+
     }],
 
     localisation : {
@@ -65,7 +68,7 @@ const PartenaireModels = new Schema({
         type: Date,
         default: Date.now()
     }
-    
+
 },{
     toJSON: {
       transform: function (doc, ret) {
