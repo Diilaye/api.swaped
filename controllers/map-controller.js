@@ -12,12 +12,21 @@ exports.place = async (req,res , next) =>  {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json`, {
         params: {
           input,
-          types: 'geocode', // Vous pouvez ajuster les types de résultats que vous voulez ici
+          types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
           key: process.env.MAPKEY,
-          components: 'country:gn', // Restreindre les résultats à la Guinée
+          components: 'country:gn', 
+          libraries:"places"// Restreindre les résultats à la Guinée
         }
       });
-  
+      
+     
+      res.json({
+        message: 'Fichier crée avec succes',
+        status: 'OK',
+        data: saveFile,
+        statusCode: 201
+      })
+
       res.json(response.data.predictions);
     } catch (error) {
       console.error(error);
@@ -33,7 +42,7 @@ exports.place = async (req,res , next) =>  {
       axios.get(apiUrl ,{
           params: {
               input,
-              // types: 'geocode', // Vous pouvez ajuster les types de résultats que vous voulez ici
+              types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
               key: process.env.MAPKEY,
               components: 'country:gn', // Restreindre les résultats à la Guinée
             }
