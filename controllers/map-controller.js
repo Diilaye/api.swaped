@@ -21,13 +21,12 @@ exports.place = async (req,res , next) =>  {
       
      
       res.json({
-        message: 'Fichier crée avec succes',
+        message: 'La Liste des places trouves avec succes',
         status: 'OK',
-        data: saveFile,
-        statusCode: 201
+        data: response.data.predictions,
+        statusCode: 200
       })
 
-      res.json(response.data.predictions);
     } catch (error) {
       console.error(error);
       res.status(500).send('Erreur lors de la récupération des résultats');
