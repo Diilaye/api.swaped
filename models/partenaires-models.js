@@ -45,7 +45,6 @@ const PartenaireModels = new Schema({
         type: Schema.Types.ObjectId,
         ref: "media",
         default : []
-
     }],
 
     localisation : {

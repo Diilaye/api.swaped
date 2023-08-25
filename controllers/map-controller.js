@@ -1,5 +1,10 @@
 const axios = require('axios');
 
+require('dotenv').config({
+    path:'./.env'
+});
+
+
 exports.place = async (req,res , next) =>  {
     const input = req.query.input;
   
@@ -8,7 +13,7 @@ exports.place = async (req,res , next) =>  {
         params: {
           input,
           types: 'geocode', // Vous pouvez ajuster les types de résultats que vous voulez ici
-          key: apiKey,
+          key: process.env.MAPKEY,
           components: 'country:gn', // Restreindre les résultats à la Guinée
         }
       });
@@ -29,7 +34,7 @@ exports.place = async (req,res , next) =>  {
           params: {
               input,
               // types: 'geocode', // Vous pouvez ajuster les types de résultats que vous voulez ici
-              key: apiKey,
+              key: process.env.MAPKEY,
               components: 'country:gn', // Restreindre les résultats à la Guinée
             }
       })
