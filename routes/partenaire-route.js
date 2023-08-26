@@ -7,7 +7,9 @@ const routes = new express.Router();
 const  partenaireCtrl =  require('../controllers/partenaire-controller');
 
 routes.post('/',partenaireCtrl.add);
-
+routes.get('/',partenaireCtrl.all);
+routes.get(':id/',partenaireCtrl.one);
+routes.put(':id/',partenaireCtrl.update);
 
 
 module.exports = routes;

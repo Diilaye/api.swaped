@@ -1,6 +1,14 @@
 const partenaireModel = require('../models/partenaires-models');
 
+const populateObject = [{
+    path :'photoExterieur'
+},{
+    path:'photoInterne'
+}];
+
+
 exports.add = async (req,res)  => {
+
 try {
 
     
@@ -30,7 +38,6 @@ try {
 
     } = req.body;
 
-    console.log(req.body);
 
     let partenaire = partenaireModel();
 
@@ -48,10 +55,12 @@ try {
 
     const savePartenaire = await partenaire.save();
 
+    const findPartenaire = await partenaireModel.findById(savePartenaire.id).populate(populateObject).exec();
+
    return  res.json({
         message: 'creation réussi',
         status: 'OK',
-        data: savePartenaire,
+        data: findPartenaire,
         statusCode: 201
     });
 
@@ -65,4 +74,149 @@ try {
     });
     }
 
+}
+
+exports.all = async (req,res) => {
+
+    try {
+        const partenaires = await partenaireModel.find(req.query).populate(populateObject).exec(); 
+        res.status(201).json({
+            message: 'Partenaires trouvée avec succes',
+            status: 'OK',
+            data: partenaires,
+            statusCode: 201
+        })
+    } catch (error) {
+        res.status(404).json({
+            message: 'Partenaires non trouvée',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        })
+    }
+
+}
+
+exports.one = async (req,res) => {
+
+    try {
+        const partenaires = await partenaireModel.findById(req.params.id).populate(populateObject).exec(); 
+        res.status(201).json({
+            message: 'Partenaires trouvée avec succes',
+            status: 'OK',
+            data: partenaires,
+            statusCode: 201
+        })
+    } catch (error) {
+        res.status(404).json({
+            message: 'Partenaires non trouvée',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        })
+    }
+
+}
+
+exports.update = async (req,res) =>{
+
+    try {
+        let {
+
+            service,
+        
+            nomEntreprise ,
+        
+            descriptionEntreprise ,
+        
+            nomInterlocuteur ,
+        
+            prenomInterlocuteur ,
+            
+            telephoneInterlocuteur ,
+        
+            photoExterieur ,
+        
+            photoInterne ,
+        
+            localisation,
+        
+            dateRv ,
+        
+            heureRv ,
+    
+        } = req.body;
+    
+    
+        const partenaireFind = await partenaireModel.findById(req.params.id).populate(populateObject).exec();
+    
+        if (service != undefined) {
+            partenaireFind.service = service;
+        }
+    
+        if (nomEntreprise != undefined) {
+            partenaireFind.nomEntreprise = nomEntreprise;
+        }
+    
+        if (descriptionEntreprise != undefined) {
+            partenaireFind.descriptionEntreprise = descriptionEntreprise;
+        } 
+    
+        if (nomInterlocuteur != undefined) {
+            partenaireFind.nomInterlocuteur = nomInterlocuteur;
+        }
+    
+        if (prenomInterlocuteur != undefined) {
+            partenaireFind.prenomInterlocuteur = prenomInterlocuteur;
+        }
+    
+        if (telephoneInterlocuteur != undefined) {
+            partenaireFind.telephoneInterlocuteur = telephoneInterlocuteur;
+        }  
+        
+        if (photoExterieur != undefined) {
+            partenaireFind.photoExterieur = photoExterieur;
+        }  
+        
+        if (photoInterne != undefined) {
+            partenaireFind.photoInterne = photoInterne;
+        }  
+        
+        if (localisation != undefined) {
+            partenaireFind.localisation = localisation;
+        }  
+        
+        if (dateRv != undefined) {
+            partenaireFind.dateRv = dateRv;
+        }
+    
+        if (heureRv != undefined) {
+            partenaireFind.heureRv = heureRv;
+        }
+    
+        const partenaireSave = await partenaireFind.save();
+    
+    
+        const findPartenaire = await partenaireModel.findById(partenaireSave.id).populate(populateObject).exec();
+    
+        return  res.json({
+             message: 'update réussi',
+             status: 'OK',
+             data: findPartenaire,
+             statusCode: 201
+         });
+    } catch (error) {
+        res.status(404).json({
+            message: 'Partenaires non trouvée',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        })
+    }
+
+
+}
+
+exports.delete = async (req,res) =>{
+    
 }
