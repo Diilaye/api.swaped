@@ -14,6 +14,8 @@ const fileRoute  = require('./routes/file-route');
 
 const mapRoute  = require('./routes/map-route');
 
+const partenairesRoute  = require('./routes/partenaire-route');
+
 
 require('dotenv').config({
     path: './.env'
@@ -37,6 +39,8 @@ app.use('/swaped-file', express.static('uploads'));
 app.use('/v1/api/files' ,fileRoute);
 
 app.use('/v1/api/maps' ,mapRoute);
+
+app.use('/v1/api/partenaires' ,partenairesRoute);
 
 
 app.get('/', (req,res) => {

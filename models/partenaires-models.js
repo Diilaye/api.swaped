@@ -73,10 +73,9 @@ const PartenaireModels = new Schema({
       transform: function (doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-        delete  ret.token;
         delete ret.__v;
       },
     },
-  },);
+},);
 
 module.exports = mongoose.model('partenaires', PartenaireModels) ;
