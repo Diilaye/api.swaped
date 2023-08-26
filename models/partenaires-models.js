@@ -6,8 +6,8 @@ const PartenaireModels = new Schema({
 
     service: {
         type : String,
-        enum: ['restaurant','hotel','mobilite'],
-        default: 'hotel'
+        enum: ['restaurant','logement','mobilite'],
+        default: 'logement'
     },
 
     nomEntreprise : {
