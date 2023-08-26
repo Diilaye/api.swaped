@@ -47,7 +47,7 @@ exports.base64 =  async (base) => {
        
         }else {
             return {
-                'url' : `https://api.cds-toubaouest.fr/cds-touba-file/${fileName}.${type.split('/')[1]}`,
+                'url' : `https://api-swaped.deally.fr/swaped-file/${fileName}.${type.split('/')[1]}`,
                 'type' :type
             };
         }
