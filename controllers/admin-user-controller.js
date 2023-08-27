@@ -126,6 +126,13 @@ exports.auth = async (req, res) =>{
                     statusCode: 404
                 });
             }
+        }else {
+            return res.status(404).json({
+                message: 'Identifiant incorrect',
+                status: 'NOT OK',
+                data: null,
+                statusCode: 404
+            });
         }
 
     } catch (error) {
