@@ -16,6 +16,8 @@ const mapRoute  = require('./routes/map-route');
 
 const partenairesRoute  = require('./routes/partenaire-route');
 
+const adminUserRoute  = require('./routes/admin-user-route');
+
 
 require('dotenv').config({
     path: './.env'
@@ -41,6 +43,8 @@ app.use('/v1/api/files' ,fileRoute);
 app.use('/v1/api/maps' ,mapRoute);
 
 app.use('/v1/api/partenaires' ,partenairesRoute);
+
+app.use('/v1/api/admin-user' ,adminUserRoute);
 
 
 app.get('/', (req,res) => {
