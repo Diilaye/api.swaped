@@ -76,6 +76,8 @@ const PartenaireModels = new Schema({
         delete ret.__v;
       },
     },
+},{
+    timestamps: true 
 },);
 
 module.exports = mongoose.model('partenaires', PartenaireModels) ;

@@ -70,6 +70,8 @@ const AdminModels = new Schema({
         delete ret.__v;
       },
     },
-},);
+},{
+    timestamps: true 
+});
 
 module.exports = mongoose.model('user-admin', AdminModels) ;

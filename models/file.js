@@ -24,6 +24,8 @@ const FileModel = new Schema({
           delete ret.__v;
         },
       },
+},{
+    timestamps: true 
 });
 
 module.exports = mongoose.model('media', FileModel) ;
