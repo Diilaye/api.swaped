@@ -9,6 +9,7 @@ const {checkRole} = require('../midleweares/auth');
 const  partenaireCtrl =  require('../controllers/partenaire-controller');
 
 routes.post('/',partenaireCtrl.add);
+routes.post('/create-partenaire', checkRole('admin')   , partenaireCtrl.addPartenaire);
 routes.get('/',partenaireCtrl.all);
 routes.get(':id/',partenaireCtrl.one);
 routes.put(':id/',partenaireCtrl.update);

@@ -1,5 +1,7 @@
 const partenaireModel = require('../models/partenaires-models');
 
+const adminModel = require('../models/admin');
+
 const populateObject = [{
     path :'photoExterieur'
 },{
@@ -73,6 +75,76 @@ try {
         status: 'NOT OK'
     });
     }
+
+}
+
+exports.addPartenaire = async (req,res ,next) => {
+
+        try {
+            let {
+                service,
+        
+                nom ,
+            
+                prenom,
+            
+                identifiant ,
+            
+            } = req.body;
+    
+           
+                if(service =="admin") {
+                     return res.status(404).json({
+                        message: 'erreur serveur ',
+                        statusCode: 404,
+                        data: "Vous pouvez pas enregister un admin",
+                        status: 'NOT OK'
+                    });
+                }
+            
+            
+                const passwordCrypt = bcrytjs.hashSync("swaped123", salt);
+            
+                const user = adminModel();
+            
+                user.service = service;
+            
+                user.nom = nom;
+            
+                user.prenom = prenom;
+            
+                user.password = passwordCrypt;
+            
+                user.identifiant = identifiant;
+            
+                const token = jwt.sign({
+                    id_user: user.id,
+                    service_user : user.service , 
+                    identifiant_user : user.identifiant
+                }, process.env.JWT_SECRET, { expiresIn: '8784h' });
+            
+                user.token = token;
+                
+                
+                const userSave = await user.save();
+            
+                return  res.status(201).json({
+                    message: 'creation réussi',
+                    status: 'OK',
+                    data: userSave,
+                    statusCode: 201
+                });
+        
+        } catch (error) {
+            res.status(404).json({
+                message: 'erreur server',
+                status: 'OK',
+                data: error,
+                statusCode: 404
+            })
+        }
+        
+
 
 }
 
@@ -242,6 +314,4 @@ exports.suspendre = async (req,res) =>{
     });
    }
 
-
-    
 }
