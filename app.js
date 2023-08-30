@@ -18,8 +18,6 @@ const partenairesRoute  = require('./routes/partenaire-route');
 
 const adminUserRoute  = require('./routes/admin-user-route');
 
-const {checkRole} = require('./midleweares/auth');
-
 
 require('dotenv').config({
     path: './.env'

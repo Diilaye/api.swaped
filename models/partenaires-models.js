@@ -63,10 +63,12 @@ const PartenaireModels = new Schema({
     },
 
     
-    date: {
-        type: Date,
-        default: Date.now()
-    }
+    status : {
+        type : String,
+        enum: ['inactive','active','canceled'],
+        default: 'inactive'
+   },
+  
 
 },{
     toJSON: {

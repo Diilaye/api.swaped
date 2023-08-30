@@ -6,7 +6,8 @@ require('dotenv').config({
 });
 
 // Middleware to check if user has required role
-exports.checkRole = (role) =>{
+exports.checkRole = (role) => {
+
   return (req, res, next) => {
 
   //get the token from the header if present
@@ -29,7 +30,7 @@ exports.checkRole = (role) =>{
         status: 'NOT OK' });
       }
 
-      if (decoded.role !== role) {
+      if (decoded.service_user !== role) {
         return res.status(403).json({ message: 'You do not have permission to access this resource.'  ,  statusCode: 403,
         data: null,
         status: 'NOT OK'});

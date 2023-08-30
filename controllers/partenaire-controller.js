@@ -217,6 +217,31 @@ exports.update = async (req,res) =>{
 
 }
 
-exports.delete = async (req,res) =>{
+exports.suspendre = async (req,res) =>{
+
+   try {
+    const partenaireFind = await partenaireModel.findById(req.params.id).populate(populateObject).exec();
+
+    partenaireFind.status = "canceled";
+
+    const savePartenaire = await partenaireFind.save();
+
+
+    return  res.status(200).json({
+        message: 'update réussi',
+        status: 'OK',
+        data: savePartenaire,
+        statusCode: 200
+    });
+   } catch (error) {
+    return  res.status(404).json({
+        message: 'Partenaires non trouvée',
+        status: 'OK',
+        data: error,
+        statusCode: 404
+    });
+   }
+
+
     
 }
