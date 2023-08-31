@@ -142,7 +142,7 @@ exports.addPartenaire = async (req,res ,next) => {
             
                 user.password = passwordCrypt;
             
-                user.identifiant = nom.toLowerCase() + "." + nomEntreprise.split(' ')[0].toLowerCase();
+                user.identifiant = nom.toLowerCase().trim() + "." + nomEntreprise.split(' ')[0].toLowerCase();
             
                 const token = jwt.sign({
                     id_user: user.id,
