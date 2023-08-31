@@ -4,6 +4,18 @@ const adminModel = require('../models/admin');
 
 const logementModel = require('../models/logement-model');
 
+const bcrytjs = require('bcryptjs');
+
+
+const salt = bcrytjs.genSaltSync(10);
+
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config({
+    path: './.env'
+});
+
+
 const populateObject = [{
     path :'photoExterieur'
 },{
@@ -82,21 +94,26 @@ try {
 
 exports.addPartenaire = async (req,res ,next) => {
 
+   
+
         try {
+
             let {
 
                 id,
-
+        
                 service,
         
                 nom ,
             
                 prenom,
-
+        
                 nomEntreprise
             
             } = req.body;
-    
+        
+            
+        
            
                 if(service =="admin") {
                      return res.status(404).json({
@@ -108,9 +125,9 @@ exports.addPartenaire = async (req,res ,next) => {
                 }
             
                 const partenaireFind = await partenaireModel.findById(id).populate(populateObject).exec(); 
-
+        
                 partenaireFind.status = "active";
-
+        
                 const partenaireSave = await partenaireFind.save();
             
                 const passwordCrypt = bcrytjs.hashSync("swaped123", salt);
@@ -125,7 +142,7 @@ exports.addPartenaire = async (req,res ,next) => {
             
                 user.password = passwordCrypt;
             
-                user.identifiant = nom + "." + nomEntreprise.split('-')[0];
+                user.identifiant = nom.toLowerCase() + "." + nomEntreprise.split(' ')[0].toLowerCase();
             
                 const token = jwt.sign({
                     id_user: user.id,
@@ -137,24 +154,26 @@ exports.addPartenaire = async (req,res ,next) => {
                 
                 
                 const userSave = await user.save();
-
+        
+               
                 if (service == "logement") {
-
+        
                     const logement = logementModel();
-
+        
                     logement.service = "logement";
                     logement.idParent = userSave.id;
-                    logement.nomEntreprise = nomEntreprise ;
-                    logement.descriptionEntreprise = descriptionEntreprise ;
+                    logement.nomEntreprise = partenaireFind.nomEntreprise ;
+                    logement.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
                     logement.photoCover = partenaireFind.photoExterieur[0] ;
                     logement.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne]  ;
-
+        
                     const saveLogement = await logement.save();
-
+                    
+        
                 }else if(service =="restaurant"){
-
+        
                 }else {
-
+        
                 }
             
                 return  res.status(201).json({
@@ -163,6 +182,7 @@ exports.addPartenaire = async (req,res ,next) => {
                     data: userSave,
                     statusCode: 201
                 });
+            
         
         } catch (error) {
             res.status(404).json({

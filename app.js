@@ -18,6 +18,8 @@ const partenairesRoute  = require('./routes/partenaire-route');
 
 const adminUserRoute  = require('./routes/admin-user-route');
 
+const logementRoute  = require('./routes/logement-route');
+
 
 require('dotenv').config({
     path: './.env'
@@ -45,6 +47,8 @@ app.use('/v1/api/maps' ,mapRoute);
 app.use('/v1/api/partenaires' ,partenairesRoute);
 
 app.use('/v1/api/admin-user' ,adminUserRoute);
+
+app.use('/v1/api/logement' ,logementRoute);
 
 
 app.get('/', (req,res) => {
