@@ -2,6 +2,8 @@ const partenaireModel = require('../models/partenaires-models');
 
 const adminModel = require('../models/admin');
 
+const logementModel = require('../models/logement-model');
+
 const populateObject = [{
     path :'photoExterieur'
 },{
@@ -82,13 +84,16 @@ exports.addPartenaire = async (req,res ,next) => {
 
         try {
             let {
+
+                id,
+
                 service,
         
                 nom ,
             
                 prenom,
-            
-                identifiant ,
+
+                nomEntreprise
             
             } = req.body;
     
@@ -102,6 +107,11 @@ exports.addPartenaire = async (req,res ,next) => {
                     });
                 }
             
+                const partenaireFind = await partenaireModel.findById(id).populate(populateObject).exec(); 
+
+                partenaireFind.status = "active";
+
+                const partenaireSave = await partenaireFind.save();
             
                 const passwordCrypt = bcrytjs.hashSync("swaped123", salt);
             
@@ -115,7 +125,7 @@ exports.addPartenaire = async (req,res ,next) => {
             
                 user.password = passwordCrypt;
             
-                user.identifiant = identifiant;
+                user.identifiant = nom + "." + nomEntreprise.split('-')[0];
             
                 const token = jwt.sign({
                     id_user: user.id,
@@ -127,6 +137,25 @@ exports.addPartenaire = async (req,res ,next) => {
                 
                 
                 const userSave = await user.save();
+
+                if (service == "logement") {
+
+                    const logement = logementModel();
+
+                    logement.service = "logement";
+                    logement.idParent = userSave.id;
+                    logement.nomEntreprise = nomEntreprise ;
+                    logement.descriptionEntreprise = descriptionEntreprise ;
+                    logement.photoCover = partenaireFind.photoExterieur[0] ;
+                    logement.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne]  ;
+
+                    const saveLogement = await logement.save();
+
+                }else if(service =="restaurant"){
+
+                }else {
+
+                }
             
                 return  res.status(201).json({
                     message: 'creation réussi',
