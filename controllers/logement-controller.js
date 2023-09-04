@@ -1,5 +1,18 @@
 const logementModel = require('../models/logement-model');
 
+
+const populateObject = [{
+    path :'photoCover'
+},{
+    path : 'gallerie'
+},{
+    path : 'biens' ,
+    populate :  [{
+        path :'galery'
+    }]
+}];
+
+
 exports.add = async (req,res) => {
 
     try {
@@ -46,13 +59,61 @@ exports.add = async (req,res) => {
         
 
     } catch (error) {
-        res.status(404).json({
+       return res.status(404).json({
             message: 'erreur server',
             status: 'OK',
             data: error,
             statusCode: 404
-        })
+        });
     }
 
+
+}
+
+exports.all = async (req,res) => {
+
+    try {
+
+        const logements = await logementModel.find(req.query).populate(populateObject).exec();
+
+        return res.status(200).json({
+            message: 'listage logement réussi',
+            status: 'OK',
+            data: logements,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur server',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+}
+
+exports.one = async (req,res) => {
+
+    try {
+
+        const logements = await logementModel.findById(req.params.id).populate(populateObject).exec();
+
+        return res.status(200).json({
+            message: 'listage logement réussi',
+            status: 'OK',
+            data: logements,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur server',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        });
+    }
 
 }

@@ -9,6 +9,8 @@ const {checkRole} = require('../midleweares/auth');
 const  logementCtrl =  require('../controllers/logement-controller');
 
 routes.post('/',logementCtrl.add);
+routes.get('/',logementCtrl.all);
+routes.get('/:id',logementCtrl.one);
 
 
 module.exports = routes;
