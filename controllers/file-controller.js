@@ -84,7 +84,7 @@ exports.one = async (req  , res ,next ) => {
         res.json({
             message: 'Fichier non trouvée',
             status: 'OK',
-            data: err,
+            data: error,
             statusCode: 400
         })
     }

@@ -20,6 +20,8 @@ const adminUserRoute  = require('./routes/admin-user-route');
 
 const logementRoute  = require('./routes/logement-route');
 
+const biensRoute = require('./routes/biens-routes');
+
 
 require('dotenv').config({
     path: './.env'
@@ -49,6 +51,8 @@ app.use('/v1/api/partenaires' ,partenairesRoute);
 app.use('/v1/api/admin-user' ,adminUserRoute);
 
 app.use('/v1/api/logement' ,logementRoute);
+
+app.use('/v1/api/biens' ,biensRoute);
 
 
 app.get('/', (req,res) => {
