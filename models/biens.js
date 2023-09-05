@@ -22,6 +22,11 @@ const BiensModel = new Schema({
         type: String,
     },
 
+    
+    description : {
+        type: String,
+    },
+
     nbreChambre : {
         type: String,
     },

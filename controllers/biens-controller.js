@@ -20,6 +20,8 @@ exports.add = async (req,res) => {
             typeLogement ,
         
             titre ,
+
+            description ,
         
             nbreChambre ,
         
@@ -59,6 +61,7 @@ exports.add = async (req,res) => {
         bien.galery = galery;
         bien.typeLogement = typeLogement;
         bien.titre = titre;
+        bien.description = description;
         bien.nbreChambre = nbreChambre;
         bien.nbreVoyageur = nbreVoyageur;
         bien.nbreSalleBain = nbreSalleBain;
