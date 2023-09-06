@@ -5,6 +5,7 @@ require('dotenv').config({
 });
 
 
+
 exports.place = async (req,res , next) =>  {
     const input = req.query.input;
   
@@ -34,7 +35,9 @@ exports.place = async (req,res , next) =>  {
   }
 
   exports.getLatLong = async (req,res ,next) => {
-    const input = req.query.input;
+      const input = req.query.input;
+
+      
   
       const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
   
@@ -53,7 +56,7 @@ exports.place = async (req,res , next) =>  {
           const latitude = location.lat;
           const longitude = location.lng;
           console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-      res.json(response.data.results[0].geometry.location);
+          res.json(response.data.results[0].geometry.location);
   
       })
       .catch(error => {

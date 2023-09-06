@@ -105,7 +105,7 @@ exports.add = async (req,res) => {
             status: 'OK',
             data: error,
             statusCode: 400
-        })
+        });
 
     }
 }
@@ -135,6 +135,66 @@ exports.all = async (req,res) => {
 
     }
 }
+
+exports.allBySearch = async (req,res) => {
+
+
+    try {
+
+        let {
+            localistaion ,
+            debut,
+            fin,
+            voyageur,
+            nuits,
+            maxPrice,
+            minPrice,
+            chambre
+        } = req.query ;
+
+        const biens = await biensModel.find(
+            {
+                nbreChambre : {
+                    $gte : Number(chambre)
+                },
+                nbreVoyageur : {
+                    $gte : Number(voyageur)
+                },
+
+                nbreMinNuit : {
+                    $lte : Number(nuits)
+                },
+
+                tarif : {
+                    $gte: minPrice, 
+                    $lte: maxPrice, 
+                },
+
+                adresse: { 
+                    $regex: new RegExp(localistaion, 'i') 
+                },  
+            }
+        ).populate(populateObject).exec();
+    
+       return res.status(200).json({
+            message: 'listes des biens success',
+            status: 'OK',
+            data: biens,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        
+       return res.status(400).json({
+            message: 'erreur serveur',
+            status: 'OK',
+            data: error,
+            statusCode: 400
+        })
+
+    }
+}
+
 
 exports.one = async (req,res) => {
 

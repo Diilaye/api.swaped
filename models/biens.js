@@ -28,15 +28,15 @@ const BiensModel = new Schema({
     },
 
     nbreChambre : {
-        type: String,
+        type: Number,
     },
 
     nbreVoyageur : {
-        type: String,
+        type: Number,
     },
 
     nbreSalleBain : {
-        type: String,
+        type: Number,
     },
 
     commoditeChambre : [{
@@ -75,19 +75,19 @@ const BiensModel = new Schema({
     }],
 
     nbreMinNuit  : {
-        type: String,
+        type: Number,
     },
 
     tarif  : {
-        type: String,
+        type: Number,
     },
 
     tarifLocataireSupplementaire  : {
-        type: String,
+        type: Number,
     },
 
     tarif_menagere  : {
-        type: String,
+        type: Number,
     },
 
     reservations : [{
