@@ -12,6 +12,8 @@ require('dotenv').config({
 
 exports.store = async (req , res , next) => {
 
+    
+
     try {
         let {
     
@@ -19,9 +21,7 @@ exports.store = async (req , res , next) => {
         
             prenom ,
         
-            telephoneMOMO ,
-        
-            telephoneOM ,
+            telephone ,
         
             email ,
         
@@ -30,14 +30,12 @@ exports.store = async (req , res , next) => {
             photoProfile,
         
         } = req.body;
-
+    
     
     
         const passwordCrypt = bcrytjs.hashSync(password, salt);
     
         const user = userClientModel();
-    
-        user.service = service;
     
         user.nom = nom;
     
@@ -47,10 +45,25 @@ exports.store = async (req , res , next) => {
     
         user.email = email;
     
-        user.telephoneMOMO = telephoneMOMO;
-
-        user.telephoneOM = telephoneOM;
-
+        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
+            user.telephoneMOMO = telephone;
+    
+           
+       }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
+        
+            user.telephoneOM = telephone;
+           
+       } else{
+        return res.status(404).json({
+            message: 'Votre opérateur numérique n\’est pas encore pris en compte' ,
+            statusCode: 404,
+            data: null,
+            status: 'NOT OK'
+        });
+       }
+    
+    
+    
         user.photoProfile = photoProfile;
         
     
@@ -91,20 +104,22 @@ exports.auth = async (req, res) =>{
 
         let findUserAdmin = undefined ;
 
-        let{password , telephoneMOMO ,telephoneOM} = req.body;
+        let{password , telephone } = req.body;
 
-        if(telephoneMOMO !=undefined) {
-             findUserAdmin = await userClientModel.findOne({
-                telephoneMOMO : telephoneMOMO
-            }).exec();
-        }else  if(telephoneOM !=undefined) {
-             findUserAdmin = await userClientModel.findOne({
-                telephoneOM : telephoneOM
-            }).exec();
-        } else{
-             findUserAdmin = undefined;
-        }
+      
+        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
 
+            findUserAdmin = await userClientModel.findOne({
+               telephoneMOMO : telephone
+           }).exec();
+
+       }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
+            findUserAdmin = await userClientModel.findOne({
+               telephoneOM : telephone
+           }).exec();
+       } else{
+            findUserAdmin = undefined;
+       }
        
 
         if (findUserAdmin != undefined) {
@@ -297,4 +312,70 @@ exports.one = async (req,res) => {
         });
     }
 
+}
+
+exports.verifNum = async (req,res) => {
+    
+    try {
+
+        let findUserAdmin = undefined ;
+
+        let NumeroNoEXISTANT = 1;
+
+    let {telephone} = req.query ;
+
+
+
+        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
+
+             findUserAdmin = await userClientModel.findOne({
+                telephoneMOMO : telephone
+            }).exec();
+            NumeroNoEXISTANT = 2;
+
+        }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
+             findUserAdmin = await userClientModel.findOne({
+                telephoneOM : telephone
+            }).exec();
+            NumeroNoEXISTANT = 3;
+        } else{
+             findUserAdmin = undefined;
+        }
+
+       
+
+        if (findUserAdmin != undefined) {
+            
+               
+            return res.status(200).json({
+                message: 'numero dans la base réussi',
+                status: 'OK',
+                data:findUserAdmin,
+                statusCode: 200
+            });
+        }else {
+            if (NumeroNoEXISTANT != 1) {
+                return res.status(201).json({
+                    message: 'Pas existant',
+                    status: 'OK',
+                    data:"numero valid ",
+                    statusCode: 201
+                });
+            }
+            return res.status(404).json({
+                message: 'Votre opérateur numérique n\’est pas encore pris en compte',
+                status: 'NOT OK',
+                data: null,
+                statusCode: 404
+            });
+        }
+
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur server ',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
 }

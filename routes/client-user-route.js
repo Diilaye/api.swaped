@@ -12,6 +12,8 @@ routes.post('/',clientUserCtrl.store);
 
 routes.get('/',clientUserCtrl.all);
 
+routes.get('/verif',clientUserCtrl.verifNum);
+
 routes.get(':id/',clientUserCtrl.one);
 
 routes.put(':id/',clientUserCtrl.update);
