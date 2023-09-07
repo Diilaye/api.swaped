@@ -12,6 +12,7 @@ const {checkRole} = require('../midleweares/auth');
 const routes = new express.Router();
 
 // Add routes
+routes.get('/user', checkRole('logement'),bienCtrl.allByUser);
 routes.get('/',bienCtrl.all);
 routes.get('/search',bienCtrl.allBySearch);
 routes.get('/:id', bienCtrl.one);

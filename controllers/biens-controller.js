@@ -137,6 +137,34 @@ exports.all = async (req,res) => {
     }
 }
 
+exports.allByUser = async (req,res) => {
+
+
+    try {
+    
+        const biens = await biensModel.find({
+            idParent : req.user.id_user
+        }).populate(populateObject).exec();
+    
+       return res.status(200).json({
+            message: 'listes des biens success',
+            status: 'OK',
+            data: biens,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        
+       return res.status(400).json({
+            message: 'erreur serveur',
+            status: 'OK',
+            data: error,
+            statusCode: 400
+        })
+
+    }
+}
+
 exports.allBySearch = async (req,res) => {
 
 
