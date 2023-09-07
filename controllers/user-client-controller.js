@@ -12,40 +12,27 @@ require('dotenv').config({
 
 exports.store = async (req , res , next) => {
 
-    
+ 
+
 
     try {
         let {
-    
-            nom ,
-        
-            prenom ,
-        
+  
             telephone ,
-        
-            email ,
         
             password ,
         
-            photoProfile,
-        
         } = req.body;
-    
     
     
         const passwordCrypt = bcrytjs.hashSync(password, salt);
     
         const user = userClientModel();
     
-        user.nom = nom;
-    
-        user.prenom = prenom;
-    
         user.password = passwordCrypt;
     
-        user.email = email;
-    
         if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
+            
             user.telephoneMOMO = telephone;
     
            
@@ -62,15 +49,10 @@ exports.store = async (req , res , next) => {
         });
        }
     
-    
-    
-        user.photoProfile = photoProfile;
         
     
         const token = jwt.sign({
             id_user: user.id,
-            service_user : user.service , 
-            identifiant_user : user.identifiant
         }, process.env.JWT_SECRET, { expiresIn: '8784h' });
     
         user.token = token;
@@ -127,8 +109,6 @@ exports.auth = async (req, res) =>{
 
                 const token = jwt.sign({
                     id_user: findUserAdmin.id,
-                    service_user : findUserAdmin.service , 
-                    identifiant_user : findUserAdmin.identifiant
                 }, process.env.JWT_SECRET, { expiresIn: '8784h' });
 
                 findUserAdmin.token = token ;
@@ -363,7 +343,7 @@ exports.verifNum = async (req,res) => {
                 });
             }
             return res.status(404).json({
-                message: 'Votre opérateur numérique n\’est pas encore pris en compte',
+                message: 'Votre opérateur téléphonique n\’est pas encore pris en compte',
                 status: 'NOT OK',
                 data: null,
                 statusCode: 404

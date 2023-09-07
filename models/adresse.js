@@ -22,8 +22,7 @@ const AdresseModels = new Schema({
 
     pays : {
         type: String,
-        require : true,
-        unique : true
+        default:""
     },
 
     localisation : {

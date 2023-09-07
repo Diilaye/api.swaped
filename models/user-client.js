@@ -46,18 +46,13 @@ const ClientModels = new Schema({
     type: String,
    },
 
-    date: {
-        type: Date,
-        default: Date.now()
-    }
-
 },{
     toJSON: {
       transform: function (doc, ret) {
         ret.id = ret._id;
         delete ret._id;
         delete ret.password;
-        delete ret.statusConexion;
+        delete ret.statusCompte;
         delete ret.__v;
       },
     },
