@@ -149,18 +149,18 @@ exports.auth = async (req, res) =>{
 
 }
 
-exports.getAuth = async (res , res) => {
+exports.getAuth = async (req , res) => {
 
     try {
         
         const client = await userClientModel.findById(req.user.id_user).exec();
 
-    return res.status(200).json({
-        message: 'Connection réussi',
-        status: 'OK',
-        data:client,
-        statusCode: 200
-    });
+        return res.status(200).json({
+            message: 'Connection réussi',
+            status: 'OK',
+            data:client,
+            statusCode: 200
+        });
 
     } catch (error) {
         return res.status(404).json({
