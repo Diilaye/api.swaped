@@ -5,8 +5,12 @@ const routes = new express.Router();
 
 // import all controllers
 const  clientUserCtrl =  require('../controllers/user-client-controller');
+const { checkRoleClient } = require('../midleweares/auth');
 
 routes.post('/auth',clientUserCtrl.auth);
+
+
+routes.get('/auth', checkRoleClient() , clientUserCtrl.getAuth);
 
 routes.post('/',clientUserCtrl.store);
 
