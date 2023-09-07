@@ -1,6 +1,16 @@
 const reservationModel = require('../models/reservation');
 const bienModel = require('../models/biens');
-const reservation = require('../models/reservation');
+
+const populateObject = [{
+    path :'bien',
+    populate : [{
+        path :'galery'
+    }]
+},{
+    path : 'client'
+},{
+    path : 'user'
+}];
 
 exports.add = async (req, res) => {
 
@@ -64,7 +74,7 @@ exports.add = async (req, res) => {
 
 exports.all = async (req,res) => {
     try {
-        const reservations = await  reservationModel.find({}).exec();
+        const reservations = await  reservationModel.find({}).populate(populateObject).exec();
     
     
         return  res.status(200).json({
@@ -89,7 +99,7 @@ exports.allByClient = async (req,res) => {
     try {
         const reservations = await  reservationModel.find({
             client : req.user.id_user
-        }).exec();
+        }).populate(populateObject).exec();
     
     
         return  res.status(200).json({
@@ -118,7 +128,7 @@ exports.allByLogement = async (req,res) => {
 
         const reservations = await  reservationModel.find({
             user : req.user.id_user
-        }).exec();
+        }).populate(populateObject).exec();
     
     
         return  res.status(200).json({
@@ -162,7 +172,7 @@ exports.update = async (req,res)=> {
     
         } = req.body;
     
-        const findReservation = await reservation.findById(req.params.id).exec();
+        const findReservation = await reservation.findById(req.params.id).populate(populateObject).exec();
     
         if (bien !=undefined) {
             
