@@ -14,6 +14,11 @@ const BiensModel = new Schema({
         default :[]
     }],
 
+    idParent : {
+        type: Schema.Types.ObjectId,
+        ref: "user-admin",
+    },
+
     typeLogement : {
         type: String,
     },

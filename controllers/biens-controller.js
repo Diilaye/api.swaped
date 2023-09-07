@@ -76,6 +76,7 @@ exports.add = async (req,res) => {
         bien.tarif = tarif;
         bien.tarifLocataireSupplementaire = tarifLocataireSupplementaire;
         bien.tarif_menagere = tarif_menagere;
+        bien.idParent = req.user.id_user;
     
         const saveBien =  await bien.save();
 
