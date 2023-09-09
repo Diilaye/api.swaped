@@ -7,7 +7,8 @@ exports.add = async (req,res , next) => {
     
     let {
         reservation,
-        text
+        text,
+        statusSender
     } = req.body ;
 
     const message = messageModel();
