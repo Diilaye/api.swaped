@@ -10,6 +10,8 @@ const populateObject = [{
     path : 'client'
 },{
     path : 'user'
+} ,{
+    path :'messages'
 }];
 
 exports.add = async (req, res) => {

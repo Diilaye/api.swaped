@@ -28,6 +28,8 @@ const clientRoute = require('./routes/client-user-route');
 
 const reservationRoute = require('./routes/reservation-route');
 
+const messageRoute = require('./routes/message-route');
+
 
 require('dotenv').config({
     path: './.env'
@@ -65,6 +67,7 @@ app.use('/v1/api/adresses' ,adresseRoute);
 app.use('/v1/api/clients' ,clientRoute);
 
 app.use('/v1/api/reservations' ,reservationRoute);
+app.use('/v1/api/messages' ,messageRoute);
 
 
 app.get('/', (req,res) => {

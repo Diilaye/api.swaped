@@ -36,12 +36,12 @@ const ReservationModel = new Schema({
 
     userCancel : {
         type: Schema.Types.ObjectId,
-        ref: "user-admin'",
+        ref: "user-admin",
     },
 
     transaction : {
         type: Schema.Types.ObjectId,
-        ref: "transactions'",
+        ref: "transactions",
     },
     
 
@@ -49,6 +49,12 @@ const ReservationModel = new Schema({
         type: String,
 
     },
+
+    messages : [{
+        type: Schema.Types.ObjectId,
+        ref: "messages",
+        default : []
+    }],
 
     isDisponible : {
         type: Boolean,
