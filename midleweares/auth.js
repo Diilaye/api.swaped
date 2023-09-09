@@ -36,7 +36,6 @@ exports.checkRole = (role) => {
         status: 'NOT OK'});
       }
 
-
       req.user = decoded;
     
       req.token = token;

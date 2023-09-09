@@ -16,6 +16,7 @@ routes.get('/',reservationCtrl.all);
 routes.get('/client', checkRoleClient() , reservationCtrl.allByClient);
 routes.get('/logement', checkRole('logement') , reservationCtrl.allByLogement);
 routes.post('/', checkRoleClient() , reservationCtrl.add);
+routes.put('/partenaires/:id', checkRole('logement') , reservationCtrl.updatePartenaire);
 routes.put('/:id', checkRoleClient() , reservationCtrl.update);
 
 module.exports = routes;
