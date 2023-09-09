@@ -1,7 +1,10 @@
 const messageModel = require('../models/message');
 const reservationModel = require('../models/reservation');
 
+
 exports.add = async (req,res , next) => {
+
+  
 
    try {
     
@@ -19,14 +22,14 @@ exports.add = async (req,res , next) => {
 
     const saveMessage = await message.save();
 
-    const findReservation = reservationModel.findById(reservation).exec();
+    const findReservation = await reservationModel.findById(reservation).exec();
 
     findReservation.messages.push(saveMessage.id);
 
     await findReservation.save();
 
     return  res.status(201).json({
-        message: 'modification réussi',
+        message: 'creation réussi',
         status: 'OK',
         data: saveMessage,
         statusCode: 201
