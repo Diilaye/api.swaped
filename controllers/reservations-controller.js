@@ -244,86 +244,87 @@ exports.update = async (req,res)=> {
 }
 
 exports.updatePartenaire = async (req,res)=> {
-    
+   
 
     try {
-        let {
+         
+    let {
 
-            bien ,
+        bien ,
+    
+        client,
+    
+        dateDebut ,
+    
+        dateFin,
+    
+        status,
+    
+        userCancel ,
+    
+        transaction ,
         
-            client,
+    
+        motifsCancel ,
+
+    } = req.body;
+
+    const findReservation = await reservationModel.findById(req.params.id).populate(populateObject).exec();
+
+    if (bien !=undefined) {
         
-            dateDebut ,
+        const findBien = await bienModel.findById(bien).exec();
         
-            dateFin,
-        
-            status,
-        
-            userCancel ,
-        
-            transaction ,
-            
-        
-            motifsCancel ,
-    
-        } = req.body;
-    
-        const findReservation = await reservation.findById(req.params.id).populate(populateObject).exec();
-    
-        if (bien !=undefined) {
-            
-            const findBien = await bienModel.findById(bien).exec();
-            
-            if (findBien != undefined) {
-                findReservation.bien = bien ;
-                findReservation.user = findBien.idParent;
-            }else {
-                return res.status(404).json({
-                    message: 'erreur supréssion ',
-                    statusCode: 404,
-                    data: "error",
-                    status: 'NOT OK'
-                });
-            }
-    
+        if (findBien != undefined) {
+            findReservation.bien = bien ;
+            findReservation.user = findBien.idParent;
+        }else {
+            return res.status(404).json({
+                message: 'erreur supréssion ',
+                statusCode: 404,
+                data: "error",
+                status: 'NOT OK'
+            });
         }
-    
-        if (client !=undefined) {
-            findReservation.client = client ;
-        }
-    
-        if (dateDebut !=undefined) {
-            findReservation.dateDebut = dateDebut ;
-        }
-    
-        if (dateFin !=undefined) {
-            findReservation.dateFin = dateFin ;
-        }
-    
-        if (status !=undefined) {
-            findReservation.status = status ;
-        }
-    
-        if (userCancel !=undefined) {
-            findReservation.userCancel = userCancel ;
-        }
-    
-        if (transaction !=undefined) {
-            findReservation.transaction = transaction ;
-        }
-    
-        if (motifsCancel !=undefined) {
-            findReservation.motifsCancel = motifsCancel ;
-        }
-    
-        const saveReservation = await findReservation.save();
-    
-        return  res.status(200).json({
-            message: 'modification réussi',
-            status: 'OK',
-            data: saveReservation,
-            statusCode: 201
-        });
+
+    }
+
+    if (client !=undefined) {
+        findReservation.client = client ;
+    }
+
+    if (dateDebut !=undefined) {
+        findReservation.dateDebut = dateDebut ;
+    }
+
+    if (dateFin !=undefined) {
+        findReservation.dateFin = dateFin ;
+    }
+
+    if (status !=undefined) {
+        findReservation.status = status ;
+    }
+
+    if (userCancel !=undefined) {
+        findReservation.userCancel = userCancel ;
+    }
+
+    if (transaction !=undefined) {
+        findReservation.transaction = transaction ;
+    }
+
+    if (motifsCancel !=undefined) {
+        findReservation.motifsCancel = motifsCancel ;
+    }
+
+    const saveReservation = await findReservation.save();
+
+    return  res.status(200).json({
+        message: 'modification réussi',
+        status: 'OK',
+        data: saveReservation,
+        statusCode: 201
+    });
     } catch (error) {
         return res.status(404).json({
             message: 'erreur supréssion ',
