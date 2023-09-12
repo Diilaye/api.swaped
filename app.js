@@ -30,6 +30,10 @@ const reservationRoute = require('./routes/reservation-route');
 
 const messageRoute = require('./routes/message-route');
 
+const transactionRoute = require('./routes/transaction-route');
+
+const  paypal = require('paypal-rest-sdk');
+
 
 require('dotenv').config({
     path: './.env'
@@ -45,6 +49,18 @@ app.use(bodyParser.urlencoded({
     extended: true,
     limit: '10000mb'
 }));
+
+// paypal.configure({
+//     'mode': 'live', //sandbox or live
+//     'client_id': 'AUrkmKQitaIycR_ZFEDmXjrmEva-gc55HJpofRtOm_r_4F0Ff8EKr7ig6I5H_P4KfTWuGVkEjtkM9oWl',
+//     'client_secret': 'ECSYqn8gkFgaSTLDT7Ra11MJfDgglvXJlM4g1Pk4zBCEd-47xEKq1qekYU3L0zPY-Bdjoxcx7IXnqxxc'
+//   });
+
+paypal.configure({
+    'mode': 'live', //sandbox or live
+    'client_id': process.env.PAYPAL_CLIENT_ID,
+    'client_secret': process.env.PAYPAL_CLIENT_SECRET
+  });
 
 app.use('/swaped-file', express.static('uploads'));
 
@@ -69,6 +85,10 @@ app.use('/v1/api/clients' ,clientRoute);
 app.use('/v1/api/reservations' ,reservationRoute);
 
 app.use('/v1/api/messages' ,messageRoute);
+
+app.use('/v1/api/transactions' ,transactionRoute);
+
+
 
 
 app.get('/', (req,res) => {

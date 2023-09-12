@@ -13,7 +13,7 @@ const transactionModel = new Schema({
     },
 
     justificatif : {
-        type : String
+        type : Schema.Types.ObjectId
     },
 
 
@@ -22,9 +22,14 @@ const transactionModel = new Schema({
         unique : true
     },
 
-    user : {
+    client : {
         type: Schema.Types.ObjectId,
         ref: "users"
+    },
+
+    service : {
+        type : String,
+        defult :""
     },
 
     
@@ -32,6 +37,12 @@ const transactionModel = new Schema({
         type: String,
         enum: ['PENDING', 'SUCCESS','CANCELED'],
         default: 'PENDING'
+    },
+
+    typeService: {
+        type: String,
+        enum: ['LOGEMENT', 'RESTAURANT','VOITURE','MOTO'],
+        default: 'LOGEMENT'
     },
 
     type: {
@@ -52,6 +63,8 @@ const transactionModel = new Schema({
           delete ret.__v;
         },
       },
+},{
+    timestamps: true 
 });
 
-module.exports = mongoose.model('transactions', transactionModel) ;
+module.exports = mongoose.model('transactions', transactionModel);

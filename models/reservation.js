@@ -50,6 +50,16 @@ const ReservationModel = new Schema({
 
     },
 
+    nbreVoyageur : {
+        type: String,
+        default :"2"
+    },
+
+    nbreChambre : {
+        type: String,
+        default :"2"
+    },
+
     messages : [{
         type: Schema.Types.ObjectId,
         ref: "messages",

@@ -25,6 +25,10 @@ exports.add = async (req, res) => {
             dateDebut ,
         
             dateFin ,
+
+            nbreVoyageur ,
+
+            nbreChambre ,
     
         } =req.body ;
     
@@ -39,6 +43,8 @@ exports.add = async (req, res) => {
             reservation.client = req.user.id_user ;
             reservation.dateDebut = dateDebut ;
             reservation.dateFin = dateFin ;
+            reservation.nbreVoyageur = nbreVoyageur ;
+            reservation.nbreChambre = nbreChambre ;
         
             const saveReservation = reservation.save();
         
