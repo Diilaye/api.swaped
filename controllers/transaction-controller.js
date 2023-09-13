@@ -126,7 +126,7 @@ exports.success = async (req,res) => {
         {
           amount: {
             "currency": "EUR",
-            "total": transaction.amount
+            "total": "1"
           }
         }
       ]
