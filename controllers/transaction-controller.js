@@ -33,15 +33,15 @@ exports.add = async (req ,res) => {
                 "item_list": {
                     "items": [{
                         "name": "reservation logement",
-                        "sku": typeService + "paiement "+amount,
-                        "price": amount,
+                        "sku":"paiement",
+                        "price": "1",
                         "currency": "EUR",
                         "quantity": "1"
                     }]
                 },
                 "amount": {
                     "currency": "EUR",
-                    "total": "0.5"
+                    "total": "1"
                 },
                 "description": "Description des avantages de cette abonnements."
             }]
