@@ -148,7 +148,7 @@ exports.success = async (req,res) => {
        
       
     
-        res.redirect("success url swaped");
+        res.redirect("Swapped://");
       }
 
     });
@@ -169,5 +169,5 @@ exports.failed = async (req ,res ) => {
 
    const tf = await transaction.save();
 
-   return res.redirect("failed url swaped");
+   return res.redirect("Swapped://");
 }
