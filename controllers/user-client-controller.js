@@ -177,89 +177,88 @@ exports.getAuth = async (req , res) => {
 
 exports.update = async (req,res) => {
 
-    try {
-        
-        let {
-            nom ,
-        
-            prenom ,
-        
-            telephoneMOMO ,
-        
-            telephoneOM ,
-        
-            email ,
-        
-            photoProfile,
-        
-            password ,
+
+    let {
+
+        nom ,
     
-            oldPassword,
+        prenom ,
     
-            statusConexion
-        
+        telephoneMOMO ,
     
-        } = req.body;
+        telephoneOM ,
     
-        const findUserAdmin = await userAdminModel.findById(req.user.id_user).exec();
+        email ,
     
+        photoProfile,
     
-        if (nom !=undefined) {
-            findUserAdmin.nom = nom ;
-        }
+        password ,
+
+        oldPassword,
+
+        statusConexion
+
+    } = req.body;
+
+    const findUserAdmin = await userClientModel.findById(req.user.id_user).exec();
+
+
+    if (nom !=undefined) {
+        findUserAdmin.nom = nom ;
+    }
+
+    if (prenom !=undefined) {
+        findUserAdmin.prenom = prenom ;
+    } 
     
-        if (prenom !=undefined) {
-            findUserAdmin.prenom = prenom ;
-        } 
-        
-        if (telephoneMOMO !=undefined) {
-            findUserAdmin.telephoneMOMO = telephoneMOMO ;
+    if (telephoneMOMO !=undefined) {
+        findUserAdmin.telephoneMOMO = telephoneMOMO ;
+    }
+
+    if (telephoneOM !=undefined) {
+        findUserAdmin.telephoneOM = telephoneOM ;
+    }
+
+    if (email !=undefined) {
+        findUserAdmin.email = email ;
+    }
+
+
+    if (password !=undefined) {
+
+        if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
+            const passwordCrypt = bcrytjs.hashSync(password, salt);
+             findUserAdmin.password = passwordCrypt ;
+        }else {
+            return res.status(404).json({
+                message: 'Mot de passe ne sont pas conforme ',
+                status: 'NOT OK',
+                data: null,
+                statusCode: 404
+            });
         }
 
-        if (telephoneOM !=undefined) {
-            findUserAdmin.telephoneOM = telephoneOM ;
-        }
-    
-        if (email !=undefined) {
-            findUserAdmin.email = email ;
-        }
-    
-        if (identifiant !=undefined) {
-            findUserAdmin.identifiant = identifiant ;
-        }
-    
-        if (password !=undefined) {
-    
-            if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
-                const passwordCrypt = bcrytjs.hashSync(password, salt);
-                 findUserAdmin.password = passwordCrypt ;
-            }else {
-                return res.status(404).json({
-                    message: 'Mot de passe ne sont pas conforme ',
-                    status: 'NOT OK',
-                    data: null,
-                    statusCode: 404
-                });
-            }
-    
-        }
-    
-        if (photoProfile !=undefined) {
-            findUserAdmin.photoProfile = photoProfile ;
-        }
-    
-        if (statusConexion !=undefined) {
-            findUserAdmin.statusConexion = statusConexion ;
-        }
-    
-        const saveUserAdmin = findUserAdmin.save() ; 
-    
-        return res.status(200).json({
-            message: 'modification reuissi',
-            status: 'OK',
-            data: saveUserAdmin,
-            statusCode: 200
-        })
+    }
+
+    if (photoProfile !=undefined) {
+        findUserAdmin.photoProfile = photoProfile ;
+    }
+
+    if (statusConexion !=undefined) {
+        findUserAdmin.statusConexion = statusConexion ;
+    }
+
+    const saveUserAdmin = await  findUserAdmin.save() ; 
+
+    return res.status(200).json({
+        message: 'modification reuissi',
+        status: 'OK',
+        data: saveUserAdmin,
+        statusCode: 200
+    })
+
+    try {
+       
 
     } catch (error) {
         return res.status(404).json({
@@ -300,7 +299,7 @@ exports.one = async (req,res) => {
 
     try {
 
-        const userAdmins = await  userAdminModel.findById(req.params.id).exec();
+        const userAdmins = await  userClientModel.findById(req.params.id).exec();
 
         return res.status(200).json({
             message: 'listes des clients  ',
