@@ -14,7 +14,7 @@ routes.get('/',adminUserCtrl.all);
 
 routes.get(':id/',adminUserCtrl.one);
 
-routes.put(':id/',adminUserCtrl.update);
+routes.put('/',adminUserCtrl.update);
 
 
 module.exports = routes;
