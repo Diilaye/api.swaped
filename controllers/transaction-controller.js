@@ -98,6 +98,8 @@ exports.add = async (req ,res) => {
 }
 
 exports.success = async (req,res) => {
+    console.log("success");
+
     console.log(req.query);
 
     const payerId = req.query.PayerID;
@@ -148,6 +150,8 @@ exports.success = async (req,res) => {
 }
 
 exports.failed = async (req ,res ) => {
+    console.log("failed");
+    console.log(req.query);
     const transaction = await transactionModel.findOne({
         token : req.query.token
     }).exec();
