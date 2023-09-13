@@ -14,6 +14,12 @@ const ClientModels = new Schema({
         default :""
     },
 
+    sexe : {
+        type: String,
+        enum: ['homme', 'femme'],
+        default: 'homme'
+    },
+
     telephoneMOMO : {
         type: String,
     },

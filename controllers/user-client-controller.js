@@ -201,7 +201,7 @@ exports.update = async (req,res) => {
     
         } = req.body;
     
-        const findUserAdmin = await userAdminModel.findById(req.params.id).exec();
+        const findUserAdmin = await userAdminModel.findById(req.user.id_user).exec();
     
     
         if (nom !=undefined) {

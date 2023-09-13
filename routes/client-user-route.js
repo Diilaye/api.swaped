@@ -20,7 +20,7 @@ routes.get('/verif',clientUserCtrl.verifNum);
 
 routes.get(':id/',clientUserCtrl.one);
 
-routes.put(':id/',clientUserCtrl.update);
+routes.put(':id/', checkRoleClient(),clientUserCtrl.update);
 
 
 module.exports = routes;
