@@ -1,5 +1,5 @@
 const transactionModel = require('../models/transactions');
-
+const { DateTime } = require('luxon');
 const  paypal = require('paypal-rest-sdk');
 
 exports.add = async (req ,res) => {
@@ -105,20 +105,7 @@ exports.success = async (req,res) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
 
-    const transaction = await transactionModel.findOne({
-        token : req.query.token
-    }).exec();
-
-    transaction.status = "SUCCESS";
-    
-
-    transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-
-
-   const tf = await transaction.save();
-
-    console.log(tf);
-  
+   
     const execute_payment_json = {
       payer_id: payerId,
       transactions: [
@@ -131,7 +118,7 @@ exports.success = async (req,res) => {
       ]
     };
   
-    paypal.payment.execute(paymentId, execute_payment_json,  (error, payment) => {
+    paypal.payment.execute(paymentId, execute_payment_json, async  (error, payment) => {
       if (error) {
         console.log(error);
         
@@ -143,9 +130,25 @@ exports.success = async (req,res) => {
         });
 
       } else {
+
+        const transaction = await transactionModel.findOne({
+            token : req.query.token
+        }).exec();
+    
+        transaction.status = "SUCCESS";
+        
+    
+        transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+    
+    
+        const tf = await transaction.save();
+    
+        console.log(tf);
+      
     
         res.redirect("success url swaped");
       }
+
     });
 }
 
