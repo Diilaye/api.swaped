@@ -145,7 +145,7 @@ exports.success = async (req,res) => {
         });
 
       } else {
-        res.sendFile(__dirname + "/success.html");
+        res.redirect("https://swaped.deally.fr/success");
       }
 
     });
@@ -166,6 +166,7 @@ exports.failed = async (req ,res ) => {
 
    const tf = await transaction.save();
 
-   res.sendFile(__dirname + "/failled.html");
+   res.redirect("https://swaped.deally.fr/failled");
+
 
 }
