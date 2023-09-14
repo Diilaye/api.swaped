@@ -165,6 +165,6 @@ exports.failed = async (req ,res ) => {
 
    const tf = await transaction.save();
 
-   res.sendFile(__dirname + "/error.html");
+   res.sendFile(__dirname + "/failled.html");
 
 }
