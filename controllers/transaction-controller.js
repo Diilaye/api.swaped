@@ -144,11 +144,7 @@ exports.success = async (req,res) => {
         });
 
       } else {
-
-       
-      
-    
-        res.redirect("Swapped://");
+        res.sendFile(__dirname + "/success.html");
       }
 
     });
@@ -169,5 +165,6 @@ exports.failed = async (req ,res ) => {
 
    const tf = await transaction.save();
 
-   return res.redirect("Swapped://");
+   res.sendFile(__dirname + "/error.html");
+
 }
