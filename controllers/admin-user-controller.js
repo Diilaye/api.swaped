@@ -20,7 +20,9 @@ exports.store = async (req , res , next) => {
         
             prenom,
         
-            telephone,
+            telephoneOM,
+
+            telephoneMOMO,
     
             email,
         
@@ -50,7 +52,9 @@ exports.store = async (req , res , next) => {
     
         user.prenom = prenom;
     
-        user.telephone = telephone;
+        user.telephoneOM = telephoneOM;
+
+        user.telephoneMOMO = telephoneMOMO;
     
         user.password = passwordCrypt;
     
@@ -157,7 +161,9 @@ exports.update = async (req,res) => {
         
             prenom,
         
-            telephone,
+            telephoneOM,
+
+            telephoneMOMO,
     
             email,
         
@@ -188,16 +194,16 @@ exports.update = async (req,res) => {
             findUserAdmin.prenom = prenom ;
         } 
         
-        if (telephone !=undefined) {
-            findUserAdmin.telephone = telephone ;
+        if (telephoneOM !=undefined) {
+            findUserAdmin.telephoneOM = telephoneOM ;
+        }
+
+        if (telephoneMOMO !=undefined) {
+            findUserAdmin.telephoneMOMO = telephoneMOMO ;
         }
     
         if (email !=undefined) {
             findUserAdmin.email = email ;
-        }
-    
-        if (identifiant !=undefined) {
-            findUserAdmin.identifiant = identifiant ;
         }
     
         if (password !=undefined) {

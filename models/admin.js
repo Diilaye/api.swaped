@@ -20,7 +20,12 @@ const AdminModels = new Schema({
         default :""
     },
 
-    telephone : {
+    telephoneOM : {
+        type: String,
+        default :""
+    },
+
+    telephoneMOMO : {
         type: String,
         default :""
     },
