@@ -55,6 +55,15 @@ const AdminModels = new Schema({
         type: String,
         default :"inactive"
    },
+
+   conditionAnulation : {
+    type: Array,
+    default : [
+        {"pourcantage" : "100" , "jour" : "30"},
+        {"pourcantage" : "70" , "jour" : "15"},
+        {"pourcantage" : "0" , "jour" : "2"},
+    ]
+},
   
    token : {
     type: String,

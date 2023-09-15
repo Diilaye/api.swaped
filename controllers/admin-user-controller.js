@@ -167,15 +167,15 @@ exports.update = async (req,res) => {
     
             email,
         
-            identifiant ,
-        
             password ,
     
             oldPassword,
     
             photoProfile,
     
-            statusConexion
+            statusConexion,
+
+            conditionAnulation,
         
     
         } = req.body;
@@ -204,6 +204,10 @@ exports.update = async (req,res) => {
     
         if (email !=undefined) {
             findUserAdmin.email = email ;
+        }
+
+        if (conditionAnulation !=undefined) {
+            findUserAdmin.conditionAnulation = conditionAnulation ;
         }
     
         if (password !=undefined) {
@@ -271,6 +275,28 @@ exports.all = async (req,res) => {
         });
     }
 
+}
+
+exports.getAuth = async (req, res) => {
+    try {
+
+        const userAdmins = await  userAdminModel.findById(req.user.id_user).exec();
+
+        return res.status(200).json({
+            message: 'Mot de passe ne sont pas conforme ',
+            status: 'OK',
+            data: userAdmins,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur server',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
 }
 
 exports.one = async (req,res) => {
