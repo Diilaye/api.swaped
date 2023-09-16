@@ -214,7 +214,7 @@ exports.update = async (req,res) => {
     
             if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
                 const passwordCrypt = bcrytjs.hashSync(password, salt);
-                 findUserAdmin.password = passwordCrypt ;
+                findUserAdmin.password = passwordCrypt ;
             }else {
                 return res.status(404).json({
                     message: 'Mot de passe ne sont pas conforme ',
