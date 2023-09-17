@@ -32,7 +32,9 @@ const messageRoute = require('./routes/message-route');
 
 const transactionRoute = require('./routes/transaction-route');
 
-const walletRoute = require('./routes/wallet-controller');
+const walletRoute = require('./routes/wallet-route');
+
+const walletTransactionRoute = require('./routes/wallet-transaction-route');
 
 const  paypal = require('paypal-rest-sdk');
 
@@ -86,6 +88,8 @@ app.use('/v1/api/messages' ,messageRoute);
 app.use('/v1/api/transactions' ,transactionRoute);
 
 app.use('/v1/api/wallets' ,walletRoute);
+
+app.use('/v1/api/wallet-transactions' ,walletTransactionRoute);
 
 
 app.get('/', (req,res) => {
