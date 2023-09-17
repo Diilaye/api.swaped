@@ -32,6 +32,8 @@ const messageRoute = require('./routes/message-route');
 
 const transactionRoute = require('./routes/transaction-route');
 
+const walletRoute = require('./routes/wallet-controller');
+
 const  paypal = require('paypal-rest-sdk');
 
 
@@ -50,11 +52,6 @@ app.use(bodyParser.urlencoded({
     limit: '10000mb'
 }));
 
-// paypal.configure({
-//     'mode': 'live', //sandbox or live
-//     'client_id': 'AUrkmKQitaIycR_ZFEDmXjrmEva-gc55HJpofRtOm_r_4F0Ff8EKr7ig6I5H_P4KfTWuGVkEjtkM9oWl',
-//     'client_secret': 'ECSYqn8gkFgaSTLDT7Ra11MJfDgglvXJlM4g1Pk4zBCEd-47xEKq1qekYU3L0zPY-Bdjoxcx7IXnqxxc'
-//   });
 
 paypal.configure({
     'mode': 'live', //sandbox or live
@@ -88,7 +85,7 @@ app.use('/v1/api/messages' ,messageRoute);
 
 app.use('/v1/api/transactions' ,transactionRoute);
 
-
+app.use('/v1/api/wallets' ,walletRoute);
 
 
 app.get('/', (req,res) => {
