@@ -1,5 +1,6 @@
 const walletModel = require('../models/wallet');
 const walletTransactionModel = require('../models/wallet-transactions');
+const { DateTime } = require('luxon');
 
 exports.add = async (req,res) => {
 
@@ -80,7 +81,7 @@ exports.add = async (req,res) => {
             }
         });
     } else  {
-       return res.redirect('https://api-swaped.deally.fr/v1/api/wallet-transactions/success?means='+means)
+       return res.redirect('/v1/api/wallet-transactions/success?means='+means+"&reference="+saveWalletTransaction.reference)
     }
 
   
@@ -163,6 +164,8 @@ exports.success = async (req,res) => {
         reference : req.query.reference
     }).exec();
 
+
+
     transaction.status = "SUCCESS";
     
 
@@ -170,6 +173,8 @@ exports.success = async (req,res) => {
 
 
     const tf = await transaction.save();
+
+    console.log(tf);
 
     if(req.query.means == "PAYPAL") {
         const execute_payment_json = {
@@ -197,9 +202,7 @@ exports.success = async (req,res) => {
       
             } else {
       
-              const wallet = await walletModel.findOne({
-                  userId : tf.userWallet
-              });
+                const wallet = await walletModel.findById(tf.userWallet);
       
               wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
       
@@ -209,11 +212,16 @@ exports.success = async (req,res) => {
             }
       
           });
+    }else {
+        const wallet = await walletModel.findById(tf.userWallet);
+
+
+        wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
+    
+        const saveWallet = await wallet.save();
+    
+        res.redirect(__dirname + "/success.html");
     }
-
-    res.redirect(__dirname + "/success.html");
-
-   
     
 }
 
