@@ -4,85 +4,89 @@ const { DateTime } = require('luxon');
 
 exports.add = async (req,res) => {
 
+   
+    
+
     try {
         let  {
        
-        amount,
-
-        
-        typeService,
+            amount,
     
-        means,
-
-    } =req.body;
-
-    const walletTransaction = walletTransactionModel();
-
-    const find = await walletModel.findOne({
-        userId : req.user.id_user
-    });
-
-    walletTransaction.amount = amount ;
-
-    walletTransaction.userWallet = find.id ;
-
-    walletTransaction.typeService = typeService ;
-
-    walletTransaction.means = means ;
-
-    const saveWalletTransaction = await  walletTransaction.save();
-
-    if (means == "PAYPAL") {
-        var create_payment_json = {
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "redirect_urls": {
-                "return_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/failled?reference="+saveWalletTransaction.reference
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "reservation logement",
-                        "sku":"paiement",
-                        "price": (parseFloat(amount) / 9000).toString(),
-                        "currency": "EUR",
-                        "quantity": "1"
-                    }]
-                },
-                "amount": {
-                    "currency": "EUR",
-                    "total": (parseFloat(amount) / 9000).toString()
-                },
-                "description": "Description des avantages de cette abonnements."
-            }]
-        };
+            
+            typeService,
         
-        paypal.payment.create(create_payment_json, async (error, payment)  => {
-            if (error) {
-                throw error;
-            } else {
-            
-            
-                console.log("Create Payment Response");
-                console.log(payment);
-
-                return res.status(201).json({
-                    message: 'creation supréssion ',
-                    statusCode: 201,
-                    url:payment['links'][1]['href'],
-                    data : saveWalletTransaction,
-                    status: 'NOT OK'
-                });
-                
-         
-            }
+            means,
+    
+        } =req.body;
+    
+        const walletTransaction = walletTransactionModel();
+    
+        const find = await walletModel.findOne({
+            userId : req.user.id_user
         });
-    } else  {
-        successFun(means , reference);
-    }
+    
+        walletTransaction.amount = amount ;
+    
+        walletTransaction.userWallet = find.id ;
+    
+        walletTransaction.typeService = typeService ;
+    
+        walletTransaction.means = means ;
+    
+        const saveWalletTransaction = await  walletTransaction.save();
+    
+        if (means == "PAYPAL") {
+            var create_payment_json = {
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "redirect_urls": {
+                    "return_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+                    "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/failled?reference="+saveWalletTransaction.reference
+                },
+                "transactions": [{
+                    "item_list": {
+                        "items": [{
+                            "name": "reservation logement",
+                            "sku":"paiement",
+                            "price": (parseFloat(amount) / 9000).toString(),
+                            "currency": "EUR",
+                            "quantity": "1"
+                        }]
+                    },
+                    "amount": {
+                        "currency": "EUR",
+                        "total": (parseFloat(amount) / 9000).toString()
+                    },
+                    "description": "Description des avantages de cette abonnements."
+                }]
+            };
+            
+            paypal.payment.create(create_payment_json, async (error, payment)  => {
+                if (error) {
+                    throw error;
+                } else {
+                
+                
+                    console.log("Create Payment Response");
+                    console.log(payment);
+    
+                    return res.status(201).json({
+                        message: 'creation supréssion ',
+                        statusCode: 201,
+                        url:payment['links'][1]['href'],
+                        data : saveWalletTransaction,
+                        status: 'NOT OK'
+                    });
+                    
+             
+                }
+            });
+        } else  {
+           return successFun(req,res,means , saveWalletTransaction.reference);
+        }
+    
 
     } catch (error) {
         return res.status(404).json({
@@ -143,9 +147,9 @@ exports.allByUser = async (req,res) => {
 }
 
 
-successFun =  async (means , reference) =>  {
+successFun =  async (req,res, means , reference) =>  {
     const transaction = await walletTransactionModel.findOne({
-        reference : req.query.reference
+        reference : reference
     }).exec();
 
 
@@ -160,7 +164,7 @@ successFun =  async (means , reference) =>  {
 
     console.log(tf);
 
-    if(req.query.means == "PAYPAL") {
+    if(means == "PAYPAL") {
         const execute_payment_json = {
             payer_id: payerId,
             transactions: [
@@ -192,7 +196,7 @@ successFun =  async (means , reference) =>  {
       
               const saveWallet = await wallet.save();
       
-              res.redirect(__dirname + "/success.html");
+             return res.redirect(__dirname + "/success.html");
             }
       
           });
