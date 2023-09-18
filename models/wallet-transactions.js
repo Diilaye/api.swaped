@@ -39,6 +39,11 @@ const walletTransactionModel = new Schema({
         default: 'OM'
     },
 
+    dateTransactionSuccess: {
+        type: String,
+        default : ""
+    },
+
 },{
     toJSON: {
         transform: function (doc, ret) {
