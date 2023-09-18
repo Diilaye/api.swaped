@@ -81,17 +81,9 @@ exports.add = async (req,res) => {
             }
         });
     } else  {
-       return res.redirect('/v1/api/wallet-transactions/success?means='+means+"&reference="+saveWalletTransaction.reference)
+        successFun(means , reference);
     }
 
-  
-
-    return res.status(201).json({
-        message: 'Creation reussi',
-        status: 'OK',
-        data: saveWalletTransaction,
-        statusCode: 201
-    });
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
@@ -150,6 +142,76 @@ exports.allByUser = async (req,res) => {
 
 }
 
+
+successFun =  async (means , reference) =>  {
+    const transaction = await walletTransactionModel.findOne({
+        reference : req.query.reference
+    }).exec();
+
+
+
+    transaction.status = "SUCCESS";
+    
+
+    transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+
+    const tf = await transaction.save();
+
+    console.log(tf);
+
+    if(req.query.means == "PAYPAL") {
+        const execute_payment_json = {
+            payer_id: payerId,
+            transactions: [
+              {
+                amount: {
+                  "currency": "EUR",
+                  "total": (parseFloat(transaction.amount) / 9000).toString()
+                }
+              }
+            ]
+          };
+        
+          paypal.payment.execute(paymentId, execute_payment_json, async  (error, payment) => {
+            if (error) {
+              console.log(error);
+              
+              return res.status(404).json({
+                  message: 'erreur serveur ',
+                  statusCode: 404,
+                  data: error,
+                  status: 'NOT OK'
+              });
+      
+            } else {
+      
+                const wallet = await walletModel.findById(tf.userWallet);
+      
+              wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
+      
+              const saveWallet = await wallet.save();
+      
+              res.redirect(__dirname + "/success.html");
+            }
+      
+          });
+    }else {
+        const wallet = await walletModel.findById(tf.userWallet);
+
+
+        wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
+    
+        const saveWallet = await wallet.save();
+    
+       return res.status(201).json({
+            message: 'recharge wallet',
+            statusCode: 201,
+            data: saveWallet,
+            status: 'OK'
+        });
+    }
+}
 
 exports.success = async (req,res) => {
 
