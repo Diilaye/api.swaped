@@ -80,7 +80,7 @@ exports.add = async (req,res) => {
             }
         });
     } else  {
-        res.redirect('https://api-swaped.deally.fr/v1/api/wallet-transactions/success?means='+means)
+       return res.redirect('https://api-swaped.deally.fr/v1/api/wallet-transactions/success?means='+means)
     }
 
   
