@@ -80,7 +80,7 @@ exports.add = async (req,res) => {
             }
         });
     } else  {
-        res.redirect("/v1/api/wallet-transactions/success?means=OM")
+        res.redirect('/wallet-transactions/success?means='+means)
     }
 
   
