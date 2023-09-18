@@ -220,7 +220,12 @@ exports.success = async (req,res) => {
     
         const saveWallet = await wallet.save();
     
-        res.redirect(__dirname + "/success.html");
+       return res.status(201).json({
+            message: 'recharge wallet',
+            statusCode: 201,
+            data: saveWallet,
+            status: 'OK'
+        });
     }
     
 }
