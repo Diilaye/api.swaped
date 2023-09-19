@@ -16,6 +16,7 @@ exports.add = async (req,res) => {
         const adresse = adresseModel() ;
 
         adresse.type = type ;
+        adresse.adresseText = localisation ;
 
         adresse.localisation = point ;
 

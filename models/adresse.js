@@ -10,6 +10,12 @@ const AdresseModels = new Schema({
         default: 'Domicile',
     },
 
+    adresseText : {
+        type: String,
+        default :""
+    },
+
+
     rue : {
         type: String,
         default :""
