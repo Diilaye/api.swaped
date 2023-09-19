@@ -1,10 +1,10 @@
 const walletModel = require('../models/wallet');
 const walletTransactionModel = require('../models/wallet-transactions');
 const { DateTime } = require('luxon');
-
+const  paypal = require('paypal-rest-sdk');
 exports.add = async (req,res) => {
 
-   
+    
     
 
     try {
@@ -28,7 +28,7 @@ exports.add = async (req,res) => {
         walletTransaction.amount = amount ;
     
         walletTransaction.userWallet = find.id ;
-
+    
         walletTransaction.reference = DateTime.now().ts ;
     
         walletTransaction.typeService = typeService ;
@@ -52,14 +52,14 @@ exports.add = async (req,res) => {
                         "items": [{
                             "name": "reservation logement",
                             "sku":"paiement",
-                            "price": (parseFloat(amount) / 9000).toString(),
+                            "price": "1",
                             "currency": "EUR",
                             "quantity": "1"
                         }]
                     },
                     "amount": {
                         "currency": "EUR",
-                        "total": (parseFloat(amount) / 9000).toString()
+                        "total": "1"
                     },
                     "description": "Description des avantages de cette abonnements."
                 }]
@@ -173,7 +173,7 @@ successFun =  async (req,res, means , reference) =>  {
               {
                 amount: {
                   "currency": "EUR",
-                  "total": (parseFloat(transaction.amount) / 9000).toString()
+                  "total": "1"
                 }
               }
             ]
@@ -251,7 +251,7 @@ exports.success = async (req,res) => {
               {
                 amount: {
                   "currency": "EUR",
-                  "total": (parseFloat(transaction.amount) / 9000).toString()
+                  "total": "1"
                 }
               }
             ]
