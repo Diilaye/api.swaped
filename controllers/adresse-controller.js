@@ -131,6 +131,8 @@ exports.allByUser = async (req,res) => {
 
 exports.update = async (req,res) => {
 
+   
+
     try {
 
         let {
@@ -140,7 +142,7 @@ exports.update = async (req,res) => {
 
         const point = await getLgLat(localisation);
 
-        const adresse = adresseModel.findById(req.params.id) ;
+        const adresse = await adresseModel.findById(req.params.id) ;
 
         adresse.type = type ;
 
