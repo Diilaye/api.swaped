@@ -12,7 +12,7 @@ const {checkRoleClient} = require('../midleweares/auth');
 const routes = new express.Router();
 
 // Add routes
-routes.get('/',adresseCtrl.all);
+routes.get('/',  checkRoleClient() ,adresseCtrl.all);
 
 routes.get('/:id', adresseCtrl.one);
 

@@ -16,7 +16,7 @@ exports.add = async (req,res) => {
         const adresse = adresseModel() ;
 
         adresse.type = type ;
-        
+
         adresse.adresseText = localisation ;
 
         adresse.localisation = point ;
@@ -54,7 +54,9 @@ exports.add = async (req,res) => {
 exports.all = async (req,res) => {
     
    try {
-    const adresses = await adresseModel.find(req.query).exec();
+    const adresses = await adresseModel.find({
+        user : req.user.id_user
+    }).exec();
 
     return res.status(200).json({
         message: 'liste de addresse avec success',
