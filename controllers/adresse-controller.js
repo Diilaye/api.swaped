@@ -144,6 +144,8 @@ exports.update = async (req,res) => {
 
         adresse.type = type ;
 
+        adresse.adresseText = localisation ;
+
         adresse.localisation = point ;
 
         adresse.rue = localisation.split(',')[0] ;
