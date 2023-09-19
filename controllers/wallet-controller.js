@@ -1,4 +1,6 @@
 const walletModel = require('../models/wallet');
+const { DateTime } = require('luxon');
+
 exports.add = async (req,res ) => {
 
   try {
@@ -13,6 +15,8 @@ exports.add = async (req,res ) => {
     const wallet = walletModel();
 
     wallet.userId = req.user.id_user ;
+
+    wallet.idWallet = DateTime.now().ts;
 
     wallet.typeWallet = typeWallet ;
 

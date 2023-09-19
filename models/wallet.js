@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-
 const walletModel = new Schema({
   
   userId: {
@@ -17,7 +16,6 @@ const walletModel = new Schema({
   idWallet : {
     type : String , 
     unique : true,
-    default : new Date().getTime()
   },
 
   montantOM : {type : String , default :"0"},

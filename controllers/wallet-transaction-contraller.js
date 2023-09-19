@@ -28,6 +28,8 @@ exports.add = async (req,res) => {
         walletTransaction.amount = amount ;
     
         walletTransaction.userWallet = find.id ;
+
+        walletTransaction.reference = DateTime.now().ts ;
     
         walletTransaction.typeService = typeService ;
     

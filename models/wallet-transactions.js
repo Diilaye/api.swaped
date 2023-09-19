@@ -2,12 +2,14 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+
+
 const walletTransactionModel = new Schema({
     
     reference: {
         type: String ,
         unique : true,
-        default : new Date().getTime()
+
     },
 
     amount : {
