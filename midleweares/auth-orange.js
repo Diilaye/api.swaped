@@ -1,5 +1,7 @@
 const axios = require('axios');
-
+require('dotenv').config({
+    path: './.env'
+});
   module.exports = async (req,res,next) => {
 
     const response = await axios.post(
@@ -9,7 +11,7 @@ const axios = require('axios');
         }),
         {
           headers: {
-            'Authorization': 'Basic MXQwaldJbW0yWVdwVEdyOGRPdkp0ZU1BUWE3ZDV6RW46RFlRbWNzV0dBNktmdjBQQw==',
+            'Authorization': 'Basic '+process.env.BAREARTOKENOM+'==',
             'Accept': 'application/json'
           }
         }
