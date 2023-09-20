@@ -137,6 +137,8 @@ exports.addPartenaire = async (req,res ,next) => {
                 user.service = service;
             
                 user.nom = nom;
+
+                user.idPartenaire = partenaireFind.id;
             
                 user.prenom = prenom;
             

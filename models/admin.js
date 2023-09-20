@@ -51,6 +51,11 @@ const AdminModels = new Schema({
         ref: "media",
     },
 
+    idPartenaire : {
+        type: Schema.Types.ObjectId,
+        ref: "partenaires",
+    },
+
    statusConexion : {
         type: String,
         default :"inactive"
