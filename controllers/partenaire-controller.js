@@ -220,6 +220,34 @@ exports.all = async (req,res) => {
 
 }
 
+exports.getIdentifiant =async (req,res) => {
+
+    try {
+        
+        const partenaire = await partenaireModel.findById(req.params.id).exec(); 
+
+        const user = await adminModel.findById(partenaire.id).exec();
+
+        res.status(201).json({
+            message: 'Admin trouvée avec succes',
+            status: 'OK',
+            data: user,
+            statusCode: 201
+        });
+        
+    } catch (error) {
+
+        res.status(404).json({
+            message: 'Partenaires non trouvée',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        })
+        
+    }
+ 
+}
+
 exports.one = async (req,res) => {
 
     try {
