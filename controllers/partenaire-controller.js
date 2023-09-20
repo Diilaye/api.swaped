@@ -232,7 +232,7 @@ exports.getIdentifiant =async (req,res) => {
             idPartenaire : partenaire.id
         }).exec();
 
-        res.status(201).json({
+        res.status(200).json({
             message: 'Admin trouvée avec succes',
             status: 'OK',
             data: user,
