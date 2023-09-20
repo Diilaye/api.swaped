@@ -222,11 +222,15 @@ exports.all = async (req,res) => {
 
 exports.getIdentifiant =async (req,res) => {
 
+   
+
     try {
         
         const partenaire = await partenaireModel.findById(req.params.id).exec(); 
 
-        const user = await adminModel.findById(partenaire.id).exec();
+        const user = await adminModel.findOne({
+            idPartenaire : partenaire.id
+        }).exec();
 
         res.status(201).json({
             message: 'Admin trouvée avec succes',
@@ -243,7 +247,7 @@ exports.getIdentifiant =async (req,res) => {
             data: error,
             statusCode: 404
         })
-        
+
     }
  
 }
