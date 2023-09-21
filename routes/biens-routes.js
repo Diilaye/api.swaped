@@ -17,6 +17,7 @@ routes.get('/',bienCtrl.all);
 routes.get('/search',bienCtrl.allBySearch);
 routes.get('/:id', bienCtrl.one);
 routes.post('/', checkRole('logement') , bienCtrl.add);
+routes.put('/:id', checkRole('logement') , bienCtrl.add);
 routes.delete('/:id', bienCtrl.delete);
 
 module.exports = routes;

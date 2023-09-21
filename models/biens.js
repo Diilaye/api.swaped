@@ -36,6 +36,10 @@ const BiensModel = new Schema({
         type: Number,
     },
 
+    nbreLit : {
+        type: Number,
+    },
+
     nbreVoyageur : {
         type: Number,
     },
