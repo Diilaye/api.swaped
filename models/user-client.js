@@ -20,6 +20,12 @@ const ClientModels = new Schema({
         default: 'homme'
     },
 
+    statusCompte : {
+        type: String,
+        enum: ['1', '2'],
+        default: '1'
+    },
+
     telephoneMOMO : {
         type: String,
     },
@@ -58,7 +64,6 @@ const ClientModels = new Schema({
         ret.id = ret._id;
         delete ret._id;
         delete ret.password;
-        delete ret.statusCompte;
         delete ret.__v;
       },
     },

@@ -275,7 +275,7 @@ exports.all = async (req,res) => {
 
     try {
 
-        const userAdmins = await  userAdminModel.find(req.query).exec();
+        const userAdmins = await  userClientModel.find(req.query).exec();
 
         return res.status(200).json({
             message: 'listes des clients  ',
