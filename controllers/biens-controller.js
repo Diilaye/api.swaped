@@ -206,11 +206,11 @@ exports.update =  async (req,res) => {
 
         await logement.save();
     
-       return res.status(201).json({
+       return res.status(200).json({
             message: 'biens créer avec success',
             status: 'OK',
             data: findBien,
-            statusCode: 201
+            statusCode: 200
         });
         
     } catch (error) {
@@ -278,6 +278,8 @@ exports.allByUser = async (req,res) => {
 
     }
 }
+
+
 
 exports.allBySearch = async (req,res) => {
 
