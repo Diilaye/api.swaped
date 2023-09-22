@@ -195,11 +195,12 @@ exports.update =  async (req,res) => {
     
         const saveBien =  await bien.save();
 
+        const findBien = await biensModel.findById(saveBien.id).populate(populateObject).exec();
     
        return res.status(200).json({
             message: 'biens modifier avec success',
             status: 'OK',
-            data: saveBien,
+            data: findBien,
             statusCode: 200
         });
         
