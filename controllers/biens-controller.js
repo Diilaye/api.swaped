@@ -118,6 +118,7 @@ exports.add = async (req,res) => {
 }
 
 exports.update =  async (req,res) => {
+
     try {
 
         let {
@@ -194,22 +195,11 @@ exports.update =  async (req,res) => {
     
         const saveBien =  await bien.save();
 
-        const findBien = await biensModel.findById(saveBien.id).populate(populateObject).exec();
-
-
-
-        const logement  =  await logementModel.findOne({
-            idParent : req.user.id_user
-        }).exec();
-
-        logement.biens.push(saveBien);
-
-        await logement.save();
     
        return res.status(200).json({
-            message: 'biens créer avec success',
+            message: 'biens modifier avec success',
             status: 'OK',
-            data: findBien,
+            data: saveBien,
             statusCode: 200
         });
         
