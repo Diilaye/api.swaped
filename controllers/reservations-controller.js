@@ -1,6 +1,8 @@
 const reservationModel = require('../models/reservation');
 const bienModel = require('../models/biens');
 
+const prospectModel = require('../models/user-prospect-model');
+
 const populateObject = [{
     path :'bien',
     populate : [{
@@ -12,6 +14,8 @@ const populateObject = [{
     path : 'user'
 } ,{
     path :'messages'
+},{
+    path :'prospect'
 }];
 
 exports.add = async (req, res) => {
@@ -77,7 +81,78 @@ exports.add = async (req, res) => {
         
     }
 
+}
+
+exports.addProspect = async (req, res) => {
+
+    try {
+        
+        let {
+
+            bien ,
+        
+            dateDebut ,
+        
+            dateFin ,
+
+           nomComplet,
+
+           telephone,
     
+        } =req.body ;
+    
+        const findBien = await bienModel.findById(bien).exec();
+
+        if (findBien != undefined) {
+
+            const reservation = reservationModel();
+
+            const prospect = prospectModel();
+
+            prospect.nomComplet = nomComplet;
+            prospect.telephone = telephone;
+
+            const saveProspect = await prospect.save();
+    
+            reservation.bien = bien ;
+            reservation.user = findBien.idParent ;
+            reservation.prospect =  saveProspect.id ;
+            reservation.dateDebut = dateDebut ;
+            reservation.dateFin = dateFin ;
+            reservation.nbreVoyageur = findBien.nbreVoyageur ;
+            reservation.nbreChambre = findBien.nbreChambre ;
+        
+            const saveReservation = reservation.save();
+        
+            return  res.status(201).json({
+                message: 'creation réussi',
+                status: 'OK',
+                data: saveReservation,
+                statusCode: 201
+            });
+        }else {
+            return res.status(404).json({
+                message: 'erreur supréssion ',
+                statusCode: 404,
+                data: "error",
+                status: 'NOT OK'
+            });
+        }
+    
+       
+
+    } catch (error) {
+
+        return res.status(404).json({
+            message: 'erreur supréssion ',
+            statusCode: 404,
+            data: error,
+            status: 'NOT OK'
+        });
+
+        
+    }
+     
 }
 
 exports.all = async (req,res) => {

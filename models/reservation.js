@@ -15,6 +15,11 @@ const ReservationModel = new Schema({
         ref: "user-client",
     },
 
+    prospect: {
+        type: Schema.Types.ObjectId,
+        ref: "user-prospect",
+    },
+
     user: {
         type: Schema.Types.ObjectId,
         ref: "user-admin",
