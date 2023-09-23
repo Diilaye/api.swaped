@@ -119,6 +119,7 @@ exports.addProspect = async (req, res) => {
             reservation.prospect =  saveProspect.id ;
             reservation.dateDebut = dateDebut ;
             reservation.dateFin = dateFin ;
+            reservation.status = "paiement" ;
             reservation.nbreVoyageur = findBien.nbreVoyageur ;
             reservation.nbreChambre = findBien.nbreChambre ;
         
