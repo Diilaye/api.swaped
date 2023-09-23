@@ -35,7 +35,7 @@ const ReservationModel = new Schema({
 
     status: {
         type : String,
-        enum: ['create','cancel-client' ,'accept-partenaire',"cancel-partenaire",'cancel-admin' , 'paiement' , 'waitingPayment'],
+        enum: ['create','cancel-client' ,'accept-partenaire',"cancel-partenaire",'cancel-admin' , 'paiement' , 'waitingPayment' ,'create-partenaire'],
         default: 'create'
     },
 
