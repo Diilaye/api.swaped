@@ -123,6 +123,7 @@ exports.add = async (req ,res) => {
         if(wallet !=undefined) {
 
             if (parseFloat(wallet.montantDEALLY) >= parseFloat(amount) ) {
+
                 const transaction = transactionModel();
                     
                 transaction.amount = amount;
@@ -138,8 +139,16 @@ exports.add = async (req ,res) => {
                 transaction.token = DateTime.now().ts;
             
                 transaction.type = type;
+
+                transaction.status = "SUCCESS";
+    
+                transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
                 
                 const saveTransaction = await transaction.save();
+
+                wallet.montantDEALLY = (parseFloat(wallet.montantDEALLY) - parseFloat(amount)).toString();
+
+                await wallet.save();
             
                 
                 return res.status(201).json({
