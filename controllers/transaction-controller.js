@@ -2,6 +2,7 @@ const transactionModel = require('../models/transactions');
 const { DateTime } = require('luxon');
 const  paypal = require('paypal-rest-sdk');
 const path = require('path');
+const walletModel = require('../models/wallet');
 
 exports.add = async (req ,res) => {
 
@@ -21,39 +22,109 @@ exports.add = async (req ,res) => {
     
         } = req.body ;
 
-        var create_payment_json = {
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "redirect_urls": {
-                "return_url": "https://api-swaped.deally.fr/v1/api/transactions/success",
-                "cancel_url": "https://api-swaped.deally.fr/v1/api/transactions/failled"
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "reservation logement",
-                        "sku":"paiement",
-                        "price": "1",
-                        "currency": "EUR",
-                        "quantity": "1"
-                    }]
-                },
-                "amount": {
-                    "currency": "EUR",
-                    "total": "1"
-                },
-                "description": "Description des avantages de cette abonnements."
-            }]
-        };
         
-        paypal.payment.create(create_payment_json, async (error, payment)  => {
-            if (error) {
-                throw error;
-            } else {
-                const transaction = transactionModel();
+        
+       if(type == 'PAYPAL'){
+            var create_payment_json = {
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal"
+                },
+                "redirect_urls": {
+                    "return_url": "https://api-swaped.deally.fr/v1/api/transactions/success",
+                    "cancel_url": "https://api-swaped.deally.fr/v1/api/transactions/failled"
+                },
+                "transactions": [{
+                    "item_list": {
+                        "items": [{
+                            "name": "reservation logement",
+                            "sku":"paiement",
+                            "price": "1",
+                            "currency": "EUR",
+                            "quantity": "1"
+                        }]
+                    },
+                    "amount": {
+                        "currency": "EUR",
+                        "total": "1"
+                    },
+                    "description": "Description des avantages de cette abonnements."
+                }]
+            };
+            paypal.payment.create(create_payment_json, async (error, payment)  => {
+                if (error) {
+                    throw error;
+                } else {
+                    const transaction = transactionModel();
+                
+                    transaction.amount = amount;
+                
+                    transaction.client = req.user.id_user;
+                
+                    transaction.justificatif = justificatif;
+                    
+                    transaction.service = service;
+
+                    transaction.typeService = typeService;
+
+                    transaction.token = payment['links'][1]['href'].split('token=')[1];
+                
+                    transaction.type = type;
+                    
+                    const saveTransaction = await transaction.save();
+                
+                    console.log("Create Payment Response");
+                    console.log(payment);
+                    return res.status(201).json({
+                        message: 'creation supréssion ',
+                        statusCode: 201,
+                        url:payment['links'][1]['href'],
+                        data : saveTransaction,
+                        status: 'NOT OK'
+                    });
+                    
             
+                }
+            });
+       }else if(type == 'OM') {
+                 const transaction = transactionModel();
+                
+                    transaction.amount = amount;
+                
+                    transaction.client = req.user.id_user;
+                
+                    transaction.justificatif = justificatif;
+                    
+                    transaction.service = service;
+
+                    transaction.typeService = typeService;
+
+                    transaction.token = DateTime.now().ts;
+                
+                    transaction.type = type;
+                    
+                    const saveTransaction = await transaction.save();
+                
+                    
+                    return res.status(201).json({
+                        message: 'creation supréssion ',
+                        statusCode: 201,
+                        url:null,
+                        data : saveTransaction,
+                        status: 'NOT OK'
+                    });
+       }else if(type == 'DEALLY') {
+
+        const wallet = await walletModel.findOne({
+            userId : req.user.id_user
+        }).exec();
+
+
+        if(wallet !=undefined) {
+
+            if (parseFloat(wallet.montantDEALLY) >= parseFloat(amount) ) {
+                const transaction = transactionModel();
+                    
                 transaction.amount = amount;
             
                 transaction.client = req.user.id_user;
@@ -64,25 +135,71 @@ exports.add = async (req ,res) => {
 
                 transaction.typeService = typeService;
 
-                transaction.token = payment['links'][1]['href'].split('token=')[1];
+                transaction.token = DateTime.now().ts;
             
                 transaction.type = type;
                 
                 const saveTransaction = await transaction.save();
             
-                console.log("Create Payment Response");
-                console.log(payment);
+                
                 return res.status(201).json({
                     message: 'creation supréssion ',
                     statusCode: 201,
-                    url:payment['links'][1]['href'],
+                    url:null,
                     data : saveTransaction,
                     status: 'NOT OK'
                 });
-                
-         
+            }else {
+                return res.status(404).json({
+                    message: 'erreur  server ',
+                    statusCode: 404,
+                    data : "solde insufisant ",
+                    status: 'NOT OK'
+                });
             }
-        });
+
+        } else {
+            return res.status(404).json({
+                message: 'erreur  server ',
+                statusCode: 404,
+                data : "vous avez pas de wallet ",
+                status: 'NOT OK'
+            });
+        }
+
+
+            
+
+       }else if(type == 'MOMO') {
+
+            const transaction = transactionModel();
+                    
+            transaction.amount = amount;
+        
+            transaction.client = req.user.id_user;
+        
+            transaction.justificatif = justificatif;
+            
+            transaction.service = service;
+
+            transaction.typeService = typeService;
+
+            transaction.token = DateTime.now().ts;
+        
+            transaction.type = type;
+            
+            const saveTransaction = await transaction.save();
+        
+            
+            return res.status(201).json({
+                message: 'creation supréssion ',
+                statusCode: 201,
+                url:null,
+                data : saveTransaction,
+                status: 'NOT OK'
+            });
+
+       } 
     
        
 
