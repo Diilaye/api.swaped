@@ -52,7 +52,7 @@ exports.add = async (req, res) => {
             reservation.nbreVoyageur = nbreVoyageur ;
             reservation.nbreChambre = nbreChambre ;
         
-            const saveReservation = reservation.save();
+            const saveReservation = await reservation.save();
 
             findBien.reservations.push(saveReservation.id);
 
