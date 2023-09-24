@@ -100,7 +100,8 @@ const BiensModel = new Schema({
     },
 
     reservations : [{
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "reservations",
         default :[]
     }],
 

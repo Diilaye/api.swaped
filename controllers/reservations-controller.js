@@ -16,6 +16,8 @@ const populateObject = [{
     path :'messages'
 },{
     path :'prospect'
+},,{
+    path :'reservations'
 }];
 
 exports.add = async (req, res) => {
@@ -51,6 +53,10 @@ exports.add = async (req, res) => {
             reservation.nbreChambre = nbreChambre ;
         
             const saveReservation = reservation.save();
+
+            findBien.reservations.push(saveReservation.id);
+
+            await findBien.save();
         
             return  res.status(201).json({
                 message: 'creation réussi',

@@ -275,6 +275,8 @@ exports.allByUser = async (req,res) => {
 exports.allBySearch = async (req,res) => {
 
 
+    
+
     try {
 
         let {
@@ -287,7 +289,7 @@ exports.allBySearch = async (req,res) => {
             minPrice,
             chambre
         } = req.query ;
-
+    
         const biens = await biensModel.find(
             {
                 nbreChambre : {
@@ -296,21 +298,23 @@ exports.allBySearch = async (req,res) => {
                 nbreVoyageur : {
                     $gte : Number(voyageur)
                 },
-
+    
                 nbreMinNuit : {
                     $lte : Number(nuits)
                 },
-
+    
                 tarif : {
                     $gte: minPrice, 
                     $lte: maxPrice, 
                 },
-
+    
                 adresse: { 
                     $regex: new RegExp(localistaion, 'i') 
                 },  
             }
         ).populate(populateObject).exec();
+    
+        
     
        return res.status(200).json({
             message: 'listes des biens success',
