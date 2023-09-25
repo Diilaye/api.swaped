@@ -18,6 +18,123 @@ const populateObject = [{
     path :'prospect'
 }];
 
+const populateObjectBiens = [{
+    path :'galery'
+},{
+    path :'reservations',
+    select:'dateDebut dateFin'
+}];
+
+exports.add = async (req,res) => {
+
+
+    try {
+
+        let {
+            adresse,
+        
+            galery ,
+        
+            typeLogement ,
+        
+            titre ,
+
+            description ,
+        
+            nbreChambre ,
+        
+            nbreVoyageur ,
+
+            nbreLit ,
+        
+            nbreSalleBain ,
+        
+            commoditeChambre ,
+        
+            commoditeSalon ,
+        
+            commoditeCuisine ,
+        
+            commoditeSalleBain ,
+        
+            commoditeBuanderie ,
+        
+            commoditeJardin ,
+        
+            commoditeServiceAnnexe ,
+        
+            nbreMinNuit  ,
+        
+            tarif  ,
+        
+            tarifLocataireSupplementaire ,
+        
+            tarif_menagere ,
+
+            conditionAnulation
+    
+    
+        } = req.body;
+    
+    
+        const bien = biensModel();
+    
+        bien.adresse = adresse;
+        bien.galery = galery;
+        bien.typeLogement = typeLogement;
+        bien.titre = titre;
+        bien.description = description;
+        bien.nbreChambre = nbreChambre;
+        bien.nbreLit = nbreLit;
+        bien.nbreVoyageur = nbreVoyageur;
+        bien.nbreSalleBain = nbreSalleBain;
+        bien.commoditeChambre = commoditeChambre;
+        bien.commoditeSalon = commoditeSalon;
+        bien.commoditeCuisine = commoditeCuisine;
+        bien.commoditeSalleBain = commoditeSalleBain;
+        bien.commoditeBuanderie = commoditeBuanderie;
+        bien.commoditeJardin = commoditeJardin;
+        bien.commoditeServiceAnnexe = commoditeServiceAnnexe;
+        bien.nbreMinNuit = nbreMinNuit;
+        bien.tarif = tarif;
+        bien.tarifLocataireSupplementaire = tarifLocataireSupplementaire;
+        bien.tarif_menagere = tarif_menagere;
+        bien.conditionAnulation = conditionAnulation;
+        bien.idParent = req.user.id_user;
+    
+        const saveBien =  await bien.save();
+
+        const findBien = await biensModel.findById(saveBien.id).populate(populateObject).exec();
+
+
+
+        const logement  =  await logementModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
+
+        logement.biens.push(saveBien);
+
+        await logement.save();
+    
+       return res.status(201).json({
+            message: 'biens créer avec success',
+            status: 'OK',
+            data: findBien,
+            statusCode: 201
+        });
+        
+    } catch (error) {
+        
+       return res.status(400).json({
+            message: 'erreur serveur',
+            status: 'OK',
+            data: error,
+            statusCode: 400
+        });
+
+    }
+}
+
 exports.add = async (req, res) => {
 
     try {
@@ -36,7 +153,11 @@ exports.add = async (req, res) => {
     
         } =req.body ;
     
-        const findBien = await bienModel.findById(bien).exec();
+        const findBien = await bienModel.findById(bien).populate(populateObjectBiens).exec();
+
+        const debut =  Date.parse(dateDebut);
+        const fin =  Date.parse(dateFin);
+
 
         if (findBien != undefined) {
 
@@ -46,7 +167,7 @@ exports.add = async (req, res) => {
             
                 var t = Object.assign(it);
 
-                if((Date.parse(dateDebut) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateDebut) -  Date.parse(t.dateFin)   <= 0) || (Date.parse(dateFin) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateFin) -  Date.parse(t.dateFin)   <= 0)    ){
+                if((debut - Date.parse(t.dateDebut)   >= 0 && debut -  Date.parse(t.dateFin)   <= 0) || (fin - Date.parse(t.dateDebut)   >= 0 && fin -  Date.parse(t.dateFin)   <= 0)    ){
 
                     biensActif = 1;
 
@@ -73,13 +194,13 @@ exports.add = async (req, res) => {
                 return  res.status(201).json({
                     message: 'creation réussi',
                     status: 'OK',
-                    data: saveReservation,
+                    data: "saveReservation",
                     statusCode: 201
                 });
            }else {
-            return res.status(404).json({
+            return res.status(403).json({
                 message: 'erreur supréssion ',
-                statusCode: 404,
+                statusCode: 403,
                 data: "Date insdisponible",
                 status: 'NOT OK'
             });
@@ -131,6 +252,9 @@ exports.addProspect = async (req, res) => {
     
         const findBien = await bienModel.findById(bien).exec();
 
+        const debut =  Date.parse(dateDebut);
+        const fin =  Date.parse(dateFin);
+
         if (findBien != undefined) {
 
             var b  = Object.assign(findBien);
@@ -139,7 +263,7 @@ exports.addProspect = async (req, res) => {
             
                 var t = Object.assign(it);
 
-                if((Date.parse(dateDebut) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateDebut) -  Date.parse(t.dateFin)   <= 0) || (Date.parse(dateFin) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateFin) -  Date.parse(t.dateFin)   <= 0)    ){
+                if((debut - Date.parse(t.dateDebut)   >= 0 && debut -  Date.parse(t.dateFin)   <= 0) || (fin - Date.parse(t.dateDebut)   >= 0 && fin -  Date.parse(t.dateFin)   <= 0)    ){
 
                     biensActif = 1;
 
