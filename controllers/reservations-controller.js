@@ -40,28 +40,52 @@ exports.add = async (req, res) => {
 
         if (findBien != undefined) {
 
-            const reservation = reservationModel();
-    
-            reservation.bien = bien ;
-            reservation.user = findBien.idParent ;
-            reservation.client = req.user.id_user ;
-            reservation.dateDebut = new Date(dateDebut) ;
-            reservation.dateFin = new  Date(dateFin) ;
-            reservation.nbreVoyageur = nbreVoyageur ;
-            reservation.nbreChambre = nbreChambre ;
-        
-            const saveReservation = await reservation.save();
+            var b  = Object.assign(findBien);
+            let biensActif = 0 ;
+           for (const it of b.reservations) {
+            
+                var t = Object.assign(it);
 
-            findBien.reservations.push(saveReservation.id);
+                if((Date.parse(dateDebut) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateDebut) -  Date.parse(t.dateFin)   <= 0) || (Date.parse(dateFin) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateFin) -  Date.parse(t.dateFin)   <= 0)    ){
 
-            await findBien.save();
+                    biensActif = 1;
+
+                }
+
+           }
+           if (biensActif == 0) {
+                const reservation = reservationModel();
         
-            return  res.status(201).json({
-                message: 'creation réussi',
-                status: 'OK',
-                data: saveReservation,
-                statusCode: 201
+                reservation.bien = bien ;
+                reservation.user = findBien.idParent ;
+                reservation.client = req.user.id_user ;
+                reservation.dateDebut = new Date(dateDebut) ;
+                reservation.dateFin = new  Date(dateFin) ;
+                reservation.nbreVoyageur = nbreVoyageur ;
+                reservation.nbreChambre = nbreChambre ;
+            
+                const saveReservation = await reservation.save();
+
+                findBien.reservations.push(saveReservation.id);
+
+                await findBien.save();
+            
+                return  res.status(201).json({
+                    message: 'creation réussi',
+                    status: 'OK',
+                    data: saveReservation,
+                    statusCode: 201
+                });
+           }else {
+            return res.status(404).json({
+                message: 'erreur supréssion ',
+                statusCode: 404,
+                data: "Date insdisponible",
+                status: 'NOT OK'
             });
+           }
+
+           
         }else {
             return res.status(404).json({
                 message: 'erreur supréssion ',
@@ -109,6 +133,21 @@ exports.addProspect = async (req, res) => {
 
         if (findBien != undefined) {
 
+            var b  = Object.assign(findBien);
+            let biensActif = 0 ;
+           for (const it of b.reservations) {
+            
+                var t = Object.assign(it);
+
+                if((Date.parse(dateDebut) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateDebut) -  Date.parse(t.dateFin)   <= 0) || (Date.parse(dateFin) - Date.parse(t.dateDebut)   >= 0 && Date.parse(dateFin) -  Date.parse(t.dateFin)   <= 0)    ){
+
+                    biensActif = 1;
+
+                }
+
+           }
+
+           if (biensActif == 0) {
             const reservation = reservationModel();
 
             const prospect = prospectModel();
@@ -121,8 +160,8 @@ exports.addProspect = async (req, res) => {
             reservation.bien = bien ;
             reservation.user = findBien.idParent ;
             reservation.prospect =  saveProspect.id ;
-            reservation.dateDebut = dateDebut ;
-            reservation.dateFin = dateFin ;
+            reservation.dateDebut = new Date(dateDebut) ;
+            reservation.dateFin = new  Date(dateFin) ;
             reservation.status = "create-partenaire" ;
             reservation.nbreVoyageur = findBien.nbreVoyageur ;
             reservation.nbreChambre = findBien.nbreChambre ;
@@ -135,6 +174,17 @@ exports.addProspect = async (req, res) => {
                 data: saveReservation,
                 statusCode: 201
             });
+
+           } else {
+                return res.status(404).json({
+                    message: 'erreur supréssion ',
+                    statusCode: 404,
+                    data: "error",
+                    status: 'NOT OK'
+                });
+           }
+
+           
         }else {
             return res.status(404).json({
                 message: 'erreur supréssion ',
