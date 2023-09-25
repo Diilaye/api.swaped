@@ -1,10 +1,17 @@
+const { DateTime } = require('luxon');
 const biensModel = require('../models/biens');
 
 const logementModel = require('../models/logement-model');
 
+const reservationModel = require('../models/reservation');
+
+
 
 const populateObject = [{
     path :'galery'
+},{
+    path :'reservations',
+    select:'dateDebut dateFin'
 }];
 
 exports.add = async (req,res) => {
@@ -274,11 +281,7 @@ exports.allByUser = async (req,res) => {
 
 exports.allBySearch = async (req,res) => {
 
-
-    
-
     try {
-
         let {
             localistaion ,
             debut,
@@ -289,6 +292,8 @@ exports.allBySearch = async (req,res) => {
             minPrice,
             chambre
         } = req.query ;
+
+        console.log(localistaion.split(',')[0]);
     
         const biens = await biensModel.find(
             {
@@ -309,23 +314,47 @@ exports.allBySearch = async (req,res) => {
                 },
     
                 adresse: { 
-                    $regex: new RegExp(localistaion, 'i') 
+                    $regex: new RegExp(localistaion.split(',')[0], 'i') 
                 },  
+
+
             }
         ).populate(populateObject).exec();
-    
+
+        const dateDebut =  Date.parse(debut);
+        const dateFin =  Date.parse(fin);
+
+        const biensFinal = [];
         
-    
+
+        for (const iterator of biens) {
+            var b  = Object.assign(iterator);
+            let biensActif = 0 ;
+           for (const it of b.reservations) {
+            
+                var t = Object.assign(it);
+
+                if((dateDebut - Date.parse(t.dateDebut)   >= 0 && dateDebut -  Date.parse(t.dateFin)   <= 0) || (dateFin - Date.parse(t.dateDebut)   >= 0 && dateFin -  Date.parse(t.dateFin)   <= 0)    ){
+
+                    biensActif = 1;
+
+                }
+
+           }
+           if (biensActif == 0) {
+            biensFinal.push(iterator);
+           }
+        }
+
        return res.status(200).json({
             message: 'listes des biens success',
             status: 'OK',
-            data: biens,
+            data: biensFinal,
             statusCode: 200
         });
-        
     } catch (error) {
-        
-       return res.status(400).json({
+
+        return res.status(400).json({
             message: 'erreur serveur',
             status: 'OK',
             data: error,
@@ -333,6 +362,7 @@ exports.allBySearch = async (req,res) => {
         })
 
     }
+
 }
 
 

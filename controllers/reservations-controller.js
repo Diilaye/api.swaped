@@ -16,8 +16,6 @@ const populateObject = [{
     path :'messages'
 },{
     path :'prospect'
-},,{
-    path :'reservations'
 }];
 
 exports.add = async (req, res) => {
@@ -47,8 +45,8 @@ exports.add = async (req, res) => {
             reservation.bien = bien ;
             reservation.user = findBien.idParent ;
             reservation.client = req.user.id_user ;
-            reservation.dateDebut = dateDebut ;
-            reservation.dateFin = dateFin ;
+            reservation.dateDebut = new Date(dateDebut) ;
+            reservation.dateFin = new  Date(dateFin) ;
             reservation.nbreVoyageur = nbreVoyageur ;
             reservation.nbreChambre = nbreChambre ;
         

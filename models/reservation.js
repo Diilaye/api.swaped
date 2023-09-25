@@ -26,11 +26,11 @@ const ReservationModel = new Schema({
     },
 
     dateDebut : {
-        type: String,
+        type: Date,
     },
 
     dateFin : {
-        type: String,
+        type: Date,
     },
 
     status: {
