@@ -328,6 +328,7 @@ exports.allBySearch = async (req,res) => {
         
 
         for (const iterator of biens) {
+            
             var b  = Object.assign(iterator);
             let biensActif = 0 ;
            for (const it of b.reservations) {
@@ -349,7 +350,7 @@ exports.allBySearch = async (req,res) => {
        return res.status(200).json({
             message: 'listes des biens success',
             status: 'OK',
-            data: biensFinal,
+            data:  biens,
             statusCode: 200
         });
     } catch (error) {
