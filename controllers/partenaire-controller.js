@@ -4,6 +4,8 @@ const adminModel = require('../models/admin');
 
 const logementModel = require('../models/logement-model');
 
+const restaurantModel = require('../models/restaurant-model');
+
 const bcrytjs = require('bcryptjs');
 
 
@@ -173,8 +175,26 @@ exports.addPartenaire = async (req,res ,next) => {
                     
         
                 }else if(service =="restaurant"){
-        
-                }else {
+                    const restaurant = restaurantModel();
+
+                    restaurant.service = "restaurant";
+
+                    restaurant.idParent = userSave.id ;
+
+                    restaurant.nomEntreprise = partenaireFind.nomEntreprise ;
+
+                    restaurant.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
+
+                    restaurant.telephone = partenaireFind.telephoneInterlocuteur ;
+
+                    restaurant.photoCover = partenaireFind.photoExterieur[0] ;
+                    
+                    restaurant.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne] ;
+                
+                    const saveRestaurant = await restaurant.save();
+                    
+                }
+                else {
         
                 }
             
