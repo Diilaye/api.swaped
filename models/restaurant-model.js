@@ -8,9 +8,34 @@ const RestaurantModel = new Schema({
         type : String,
     },
 
+    specialite : {
+        type : Array,
+        default : []
+    },
+
     adresse : {
         type: String,
         default :""
+    },
+
+    heureOuverture : {
+        type: String,
+        default :""
+    },
+
+    heureFermeture : {
+        type: String,
+        default :""
+    },
+
+    jourOuvertures : {
+        type : Array,
+        default : []
+    },
+
+    nombreTable : {
+        type : String,
+        default : "1"
     },
 
 
