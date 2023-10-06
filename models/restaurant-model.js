@@ -8,6 +8,12 @@ const RestaurantModel = new Schema({
         type : String,
     },
 
+    adresse : {
+        type: String,
+        default :""
+    },
+
+
     idParent : {
         type: Schema.Types.ObjectId,
         ref: "user-admin"
@@ -24,6 +30,16 @@ const RestaurantModel = new Schema({
     },
 
     telephone : {
+        type: String,
+        default :""
+    },
+
+    telephone1 : {
+        type: String,
+        default :""
+    },
+
+    telephone2 : {
         type: String,
         default :""
     },
@@ -74,7 +90,7 @@ const RestaurantModel = new Schema({
 
    status : {
         type: String,
-        default :"inactive"
+        default :"active"
    },
 
    

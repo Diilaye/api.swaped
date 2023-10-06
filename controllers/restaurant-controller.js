@@ -1,50 +1,39 @@
-const restaurantModel = require('../models/reservation');
+const restaurantModel = require('../models/restaurant-model');
 
-exports.add = async (req ,res) => {
+const populateObject = [{
+    path :'gallerie'
+},{
+    path :'photoCover',
+}];
 
-   try {
+exports.one = async (req,res) => {
 
-    let {
-
-        bien ,
     
-        client,
-    
-        dateDebut ,
-    
-        dateFin ,
-    
-    } = req.body;
 
-    const reservation = restaurantModel();
+    try {
 
-    reservation.bien = bien ;
+        const restaurant = await restaurantModel.findOne({
+            idParent : req.user.id_user
+        }).populate(populateObject).exec();
 
-    reservation.client = client ;
+      
 
-    reservation.dateDebut = dateDebut ;
 
-    reservation.dateFin = dateFin ;
-
-    const reservationSave = await reservation.save();
-
-    return  res.status(201).json({
-        message: 'creation réussi',
-        status: 'OK',
-        data: reservationSave,
-        statusCode: 201
-    });
-
-   } catch (error) {
-    
-    return res.status(404).json({
-        message: 'erreur supréssion ',
-        statusCode: 404,
-        data: error,
-        status: 'NOT OK'
-    });
-
-   }
+        return  res.status(200).json({
+            message: 'creation réussi',
+            status: 'OK',
+            data: restaurant,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur supréssion ',
+            statusCode: 404,
+            data: error,
+            status: 'NOT OK'
+        });
+    }
 
 }
 
@@ -53,12 +42,12 @@ exports.all = async (req ,res )=> {
 
     try {
         
-        const reservations = await restaurantModel.find(req.query).exec();
+        const restaurants = await restaurantModel.find(req.query).populate(populateObject).exec();
 
         return  res.status(200).json({
             message: 'creation réussi',
             status: 'OK',
-            data: reservations,
+            data: restaurants,
             statusCode: 200
         });
 

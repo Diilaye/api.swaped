@@ -36,6 +36,9 @@ const walletRoute = require('./routes/wallet-route');
 
 const walletTransactionRoute = require('./routes/wallet-transaction-route');
 
+const restaurantRoute = require('./routes/restaurant-route');
+
+
 const  paypal = require('paypal-rest-sdk');
 
 
@@ -90,6 +93,8 @@ app.use('/v1/api/transactions' ,transactionRoute);
 app.use('/v1/api/wallets' ,walletRoute);
 
 app.use('/v1/api/wallet-transactions' ,walletTransactionRoute);
+
+app.use('/v1/api/restaurants' ,restaurantRoute);
 
 
 app.get('/', (req,res) => {
