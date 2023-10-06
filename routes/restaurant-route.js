@@ -9,6 +9,7 @@ const { checkRoleClient, checkRole } = require('../midleweares/auth');
 
 
 routes.get('/', checkRole('restaurant') ,restaurantCtrl.one);
+routes.put('/', checkRole('restaurant') ,restaurantCtrl.update);
 
 routes.get('/all',restaurantCtrl.all);
 
