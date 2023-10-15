@@ -10,6 +10,12 @@ const PartenaireModels = new Schema({
         default: 'logement'
     },
 
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
+
     nomEntreprise : {
         type: String,
         default :""

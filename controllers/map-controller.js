@@ -8,6 +8,12 @@ require('dotenv').config({
 
 exports.place = async (req,res , next) =>  {
     const input = req.query.input;
+
+    const pays = req.query.pays;
+
+    if (pays == undefined) {
+      pays = 'gn';
+    }
   
     try {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json`, {
@@ -15,7 +21,7 @@ exports.place = async (req,res , next) =>  {
           input,
           types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
           key: process.env.MAPKEY,
-          components: 'country:gn', 
+          components: 'country:'+pays, 
           libraries:"places"// Restreindre les résultats à la Guinée
         }
       });
@@ -37,7 +43,11 @@ exports.place = async (req,res , next) =>  {
   exports.getLatLong = async (req,res ,next) => {
       const input = req.query.input;
 
-      
+      const pays = req.query.pays;
+
+      if (pays == undefined) {
+        pays = 'gn';
+      }
   
       const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
   
@@ -46,7 +56,7 @@ exports.place = async (req,res , next) =>  {
               input,
               types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
               key: process.env.MAPKEY,
-              components: 'country:gn', // Restreindre les résultats à la Guinée
+              components: 'country:'+pays, // Restreindre les résultats à la Guinée
             }
       })
       .then(response => {

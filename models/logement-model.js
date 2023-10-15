@@ -8,6 +8,12 @@ const LogementModel = new Schema({
         type : String,
     },
 
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
+
     idParent : {
         type: Schema.Types.ObjectId,
         ref: "user-admin"

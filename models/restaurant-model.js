@@ -8,6 +8,12 @@ const RestaurantModel = new Schema({
         type : String,
     },
 
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
+
     specialite : {
         type : Array,
         default : []

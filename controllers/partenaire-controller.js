@@ -33,6 +33,8 @@ try {
     let {
 
         service,
+
+        pays,
     
         nomEntreprise ,
     
@@ -60,6 +62,7 @@ try {
     let partenaire = partenaireModel();
 
     partenaire.service = service;
+    partenaire.pays = pays;
     partenaire.nomEntreprise = nomEntreprise;
     partenaire.descriptionEntreprise = descriptionEntreprise;
     partenaire.nomInterlocuteur = nomInterlocuteur;
@@ -110,7 +113,7 @@ exports.addPartenaire = async (req,res ,next) => {
             
                 prenom,
         
-                nomEntreprise
+                nomEntreprise,
             
             } = req.body;
         
@@ -165,6 +168,8 @@ exports.addPartenaire = async (req,res ,next) => {
                     const logement = logementModel();
         
                     logement.service = "logement";
+                    logement.pays = partenaireFind.pays;
+
                     logement.idParent = userSave.id;
                     logement.nomEntreprise = partenaireFind.nomEntreprise ;
                     logement.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
@@ -178,6 +183,8 @@ exports.addPartenaire = async (req,res ,next) => {
                     const restaurant = restaurantModel();
 
                     restaurant.service = "restaurant";
+
+                    restaurant.pays = partenaireFind.pays;
 
                     restaurant.idParent = userSave.id ;
 

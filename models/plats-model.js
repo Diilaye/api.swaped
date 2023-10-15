@@ -11,6 +11,22 @@ const PlatsModel = new Schema({
         default :[]
     }],
 
+    specialite : {
+        type : String,
+        default :"Africaine"
+    },
+
+    menu : {
+        type : String,
+        default :"Petit dejeuner"
+    },
+
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
+
     idRestaurant : {
         type: Schema.Types.ObjectId,
         ref: "restaurant",
@@ -56,7 +72,7 @@ const PlatsModel = new Schema({
         default : true,
     },
 
-    isLivraible : {
+    isLivrable : {
         type: Boolean,
         default : true,
     },
