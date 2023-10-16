@@ -29,7 +29,9 @@ exports.add = async (req, res) => {
 
             menu,
 
-            isFreeLivraison
+            isFreeLivraison,
+
+            isDisponible
     
         } = req.body
     
@@ -50,6 +52,7 @@ exports.add = async (req, res) => {
             plats.description = description ;
             plats.tarif = parseFloat(tarif) ;
             plats.isLivraible = isLivraible ;
+            plats.isDisponible = isDisponible ;
             plats.isFreeLivraison = isFreeLivraison ;
             plats.idRestaurant = restaurant.id ;
     
@@ -71,6 +74,67 @@ exports.add = async (req, res) => {
                 statusCode: 404
             });
         }
+    } catch (error) {
+        res.status(404).json({
+            message: 'erreur server',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+}
+
+exports.update = async (req, res) => {
+
+    try {
+
+        let {
+
+            galery ,
+        
+            titre ,
+        
+            complements ,
+        
+            
+            description,
+        
+            tarif  ,
+        
+            isLivraible ,
+
+            specialite,
+
+            menu,
+
+            isFreeLivraison,
+            
+            isDisponible
+    
+        } = req.body
+    
+        const plats = platsModel.findById(req.params.id);
+    
+        plats.galery = galery ;
+        plats.specialite = specialite ;
+        plats.menu = menu ;
+        plats.titre = titre ;
+        plats.complements = complements ;
+        plats.description = description ;
+        plats.tarif = parseFloat(tarif) ;
+        plats.isLivraible = isLivraible ;
+        plats.isDisponible = isDisponible ;
+        plats.isFreeLivraison = isFreeLivraison ;
+
+        const platsSave = await plats.save();
+
+        res.status(200).json({
+            message: 'modifications plats',
+            status: 'OK',
+            data: platsSave,
+            statusCode: 200
+        });
     } catch (error) {
         res.status(404).json({
             message: 'erreur server',
