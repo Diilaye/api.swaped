@@ -323,32 +323,14 @@ exports.verifNum = async (req,res) => {
     
     try {
 
-        let findUserAdmin = undefined ;
 
-        let NumeroNoEXISTANT = 1;
+        let {telephone} = req.query ;
 
-    let {telephone} = req.query ;
+    const findUserAdmin = await userClientModel.findOne({
+            telephoneOM : telephone
+        }).exec();
 
-
-
-        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
-
-             findUserAdmin = await userClientModel.findOne({
-                telephoneMOMO : telephone
-            }).exec();
-            NumeroNoEXISTANT = 2;
-
-        }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
-             findUserAdmin = await userClientModel.findOne({
-                telephoneOM : telephone
-            }).exec();
-            NumeroNoEXISTANT = 3;
-        } else{
-             findUserAdmin = undefined;
-        }
-
-       
-
+   
         if (findUserAdmin != undefined) {
             
                
@@ -358,20 +340,13 @@ exports.verifNum = async (req,res) => {
                 data:findUserAdmin,
                 statusCode: 200
             });
+
         }else {
-            if (NumeroNoEXISTANT != 1) {
-                return res.status(201).json({
-                    message: 'Pas existant',
-                    status: 'OK',
-                    data:"numero valid ",
-                    statusCode: 201
-                });
-            }
-            return res.status(404).json({
-                message: 'Votre opérateur téléphonique n\’est pas encore pris en compte',
-                status: 'NOT OK',
-                data: null,
-                statusCode: 404
+            return res.status(201).json({
+                message: 'Pas existant',
+                status: 'OK',
+                data:"numero valid ",
+                statusCode: 201
             });
         }
 

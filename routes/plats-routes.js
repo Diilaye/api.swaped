@@ -15,7 +15,7 @@ const routes = new express.Router();
 
 routes.post('/', checkRole("restaurant") , platsCtrl.add);
 routes.put('/:id', checkRole("restaurant") , platsCtrl.update);
-routes.get('/byRestaurant', checkRole("restaurant") , platsCtrl.all);
+routes.get('/byRestaurant', checkRole("restaurant") , platsCtrl.allByRestaurantAdmin);
 routes.get('/', platsCtrl.all);
 
 module.exports = routes;
