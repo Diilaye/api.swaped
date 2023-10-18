@@ -172,10 +172,16 @@ exports.all = async (req ,res) => {
 exports.allByRestaurantAdmin = async (req ,res) => {
     
     try {
+
+        const restaurant = await restaurantModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
          const plats = await platsModel.find({
-            idRestaurant : req.user.id_user
+            idRestaurant : restaurant.id
          }).populate(objectPopulate).exec();
  
+
+
          res.status(200).json({
              message: 'creation plats',
              status: 'OK',

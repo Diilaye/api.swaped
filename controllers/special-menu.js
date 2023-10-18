@@ -100,3 +100,32 @@ exports.all = async (req ,res) => {
 
 }
 
+exports.allByRestaurant = async (req ,res) => {
+    
+    try {
+
+        const restaurant = await restaurantModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
+
+         const menuSpecials = await menuSpecialModel.find({
+            idRestaurant :  restaurant.id
+         }).exec();
+ 
+         res.status(200).json({
+             message: 'menu special ',
+             status: 'OK',
+             data: menuSpecials,
+             statusCode: 200
+         })
+    } catch (error) {
+         res.status(404).json({
+             message: 'erreur server',
+             status: 'NOT OK',
+             data: error,
+             statusCode: 404
+         })
+    }
+ 
+ }
+
