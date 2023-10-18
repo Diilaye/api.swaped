@@ -37,10 +37,10 @@ const PlatsModel = new Schema({
         type: String,
     },
 
-    complements : [{
-        type: Map,
+    complements : {
+        type: Array,
         default :[]
-    }],
+    },
 
     
     description : {

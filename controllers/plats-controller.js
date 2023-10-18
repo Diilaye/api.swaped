@@ -113,15 +113,15 @@ exports.update = async (req, res) => {
             isDisponible
     
         } = req.body
-    
-        const plats = platsModel.findById(req.params.id);
+
+        const plats = await platsModel.findById(req.params.id).exec();
     
         plats.galery = galery ;
         plats.specialite = specialite ;
         plats.menu = menu ;
         plats.titre = titre ;
-        plats.complements = complements ;
         plats.description = description ;
+        plats.complements = complements ;
         plats.tarif = parseFloat(tarif) ;
         plats.isLivraible = isLivraible ;
         plats.isDisponible = isDisponible ;
@@ -136,6 +136,7 @@ exports.update = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
+        console.log(error);
         res.status(404).json({
             message: 'erreur server',
             status: 'NOT OK',

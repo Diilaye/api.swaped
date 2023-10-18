@@ -5,34 +5,37 @@ const Schema = mongoose.Schema;
 
 const SpecialMenu = new Schema({
 
-    galery : [{
+    galery : {
         type: Schema.Types.ObjectId,
         ref: "media",
-        default :[]
-    }],
+    },
 
     idRestaurant : {
         type: Schema.Types.ObjectId,
         ref: "restaurant",
     },
 
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
     
     titre : {
         type: String,
     },
 
-    complements : [{
-        type: Map,
+    complements : {
+        type: Array,
         default :[]
-    }],
+    },
 
-    dateFin : {
+    dateDebut : {
         type : Date
     },
 
-    
-    description : {
-        type: String,
+    dateFin : {
+        type : Date
     },
 
     pourcentage  : {
@@ -42,16 +45,6 @@ const SpecialMenu = new Schema({
     plats : [{
         type: Schema.Types.ObjectId,
         ref: "plats",
-        default :[]
-    }],
-
-    notes : [{
-        type: String,
-        default :[]
-    }],
-
-    commentaires : [{
-        type: String,
         default :[]
     }],
 

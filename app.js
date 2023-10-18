@@ -40,6 +40,8 @@ const restaurantRoute = require('./routes/restaurant-route');
 
 const platsRoute = require('./routes/plats-routes');
 
+const offreSpecialRoute = require('./routes/offre-special-route');
+
 
 const  paypal = require('paypal-rest-sdk');
 
@@ -99,6 +101,8 @@ app.use('/v1/api/wallet-transactions' ,walletTransactionRoute);
 app.use('/v1/api/restaurants' ,restaurantRoute);
 
 app.use('/v1/api/plats' ,platsRoute);
+
+app.use('/v1/api/special-offres' ,offreSpecialRoute);
 
 
 app.get('/', (req,res) => {
