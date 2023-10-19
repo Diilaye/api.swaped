@@ -129,6 +129,8 @@ exports.update = async (req, res) => {
 
         const platsSave = await plats.save();
 
+        console.log(platsSave);
+
         res.status(200).json({
             message: 'modifications plats',
             status: 'OK',

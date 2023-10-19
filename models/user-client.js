@@ -25,12 +25,8 @@ const ClientModels = new Schema({
         enum: ['1', '2'],
         default: '1'
     },
-
-    telephoneMOMO : {
-        type: String,
-    },
-
-    telephoneOM : {
+    
+    telephone : {
         type: String,
     },
 

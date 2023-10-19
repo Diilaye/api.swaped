@@ -7,6 +7,7 @@ const routes = new express.Router();
 const  clientUserCtrl =  require('../controllers/user-client-controller');
 const { checkRoleClient, checkRole } = require('../midleweares/auth');
 
+
 routes.post('/auth',clientUserCtrl.auth);
 
 

@@ -5,7 +5,6 @@ const bcrytjs = require('bcryptjs');
 const salt = bcrytjs.genSaltSync(10);
 
 const jwt = require('jsonwebtoken');
-
 require('dotenv').config({
     path: './.env'
 });
@@ -30,26 +29,9 @@ exports.store = async (req , res , next) => {
         const user = userClientModel();
     
         user.password = passwordCrypt;
+
+        user.telephone = telephone;
     
-        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
-            
-            user.telephoneMOMO = telephone;
-    
-           
-       }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
-        
-            user.telephoneOM = telephone;
-           
-       } else{
-        return res.status(404).json({
-            message: 'Votre opérateur numérique n\’est pas encore pris en compte' ,
-            statusCode: 404,
-            data: null,
-            status: 'NOT OK'
-        });
-       }
-    
-        
     
         const token = jwt.sign({
             id_user: user.id,
@@ -84,24 +66,12 @@ exports.auth = async (req, res) =>{
 
     try {
 
-        let findUserAdmin = undefined ;
-
         let{password , telephone } = req.body;
 
       
-        if(telephone.substr(0,2) =="64" || telephone.substr(0,2) =="66" || telephone.substr(0,2) =="69" || telephone.substr(0,2) =="24" ) {
-
-            findUserAdmin = await userClientModel.findOne({
-               telephoneMOMO : telephone
-           }).exec();
-
-       }else  if(telephone.substr(0,2) =="61" || telephone.substr(0,2) =="62" || telephone.substr(0,2) =="68") {
-            findUserAdmin = await userClientModel.findOne({
-               telephoneOM : telephone
-           }).exec();
-       } else{
-            findUserAdmin = undefined;
-       }
+        const findUserAdmin = await userClientModel.findOne({
+            telephone : telephone
+        }).exec();
        
 
         if (findUserAdmin != undefined) {
@@ -178,87 +148,82 @@ exports.getAuth = async (req , res) => {
 exports.update = async (req,res) => {
 
 
-    let {
-
-        nom ,
     
-        prenom ,
-    
-        telephoneMOMO ,
-    
-        telephoneOM ,
-    
-        email ,
-    
-        photoProfile,
-    
-        password ,
-
-        oldPassword,
-
-        statusConexion
-
-    } = req.body;
-
-    const findUserAdmin = await userClientModel.findById(req.user.id_user).exec();
-
-
-    if (nom !=undefined) {
-        findUserAdmin.nom = nom ;
-    }
-
-    if (prenom !=undefined) {
-        findUserAdmin.prenom = prenom ;
-    } 
-    
-    if (telephoneMOMO !=undefined) {
-        findUserAdmin.telephoneMOMO = telephoneMOMO ;
-    }
-
-    if (telephoneOM !=undefined) {
-        findUserAdmin.telephoneOM = telephoneOM ;
-    }
-
-    if (email !=undefined) {
-        findUserAdmin.email = email ;
-    }
-
-
-    if (password !=undefined) {
-
-        if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
-            const passwordCrypt = bcrytjs.hashSync(password, salt);
-             findUserAdmin.password = passwordCrypt ;
-        }else {
-            return res.status(404).json({
-                message: 'Mot de passe ne sont pas conforme ',
-                status: 'NOT OK',
-                data: null,
-                statusCode: 404
-            });
-        }
-
-    }
-
-    if (photoProfile !=undefined) {
-        findUserAdmin.photoProfile = photoProfile ;
-    }
-
-    if (statusConexion !=undefined) {
-        findUserAdmin.statusConexion = statusConexion ;
-    }
-
-    const saveUserAdmin = await  findUserAdmin.save() ; 
-
-    return res.status(200).json({
-        message: 'modification reuissi',
-        status: 'OK',
-        data: saveUserAdmin,
-        statusCode: 200
-    })
 
     try {
-       
+        let {
+
+            nom ,
+        
+            prenom ,
+        
+            telephone ,
+        
+            email ,
+        
+            photoProfile,
+        
+            password ,
+    
+            oldPassword,
+    
+            statusConexion
+    
+        } = req.body;
+    
+        const findUserAdmin = await userClientModel.findById(req.user.id_user).exec();
+    
+    
+        if (nom !=undefined) {
+            findUserAdmin.nom = nom ;
+        }
+    
+        if (prenom !=undefined) {
+            findUserAdmin.prenom = prenom ;
+        } 
+        
+        if (telephone !=undefined) {
+            findUserAdmin.telephone = telephone ;
+        }
+    
+        
+        if (email !=undefined) {
+            findUserAdmin.email = email ;
+        }
+    
+    
+        if (password !=undefined) {
+    
+            if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
+                const passwordCrypt = bcrytjs.hashSync(password, salt);
+                 findUserAdmin.password = passwordCrypt ;
+            }else {
+                return res.status(404).json({
+                    message: 'Mot de passe ne sont pas conforme ',
+                    status: 'NOT OK',
+                    data: null,
+                    statusCode: 404
+                });
+            }
+    
+        }
+    
+        if (photoProfile !=undefined) {
+            findUserAdmin.photoProfile = photoProfile ;
+        }
+    
+        if (statusConexion !=undefined) {
+            findUserAdmin.statusConexion = statusConexion ;
+        }
+    
+        const saveUserAdmin = await  findUserAdmin.save() ; 
+    
+        return res.status(200).json({
+            message: 'modification reuissi',
+            status: 'OK',
+            data: saveUserAdmin,
+            statusCode: 200
+        })
 
     } catch (error) {
         return res.status(404).json({
@@ -321,10 +286,14 @@ exports.one = async (req,res) => {
 
 exports.verifNum = async (req,res) => {
     
+    let {telephone} = req.query ;
+
+   
+
     try {
 
 
-        let {telephone} = req.query ;
+        
 
     const findUserAdmin = await userClientModel.findOne({
             telephoneOM : telephone
@@ -342,6 +311,9 @@ exports.verifNum = async (req,res) => {
             });
 
         }else {
+           
+        
+               
             return res.status(201).json({
                 message: 'Pas existant',
                 status: 'OK',
