@@ -182,6 +182,7 @@ exports.allByRestaurantAdmin = async (req ,res) => {
         const restaurant = await restaurantModel.findOne({
             idParent : req.user.id_user
         }).exec();
+        
          const plats = await platsModel.find({
             idRestaurant : restaurant.id
          }).populate(objectPopulate).exec();
