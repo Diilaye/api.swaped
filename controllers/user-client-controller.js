@@ -2,6 +2,11 @@ const userClientModel = require('../models/user-client');
 
 const bcrytjs = require('bcryptjs');
 
+const axios = require('axios');
+
+const codePhoneModel = require('../models/code-phone');
+
+
 const salt = bcrytjs.genSaltSync(10);
 
 const jwt = require('jsonwebtoken');
@@ -236,6 +241,8 @@ exports.update = async (req,res) => {
 
 }
 
+
+
 exports.all = async (req,res) => {
 
     try {
@@ -285,22 +292,27 @@ exports.one = async (req,res) => {
 }
 
 exports.verifNum = async (req,res) => {
-    
-    let {telephone} = req.query ;
-
-   
 
     try {
 
+        let {telephone} = req.query ;
 
-        
+
+    const min = 10000;
+    const max = 99999;
+    const code = Math.floor(Math.random() * (max - min + 1)) + min;
+    
+
+        console.log(telephone);
 
     const findUserAdmin = await userClientModel.findOne({
-            telephoneOM : telephone
+            telephone : telephone
         }).exec();
-
+console.log(findUserAdmin);
    
         if (findUserAdmin != undefined) {
+
+            
             
                
             return res.status(200).json({
@@ -310,17 +322,80 @@ exports.verifNum = async (req,res) => {
                 statusCode: 200
             });
 
-        }else {
+        } else {
+
+            console.log(telephone.trim().substring(0,3));
            
+            if(telephone.trim().substring(0,3)== "224") {
+
+                const newCode = codePhoneModel();
+
+                newCode.code = code;
+                newCode.phone = "+"+telephone.trim();
         
+                const s = await newCode.save();
+        
+                console.log('s => ', code);
+                
+        
+                const updateCode = async () => {
+        
+                    const i = await codePhoneModel.findById(s._id);
+        
+                    i.is_treat = true;
+        
+                    const j = await i.save();
+                }
+        
+                setTimeout(updateCode, 300000);
+
+                let data = JSON.stringify({
+                    "outboundSMSMessageRequest": {
+                        "address": "tel:+"+telephone.trim(),
+                        "senderAddress": "tel:+224626501651",
+                        "senderName": "Deally",
+                        "outboundSMSTextMessage": {
+                        "message": "Votre code de validation Swaped est le suivant : "+code
+                        }
+                    }
+                    });
+                
+                    let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': 'Bearer '+req.accessToken
+                    },
+                    data : data
+                    };
+                
+                    axios.request(config)
+                    .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                    return res.status(202).json({
+                        message: 'Pas existant',
+                        status: 'OK',
+                        data:"Code envoyé  ",
+                        statusCode: 202
+                    });
+                    })
+                    .catch((error) => {
+                    console.log(error);
+                    });
+            }else {
+                return res.status(201).json({
+                    message: 'Pas existant',
+                    status: 'OK',
+                    data:"numero valid ",
+                    statusCode: 201
+                });
+            }
                
-            return res.status(201).json({
-                message: 'Pas existant',
-                status: 'OK',
-                data:"numero valid ",
-                statusCode: 201
-            });
+           
         }
+   
 
     } catch (error) {
         return res.status(404).json({
@@ -330,4 +405,32 @@ exports.verifNum = async (req,res) => {
             statusCode: 404
         });
     }
+}
+
+exports.verifCode = async (req,res) => {
+    const codes = await codePhoneModel.findOne({
+        code : req.body.code,
+        phone : req.body.phone,
+        is_treat : false
+    }) ;
+
+    console.log();
+
+    if(codes){
+        codes.is_treat = true ;
+        await codes.save();
+        return res.status(200).json({
+            message: 'code valid et verifier',
+            status: 'OK',
+            data: null,
+            statusCode: 200
+        })
+    }
+
+    return res.status(404).json({
+        message: 'code non disponible ',
+            status: 'OK',
+            data: null,
+            statusCode: 404
+    })
 }

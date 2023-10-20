@@ -100,17 +100,10 @@ exports.all = async (req ,res) => {
 
 }
 
-exports.allByRestaurant = async (req ,res) => {
+exports.allRestaurant = async (req ,res) => {
     
     try {
-
-        const restaurant = await restaurantModel.findOne({
-            idParent : req.user.id_user
-        }).exec();
-
-         const menuSpecials = await menuSpecialModel.find({
-            idRestaurant :  restaurant.id
-         }).exec();
+         const menuSpecials = await menuSpecialModel.find().exec();
  
          res.status(200).json({
              message: 'menu special ',

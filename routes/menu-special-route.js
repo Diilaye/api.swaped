@@ -15,6 +15,7 @@ const routes = new express.Router();
 
 routes.post('/', checkRole("restaurant") , menuSpecialCtrl.add);
 routes.get('/', menuSpecialCtrl.all);
+routes.get('/byRestaurant',  checkRole("restaurant") ,  menuSpecialCtrl.allRestaurant);
 
 module.exports = routes;
     

@@ -65,10 +65,14 @@ exports.add = async (req,res) => {
     
         } = req.body;
     
+        const logement  =  await logementModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
     
         const bien = biensModel();
     
         bien.adresse = adresse;
+        bien.pays = logement.pays;
         bien.galery = galery;
         bien.typeLogement = typeLogement;
         bien.titre = titre;
@@ -94,12 +98,6 @@ exports.add = async (req,res) => {
         const saveBien =  await bien.save();
 
         const findBien = await biensModel.findById(saveBien.id).populate(populateObject).exec();
-
-
-
-        const logement  =  await logementModel.findOne({
-            idParent : req.user.id_user
-        }).exec();
 
         logement.biens.push(saveBien);
 
@@ -227,6 +225,8 @@ exports.all = async (req,res) => {
 
 
     try {
+
+        console.log(req.query);
     
         const biens = await biensModel.find(req.query).populate(populateObject).exec();
     

@@ -8,6 +8,12 @@ const BiensModel = new Schema({
         type: String,
     },
 
+    pays: {
+        type : String,
+        enum: ['gn','ci','sn'],
+        default: 'gn'
+    },
+
     galery : [{
         type: Schema.Types.ObjectId,
         ref: "media",

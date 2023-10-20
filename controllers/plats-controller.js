@@ -57,6 +57,10 @@ exports.add = async (req, res) => {
             plats.idRestaurant = restaurant.id ;
     
             const platsSave = await plats.save();
+
+            restaurant.plats.push(platsSave);
+
+            await restaurant.save();
     
             res.status(201).json({
                 message: 'creation plats',

@@ -60,6 +60,10 @@ exports.add = async (req,res) => {
             offre.isLivraible = isLivraible;
     
             const offreSave = await offre.save();
+
+            restaurant.specialMenu.push(offreSave);
+
+            await restaurant.save();
     
             res.status(201).json({
                 message: 'creation réussi',
@@ -102,8 +106,12 @@ exports.all = async (req,res) => {
 
 exports.allByRestaurant = async (req,res) => {
 
+    const restaurant = await restaurantModel.findOne({
+        idParent : req.user.id_user
+    }).exec();
+
     const offres = await offreModel.find({
-        idRestaurant : req.user.id_user
+        idRestaurant : restaurant.id
     }).populate(objectPopulate).exec();
 
     res.status(200).json({

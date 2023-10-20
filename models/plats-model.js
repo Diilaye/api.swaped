@@ -17,8 +17,8 @@ const PlatsModel = new Schema({
     },
 
     menu : {
-        type : String,
-        default :"Petit dejeuner"
+        type : Array,
+        default :[]
     },
 
     pays: {
