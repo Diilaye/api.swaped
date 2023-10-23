@@ -7,11 +7,11 @@ const routes = new express.Router();
 const  restaurantCtrl =  require('../controllers/restaurant-controller');
 const { checkRoleClient, checkRole } = require('../midleweares/auth');
 
+routes.get('/all',restaurantCtrl.all);
 
 routes.get('/', checkRole('restaurant') ,restaurantCtrl.one);
 routes.put('/', checkRole('restaurant') ,restaurantCtrl.update);
 
-routes.get('/all',restaurantCtrl.all);
 
 
 

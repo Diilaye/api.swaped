@@ -9,6 +9,7 @@ const {checkRole} = require('../midleweares/auth');
 const  logementCtrl =  require('../controllers/logement-controller');
 
 routes.post('/',logementCtrl.add);
+routes.get('/oneByAdmin', checkRole("logement"), logementCtrl.oneByUser);
 routes.get('/',logementCtrl.all);
 routes.get('/:id',logementCtrl.one);
 

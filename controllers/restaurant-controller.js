@@ -6,6 +6,33 @@ const populateObject = [{
     path :'photoCover',
 }];
 
+const populateObjectRestaurantsPlats = [{
+    path :'gallerie'
+},{
+    path :'photoCover',
+},{
+    path :'plats',
+    populate : [{
+        path : 'galery'
+    }]
+},{
+    path : 'specialMenu',
+    populate :[
+        {
+             path :'plats',
+             populate : {
+                 path : 'galery'
+             }
+        },{
+         path : 'galery'
+        }
+     
+     ]
+}
+];
+
+
+
 exports.one = async (req,res) => {
 
     
@@ -15,12 +42,9 @@ exports.one = async (req,res) => {
         const restaurant = await restaurantModel.findOne({
             idParent : req.user.id_user
         }).populate(populateObject).exec();
-
       
-
-
         return  res.status(200).json({
-            message: 'creation réussi',
+            message: 'restaurant found',
             status: 'OK',
             data: restaurant,
             statusCode: 200
@@ -40,14 +64,43 @@ exports.one = async (req,res) => {
 
 exports.all = async (req ,res )=> {
 
+    
+
     try {
         
-        const restaurants = await restaurantModel.find(req.query).populate(populateObject).exec();
+        const restaurants = await restaurantModel.find(req.query).populate(populateObjectRestaurantsPlats).exec();
+
+        const restauranFind = [];
+
+        for (const iterator of restaurants) {
+            const object = Object.assign(iterator);
+            const result = {};
+            // Trouver le plus petit tarif
+
+            let plusPetitTarif =0;
+            let plusGrandTarif = 0;
+
+            if(object.plats.length !=0) {
+                plusPetitTarif = object.plats.map((plat) => plat["tarif"]).reduce((a, b) => a < b ? a : b);
+
+                // Trouver le plus grand tarif
+                plusGrandTarif = object.plats.map((plat) => plat["tarif"]).reduce((a, b) => a > b ? a : b);
+            }
+        
+            result["restaurant"] = iterator;
+            result["minTarif"] = plusPetitTarif;
+            result["maxTarif"] = plusGrandTarif;
+
+            restauranFind.push(result);
+
+        }
+
+
 
         return  res.status(200).json({
             message: 'creation réussi',
             status: 'OK',
-            data: restaurants,
+            data: restauranFind,
             statusCode: 200
         });
 

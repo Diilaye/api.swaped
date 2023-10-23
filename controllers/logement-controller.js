@@ -1,5 +1,7 @@
 const logementModel = require('../models/logement-model');
 
+const authModel = require("../models/admin");
+
 
 const populateObject = [{
     path :'photoCover'
@@ -71,6 +73,7 @@ exports.add = async (req,res) => {
 }
 
 exports.all = async (req,res) => {
+    
 
     try {
 
@@ -94,6 +97,8 @@ exports.all = async (req,res) => {
 
 }
 
+
+
 exports.one = async (req,res) => {
 
     try {
@@ -116,4 +121,33 @@ exports.one = async (req,res) => {
         });
     }
 
+}
+
+exports.oneByUser = async (req,res) => {
+
+    try {
+
+        const auth = await authModel.findById(req.user.id_user).exec();
+
+
+        const logements = await logementModel.findOne({
+            idParent : auth.id
+        }).populate(populateObject).exec();
+
+        return res.status(200).json({
+            message: 'listage logement réussi',
+            status: 'OK',
+            data: logements['pays'],
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur server',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+    
 }
