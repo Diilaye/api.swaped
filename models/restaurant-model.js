@@ -24,6 +24,14 @@ const RestaurantModel = new Schema({
         default :""
     },
 
+    localisation : {
+        type: Map,
+        default : {
+            lat : 0,
+            lng :0
+        }
+    },
+
     heureOuverture : {
         type: String,
         default :""

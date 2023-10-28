@@ -306,7 +306,7 @@ exports.verifNum = async (req,res) => {
         console.log(telephone);
 
     const findUserAdmin = await userClientModel.findOne({
-            telephone : telephone
+            telephone : '+'+telephone.trim()
         }).exec();
 console.log(findUserAdmin);
    

@@ -13,6 +13,7 @@ const routes = new express.Router();
 // Add routes
 routes.get('/places',mapCtrl.place);
 routes.get('/getLgLat', mapCtrl.getLatLong);
+routes.get('/name', mapCtrl.address);
 
 module.exports = routes;
     

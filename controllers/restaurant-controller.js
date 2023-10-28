@@ -1,5 +1,7 @@
 const restaurantModel = require('../models/restaurant-model');
 
+const utiilsFnc = require('../utils/getLgLat');
+
 const populateObject = [{
     path :'gallerie'
 },{
@@ -64,14 +66,27 @@ exports.one = async (req,res) => {
 
 exports.all = async (req ,res )=> {
 
+   
     
+        
+
 
     try {
+
         
-        const restaurants = await restaurantModel.find(req.query).populate(populateObjectRestaurantsPlats).exec();
-
+        let {
+            pays,
+            lng,
+            lat
+        } = req.query;
+    
+        const restaurants = await restaurantModel.find({
+            pays : pays
+        }).populate(populateObjectRestaurantsPlats).exec();
+    
         const restauranFind = [];
-
+       
+    
         for (const iterator of restaurants) {
             const object = Object.assign(iterator);
             const result = {};
@@ -90,19 +105,36 @@ exports.all = async (req ,res )=> {
             result["restaurant"] = iterator;
             result["minTarif"] = plusPetitTarif;
             result["maxTarif"] = plusGrandTarif;
+            if (lat != undefined && lng != undefined) {
 
+                const addressCible = await utiilsFnc.getName(lat,lng);
+               
+                result["info"] = await  utiilsFnc.getDistance(addressCible,iterator.adresse);
+
+            }else {
+                result["info"] = {
+                    distance: { text: '0 km', value: 100000000000 },
+                    duration: { text: '0 mins', value: 0 },
+                    status: 'NOT OK'
+                };    
+            }
             restauranFind.push(result);
-
         }
 
+         // Calculate distances for each restaurant and sort by distance
+         
 
-
+        // Sort the restaurants by distance (ascending order)
+        restauranFind.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+    
         return  res.status(200).json({
-            message: 'creation réussi',
+            message: 'listage réussi',
             status: 'OK',
             data: restauranFind,
             statusCode: 200
         });
+
+       
 
     } catch (error) {
         
@@ -118,6 +150,30 @@ exports.all = async (req ,res )=> {
 
 }
 
+
+async function getNearestRestaurants(pays, addressCible) {
+    try {
+      const restaurants = await restaurantModel.find({ pays: pays }).populate(populateObjectRestaurantsPlats).exec();
+  
+      // Calculate distances for each restaurant and sort by distance
+      restaurants.forEach((restaurant) => {
+        restaurant.distance = utiilsFnc.getDistance(addressCible, restaurant.adresse);
+      });
+  
+      // Sort the restaurants by distance (ascending order)
+      restaurants.sort((a, b) => a.distance - b.distance);
+  
+      // Select the first n (e.g., 10) restaurants as the nearest ones
+      const nearestRestaurants = restaurants.slice(0, 10); // You can adjust the number as needed
+  
+      return nearestRestaurants;
+    } catch (error) {
+      throw new Error("An error occurred while getting the nearest restaurants: " + error.message);
+    }
+  }
+  
+  
+  
 
 exports.update = async (req,res) => {
 
@@ -165,7 +221,12 @@ exports.update = async (req,res) => {
         }
 
         if(adresse != undefined) {
+
+
+
             restaurant.adresse = adresse;
+
+            restaurant.localisation = await utiilsFnc.getLgLat(adresse);
         }
 
         if(heureOuverture != undefined) {
