@@ -15,7 +15,7 @@ const routes = new express.Router();
 // Add routes
 routes.post('/', checkRoleClient() , walletCtrl.add);
 routes.get('/', checkRoleClient() , walletCtrl.one);
-routes.get('/success', walletCtrl.success);
+routes.post('/success', walletCtrl.success);
 
 module.exports = routes;
     
