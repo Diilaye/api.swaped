@@ -204,3 +204,23 @@ exports.allByRestaurantAdmin = async (req ,res) => {
  
  }
  
+
+ exports.allByPays = async (req , res) =>{
+
+    const plats = await platsModel.find().exec();
+
+    const dishesByCountry = plats.reduce((result, dish) => {
+        const country = dish.pays;
+        if (!result[country]) {
+            result[country] = [];
+        }
+        result[country].push(dish);
+        return result;
+    }, {});
+    
+    // Now 'dishesByCountry' is an object where each key is a country code and the value is an array of dishes for that country
+    
+    // Example usage
+    console.log(dishesByCountry['gn']); 
+
+ }

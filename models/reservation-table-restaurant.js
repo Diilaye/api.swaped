@@ -30,7 +30,7 @@ const reservationRestaurantModel = new Schema({
         default :"active"
     },  
 
-   status : {
+   statusRes : {
         type: String,
         default :"active"
    },

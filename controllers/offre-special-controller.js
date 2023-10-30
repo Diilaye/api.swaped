@@ -91,14 +91,34 @@ exports.add = async (req,res) => {
 
 }
 
+function isWithinUpcomingWeek(date) {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Start of the week (Sunday as the first day)
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7); // End of the week (next Sunday)
+
+    return date >= startOfWeek && date <= endOfWeek;
+}
+
+
 exports.all = async (req,res) => {
 
     const offres = await offreModel.find(req.query).populate(objectPopulate).exec();
 
+    // Filter special offers for the upcoming week
+    const offreFind = offres.filter((offer) => {
+        const startDate = new Date(offer.dateDebut);
+        const endDate = new Date(offer.dateFin);
+        return isWithinUpcomingWeek(startDate) || isWithinUpcomingWeek(endDate);
+    });
+
     res.status(200).json({
         message: 'listes des offres',
         status: 'OK',
-        data: offres,
+        data: offreFind,
         statusCode: 200
     });
 

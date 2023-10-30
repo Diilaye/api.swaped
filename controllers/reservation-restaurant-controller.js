@@ -1,5 +1,7 @@
 const reservationRestaurant = require('../models/reservation-table-restaurant');
 
+const restaurantModel = require('../models/restaurant-model');
+
 const populateObject = [{
     path :'restaurants',
     populate : [{
@@ -37,11 +39,11 @@ exports.add = async (req,res) => {
     
         const saveReservation = await reservation.save();
     
-        return  res.status(200).json({
+        return  res.status(201).json({
             message: 'reservation creation ',
             status: 'OK',
             data: saveReservation,
-            statusCode: 200
+            statusCode: 201
         });
     } catch (error) {
         return  res.status(404).json({
@@ -82,16 +84,19 @@ exports.byClient =async (req,res) => {
 exports.byRestaurant =async (req,res) => {
 
     try {
+
+        const findResto =await restaurantModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
         const reservations = await reservationRestaurant.find({
-            restaurants : req.user.id_user
+            restaurants : findResto.id
         }).populate(populateObject).exec();
-    
          
-        return  res.status(201).json({
+        return  res.status(200).json({
             message: 'Liste des reservations  ',
             status: 'OK',
             data: reservations,
-            statusCode: 201
+            statusCode: 200
         });
     } catch (error) {
         return  res.status(404).json({
@@ -102,4 +107,39 @@ exports.byRestaurant =async (req,res) => {
         });
     }
 
+}
+
+exports.update = async (req,res ) => {
+
+    let {
+        statusRes ,  
+    } = req.body ;
+
+
+    const reservation = await reservationRestaurant.findById(req.params.id).exec();
+
+    if(reservation) {
+
+        if(statusRes != undefined) {
+            reservation.statusRes = statusRes ;
+        }
+
+        const saveReservation = await reservation.save();
+
+        return  res.status(200).json({
+            message: 'modification reservations ',
+            status: 'OK',
+            data: saveReservation,
+            statusCode: 200
+        });
+
+
+    }else {
+        return res.status(404).json({
+            message: 'erreur serveur  ',
+            status: 'NOT OK',
+            data: "error",
+            statusCode: 404
+        });
+    }
 }

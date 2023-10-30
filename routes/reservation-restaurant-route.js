@@ -14,7 +14,8 @@ const routes = new express.Router();
 // Add routes
 routes.get('/byRestaurant', checkRoleClient() ,reservationCtrl.byRestaurant);
 routes.get('/byClient', checkRoleClient() , reservationCtrl.byClient);
-routes.post('/', checkRoleClient() ,reservationCtrl.add);
+routes.put('/:id', checkRoleClient() , reservationCtrl.update);
+routes.post('/',checkRoleClient() ,reservationCtrl.add);
 
 module.exports = routes;
     

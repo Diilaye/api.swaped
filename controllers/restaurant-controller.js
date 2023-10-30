@@ -19,7 +19,7 @@ const populateObjectRestaurantsPlats = [{
     }]
 },{
     path : 'specialMenu',
-    populate :[
+    populate :[ 
         {
              path :'plats',
              populate : {
