@@ -33,6 +33,7 @@ const messageRoute = require('./routes/message-route');
 const transactionRoute = require('./routes/transaction-route');
 
 const walletRoute = require('./routes/wallet-route');
+const walletIntouchRoute = require('./routes/wallet-intocuh-route');
 
 const walletTransactionRoute = require('./routes/wallet-transaction-route');
 
@@ -97,6 +98,8 @@ app.use('/v1/api/messages' ,messageRoute);
 app.use('/v1/api/transactions' ,transactionRoute);
 
 app.use('/v1/api/wallets' ,walletRoute);
+
+app.use('/v1/api/wallets-intouch' ,walletIntouchRoute);
 
 app.use('/v1/api/wallet-transactions' ,walletTransactionRoute);
 

@@ -18,13 +18,7 @@ const walletModel = new Schema({
     unique : true,
   },
 
-  montant : {type : String , default :"0"},
-
-  montantMOMO : {type : String , default :"0"},
-
-  montantPAYPAL : {type : String , default :"0"},
-
-  montantDEALLY : {type : String , default :"0"},
+  montant : {type : Number , default :0},
 
   
 
@@ -40,4 +34,4 @@ const walletModel = new Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('wallet', walletModel) ;
+module.exports = mongoose.model('wallet-intouch', walletModel) ;
