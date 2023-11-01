@@ -13,18 +13,16 @@ const walletModel = new Schema({
     default: 'client'
   },
 
+  phoneWallet : {
+    type : String , 
+  },
+
   idWallet : {
     type : String , 
     unique : true,
   },
 
-  montant : {type : String , default :"0"},
-
-  montantMOMO : {type : String , default :"0"},
-
-  montantPAYPAL : {type : String , default :"0"},
-
-  montantDEALLY : {type : String , default :"0"},
+  balance : {type : Number , default :0},
 
   
 

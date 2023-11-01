@@ -2,6 +2,12 @@ const walletModel = require('../models/wallet');
 const walletTransactionModel = require('../models/wallet-transactions');
 const { DateTime } = require('luxon');
 const  paypal = require('paypal-rest-sdk');
+const axios = require('axios');
+
+require('dotenv').config({
+    path: './.env'
+});
+
 exports.add = async (req,res) => {
 
     
@@ -16,6 +22,13 @@ exports.add = async (req,res) => {
             typeService,
         
             means,
+
+            pays,
+
+            phone,
+
+            otp
+
     
         } =req.body;
     
@@ -36,58 +49,75 @@ exports.add = async (req,res) => {
         walletTransaction.means = means ;
     
         const saveWalletTransaction = await  walletTransaction.save();
-    
-        if (means == "PAYPAL") {
-            var create_payment_json = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                    "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/failled?reference="+saveWalletTransaction.reference
-                },
-                "transactions": [{
-                    "item_list": {
-                        "items": [{
-                            "name": "reservation logement",
-                            "sku":"paiement",
-                            "price": "1",
-                            "currency": "EUR",
-                            "quantity": "1"
-                        }]
-                    },
-                    "amount": {
-                        "currency": "EUR",
-                        "total": "1"
-                    },
-                    "description": "Description des avantages de cette abonnements."
-                }]
-            };
-            
-            paypal.payment.create(create_payment_json, async (error, payment)  => {
-                if (error) {
-                    throw error;
-                } else {
+
+        if(pays=='GN') {
+
+            if (means == "MOMO") {
                 
+                let data = JSON.stringify({
+                    "idFromClient": process.env.idFromClientGN,
+                    "additionnalInfos": {
+                      "destinataire": phone
+                    },
+                    "amount": amount,
+                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+                    "recipientNumber": process.env.numberGN,
+                    "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+                  });
+                  
+                  
+                 
+               }else {
                 
-                    console.log("Create Payment Response");
-                    console.log(payment);
-    
-                    return res.status(201).json({
-                        message: 'creation supréssion ',
-                        statusCode: 201,
-                        url:payment['links'][1]['href'],
-                        data : saveWalletTransaction,
-                        status: 'NOT OK'
-                    });
-                    
-             
-                }
-            });
-        } else  {
-           return successFun(req,res,means , saveWalletTransaction.reference);
+                let data = JSON.stringify({
+                    "idFromClient": process.env.idFromClientGN,
+                    "additionnalInfos": {
+                      "destinataire": phone,
+                      "otp": otp
+                    },
+                    "amount": amount,
+                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+                    "recipientNumber": process.env.numberGN,
+                    "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+                  });
+               }
+
+               let config = {
+                method: 'put',
+                maxBodyLength: Infinity,
+                url: 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN,
+                headers: { 
+                  'Content-Type': 'application/json'
+                },
+                data : data
+              };
+
+              axios.request(config)
+              .then((response) => {
+                console.log(JSON.stringify(response.data));
+
+                res.status(200).json({
+                    message : '',
+                    status: 'OK',
+                    data : JSON.stringify(response.data),
+                    statusCode: 200
+                })
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+
+        }else if(pays == 'SN') {
+            return res.json('sn')
+        }else {
+            return res.json('ci')
         }
+
+
+    
+      
+          
     
 
     } catch (error) {
@@ -219,14 +249,7 @@ successFun =  async (req,res, means , reference) =>  {
     }
 }
 
-exports.success = async (req,res) => {
-
-    console.log("success");
-
-    console.log(req.query);
-
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
+exports.successONR = async (req,res) => {
 
     const transaction = await walletTransactionModel.findOne({
         reference : req.query.reference
@@ -242,59 +265,9 @@ exports.success = async (req,res) => {
 
     const tf = await transaction.save();
 
-    console.log(tf);
-
-    if(req.query.means == "PAYPAL") {
-        const execute_payment_json = {
-            payer_id: payerId,
-            transactions: [
-              {
-                amount: {
-                  "currency": "EUR",
-                  "total": "1"
-                }
-              }
-            ]
-          };
-        
-          paypal.payment.execute(paymentId, execute_payment_json, async  (error, payment) => {
-            if (error) {
-              console.log(error);
-              
-              return res.status(404).json({
-                  message: 'erreur serveur ',
-                  statusCode: 404,
-                  data: error,
-                  status: 'NOT OK'
-              });
-      
-            } else {
-      
-                const wallet = await walletModel.findById(tf.userWallet);
-      
-              wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
-      
-              const saveWallet = await wallet.save();
-      
-              res.redirect(__dirname + "/success.html");
-            }
-      
-          });
-    }else {
-        const wallet = await walletModel.findById(tf.userWallet);
 
 
-        wallet.montantDEALLY = parseFloat(wallet.montantDEALLY) + parseFloat(transaction.amount);
     
-        const saveWallet = await wallet.save();
-    
-       return res.status(201).json({
-            message: 'recharge wallet',
-            statusCode: 201,
-            data: saveWallet,
-            status: 'OK'
-        });
-    }
     
 }
 
@@ -315,4 +288,12 @@ exports.failed = async (req ,res ) => {
 
    res.sendFile(__dirname + "/failled.html");
 
+}
+
+
+exports.success = async (req,res)=> {
+    console.log(req.query);
+    console.log(req.params);
+    console.log(req.body);
+    
 }

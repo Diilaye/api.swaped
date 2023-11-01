@@ -1,4 +1,5 @@
 const walletModel = require('../models/wallet');
+const clientModel = require('../models/user-client');
 const { DateTime } = require('luxon');
 
 exports.add = async (req,res ) => {
@@ -11,14 +12,20 @@ exports.add = async (req,res ) => {
 
     } = req.body ;
 
+    const user = await clientModel.findById(req.user.id_user).exec();
+
 
     const wallet = walletModel();
 
     wallet.userId = req.user.id_user ;
+    
+    wallet.phoneWallet = user.telephone ;
 
     wallet.idWallet = DateTime.now().ts;
 
     wallet.typeWallet = typeWallet ;
+
+
 
     const walletSave = await wallet.save();
 
