@@ -67,7 +67,12 @@ exports.add = async (req,res) => {
     const data = JSON.stringify({
       "idFromClient": process.env.idFromClientGN,
       "amount": amount,
-      "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference=1234543",
+      "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success",
+      "additionnalInfos": {
+        "destinataire": "626501651",
+        "otp": "728547",
+        "reference" : "1234567"
+      },
       "recipientNumber": phone,
       "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
     });
@@ -83,7 +88,7 @@ exports.add = async (req,res) => {
       return res.status(200).json({
         message: 'paiement initie',
         status: 'OK',
-        data: JSON.stringify(value.data.toString()),
+        data: value.data.toString(),
         statusCode: 200
     });
     });
@@ -168,8 +173,11 @@ exports.failed = async (req ,res ) => {
 
 
 exports.success = async (req,res)=> {
+    console.log("req.query");
     console.log(req.query);
+    console.log("req.params");
     console.log(req.params);
+    console.log("req.body");
     console.log(req.body);
 
 }
