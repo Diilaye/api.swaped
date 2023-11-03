@@ -3,131 +3,94 @@ const walletTransactionModel = require('../models/wallet-transactions');
 const { DateTime } = require('luxon');
 const  paypal = require('paypal-rest-sdk');
 const axios = require('axios');
-
+const cryto = require('crypto');
+const  createDigestHeader  = require('digest-header');
+const { request } = require('urllib');
+var digest = require('http-digest-client')('98f44ee3ee65d36bfa886a22c00b96b59e980233ce5faf0882bdf1286cb326e4', '1c99750cc6b890a78a6472a04e7cff7d8410e612e9f38a2d3c872790669e8ecd','https');
 require('dotenv').config({
     path: './.env'
 });
 
+
+const callAPI = async (method, url, data) => {
+    const login = '98f44ee3ee65d36bfa886a22c00b96b59e980233ce5faf0882bdf1286cb326e4:1c99750cc6b890a78a6472a04e7cff7d8410e612e9f38a2d3c872790669e8ecd';
+    
+    try {
+      let config = {
+        method: method,
+        url: url,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        auth: {
+          username: login.split(':')[0],
+          password: login.split(':')[1],
+        
+        }
+      };
+  
+      if (method === 'POST' || method === 'PUT') {
+        config.data = data;
+      }
+  
+      const response = await axios(config);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Connection Failure: ${error.message}`);
+    }
+  };
+
+
 exports.add = async (req,res) => {
 
-    
-    
-
-    try {
-        let  {
+    let  {
        
-            amount,
-    
-            
-            typeService,
+        amount,
+
         
-            means,
-
-            pays,
-
-            phone,
-
-            otp
-
+        typeService,
     
-        } =req.body;
-    
-        const walletTransaction = walletTransactionModel();
-    
-        const find = await walletModel.findOne({
-            userId : req.user.id_user
-        });
-    
-        walletTransaction.amount = amount ;
-    
-        walletTransaction.userWallet = find.id ;
-    
-        walletTransaction.reference = DateTime.now().ts ;
-    
-        walletTransaction.typeService = typeService ;
-    
-        walletTransaction.means = means ;
-    
-        const saveWalletTransaction = await  walletTransaction.save();
+        means,
 
-        if(pays=='GN') {
+        pays,
 
-            if (means == "MOMO") {
-                
-                let data = JSON.stringify({
-                    "idFromClient": process.env.idFromClientGN,
-                    "additionnalInfos": {
-                      "destinataire": phone
-                    },
-                    "amount": amount,
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                    "recipientNumber": process.env.numberGN,
-                    "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
-                  });
-                  
-                  
-                 
-               }else {
-                
-                let data = JSON.stringify({
-                    "idFromClient": process.env.idFromClientGN,
-                    "additionnalInfos": {
-                      "destinataire": phone,
-                      "otp": otp
-                    },
-                    "amount": amount,
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                    "recipientNumber": process.env.numberGN,
-                    "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
-                  });
-               }
+        phone,
 
-               let config = {
-                method: 'put',
-                maxBodyLength: Infinity,
-                url: 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN,
-                headers: { 
-                  'Content-Type': 'application/json'
-                },
-                data : data
-              };
-
-              axios.request(config)
-              .then((response) => {
-                console.log(JSON.stringify(response.data));
-
-                res.status(200).json({
-                    message : '',
-                    status: 'OK',
-                    data : JSON.stringify(response.data),
-                    statusCode: 200
-                })
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+        otp
 
 
-        }else if(pays == 'SN') {
-            return res.json('sn')
-        }else {
-            return res.json('ci')
-        }
+    } =req.body;
 
-
+   
+    const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
     
-      
-          
-    
+    const data = JSON.stringify({
+      "idFromClient": process.env.idFromClientGN,
+      "amount": amount,
+      "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference=1234543",
+      "recipientNumber": phone,
+      "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+    });
 
-    } catch (error) {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data: error,
-            statusCode: 404
-        });
+    options = {
+        method: 'PUT',
+        rejectUnauthorized: false,
+        digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
+        data :  data
     }
+    
+    request(url, options).then((value) => {
+        console.log(JSON.stringify(response.data));
+        console.log(value.status);
+    });
+
+
+
+    
+
+    
+
+   
 }
 
 exports.all = async (req,res) => {
@@ -178,6 +141,57 @@ exports.allByUser = async (req,res) => {
 
 }
 
+
+
+exports.failed = async (req ,res ) => {
+    console.log("failed");
+    console.log(req.query);
+    const transaction = await walletTransactionModel.findOne({
+        reference : req.query.reference
+    }).exec();
+
+    transaction.status = "CANCELED";
+    
+
+    transaction.dateTransactionSuccess = new Date().toISOString().split('T')[0];
+
+
+   const tf = await transaction.save();
+
+   res.sendFile(__dirname + "/failled.html");
+
+}
+
+
+exports.success = async (req,res)=> {
+    console.log(req.query);
+    console.log(req.params);
+    console.log(req.body);
+
+}
+
+
+exports.successONR = async (req,res) => {
+
+    const transaction = await walletTransactionModel.findOne({
+        reference : req.query.reference
+    }).exec();
+
+
+
+    transaction.status = "SUCCESS";
+    
+
+    transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+
+    const tf = await transaction.save();
+
+
+
+    
+    
+}
 
 successFun =  async (req,res, means , reference) =>  {
     const transaction = await walletTransactionModel.findOne({
@@ -247,53 +261,4 @@ successFun =  async (req,res, means , reference) =>  {
             status: 'OK'
         });
     }
-}
-
-exports.successONR = async (req,res) => {
-
-    const transaction = await walletTransactionModel.findOne({
-        reference : req.query.reference
-    }).exec();
-
-
-
-    transaction.status = "SUCCESS";
-    
-
-    transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-
-
-    const tf = await transaction.save();
-
-
-
-    
-    
-}
-
-exports.failed = async (req ,res ) => {
-    console.log("failed");
-    console.log(req.query);
-    const transaction = await walletTransactionModel.findOne({
-        reference : req.query.reference
-    }).exec();
-
-    transaction.status = "CANCELED";
-    
-
-    transaction.dateTransactionSuccess = new Date().toISOString().split('T')[0];
-
-
-   const tf = await transaction.save();
-
-   res.sendFile(__dirname + "/failled.html");
-
-}
-
-
-exports.success = async (req,res)=> {
-    console.log(req.query);
-    console.log(req.params);
-    console.log(req.body);
-    
 }
