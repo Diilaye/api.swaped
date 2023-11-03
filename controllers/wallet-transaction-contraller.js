@@ -80,8 +80,12 @@ exports.add = async (req,res) => {
     }
     
     request(url, options).then((value) => {
-        console.log(JSON.stringify(response.data));
-        console.log(value.status);
+      return res.status(200).json({
+        message: 'paiement initie',
+        status: 'OK',
+        data: JSON.stringify(value.data.toString()),
+        statusCode: 200
+    });
     });
 
 
