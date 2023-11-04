@@ -196,18 +196,20 @@ exports.success = async (req,res)=> {
       const wallet = await walletModel.findById(transaction.userWallet).exec();
 
       wallet.balance = wallet.balance + transaction.amount;
-
+      await wallet.save();
     }
     transaction.status = "SUCCESS";
   } else {
     transaction.status = "CANCELED";
-    
+    console.log(transaction);
   }
 
   transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
 
 
   const tf = await transaction.save();
+
+  console.log(tf);
 
   res.sendFile(__dirname + "/success.html");
 
