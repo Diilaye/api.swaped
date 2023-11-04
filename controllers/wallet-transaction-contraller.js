@@ -195,7 +195,7 @@ exports.success = async (req,res)=> {
 
       const wallet = await walletModel.findById(transaction.userWallet).exec();
 
-      wallet.balance = wallet.balance + transaction.amount;
+      wallet.balance = wallet.balance + parseInt(transaction.amount);
       await wallet.save();
     }
     transaction.status = "SUCCESS";
