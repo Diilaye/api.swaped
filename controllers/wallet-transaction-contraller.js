@@ -2,43 +2,8 @@ const walletModel = require('../models/wallet');
 const walletTransactionModel = require('../models/wallet-transactions');
 const { DateTime } = require('luxon');
 const  paypal = require('paypal-rest-sdk');
-const axios = require('axios');
-const cryto = require('crypto');
-const  createDigestHeader  = require('digest-header');
 const { request } = require('urllib');
-var digest = require('http-digest-client')('98f44ee3ee65d36bfa886a22c00b96b59e980233ce5faf0882bdf1286cb326e4', '1c99750cc6b890a78a6472a04e7cff7d8410e612e9f38a2d3c872790669e8ecd','https');
-require('dotenv').config({
-    path: './.env'
-});
 
-
-const callAPI = async (method, url, data) => {
-    const login = '98f44ee3ee65d36bfa886a22c00b96b59e980233ce5faf0882bdf1286cb326e4:1c99750cc6b890a78a6472a04e7cff7d8410e612e9f38a2d3c872790669e8ecd';
-    
-    try {
-      let config = {
-        method: method,
-        url: url,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        auth: {
-          username: login.split(':')[0],
-          password: login.split(':')[1],
-        
-        }
-      };
-  
-      if (method === 'POST' || method === 'PUT') {
-        config.data = data;
-      }
-  
-      const response = await axios(config);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Connection Failure: ${error.message}`);
-    }
-  };
 
 
 exports.add = async (req,res) => {
@@ -61,43 +26,90 @@ exports.add = async (req,res) => {
 
     } =req.body;
 
-   
-    const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
+    const walletTransaction = walletTransactionModel();
     
-    const data = JSON.stringify({
-      "idFromClient": process.env.idFromClientGN,
-      "amount": amount,
-      "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success",
-      "additionnalInfos": {
-        "destinataire": "626501651",
-        "otp": "728547",
-        "reference" : "1234567"
-      },
-      "recipientNumber": phone,
-      "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+    const find = await walletModel.findOne({
+        userId : req.user.id_user
     });
 
-    options = {
+    walletTransaction.amount = amount ;
+
+    walletTransaction.userWallet = find.id ;
+
+    walletTransaction.reference = DateTime.now().ts ;
+
+    walletTransaction.typeService = typeService ;
+
+    walletTransaction.means = means ;
+
+    const saveWalletTransaction = await  walletTransaction.save();
+   
+    if(pays == 'GN') {
+      const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
+      let data = {};
+      if(means == "OM") {
+    
+         data = JSON.stringify({
+          "idFromClient": process.env.idFromClientGN,
+          "amount": amount,
+          "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+          "additionnalInfos": {
+            "destinataire": phone,
+            "otp": otp,
+          },
+          "recipientNumber": phone,
+          "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
+        });
+    
+        
+      }else {
+         data = JSON.stringify({
+          "idFromClient": process.env.idFromClientGN,
+          "amount": amount,
+          "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+          "recipientNumber": phone,
+          "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+        });
+      }
+
+      options = {
         method: 'PUT',
         rejectUnauthorized: false,
         digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
         data :  data
     }
     
-    request(url, options).then((value) => {
-      return res.status(200).json({
-        message: 'paiement initie',
-        status: 'OK',
-        data: value.data.toString(),
-        statusCode: 200
+      request(url, options).then(async (value) => {
+       const obj = Object.assign(JSON.parse(value.data.toString()));
+       
+       if(obj.status === "SUCCESSFUL") {
+
+          if(typeService == "recharge") {
+
+            const transactionFind = await walletTransactionModel.findOne({
+              reference : saveWalletTransaction.reference
+            }).exec();
+
+            transactionFind.status = "SUCCESS";
+            transactionFind.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+             const tf = await transactionFind.save();
+
+             find.balance = find.balance + amount ;
+
+             const tfW= await find.save();
+          }
+
+       }
+        return res.status(201).json({
+          message: 'paiement initie',
+          status: 'OK',
+          data: JSON.parse(value.data.toString()),
+          statusCode: 201
+      });
     });
-    });
-
-
-
-    
-
-    
+     
+    }
 
    
 }
@@ -173,37 +185,35 @@ exports.failed = async (req ,res ) => {
 
 
 exports.success = async (req,res)=> {
-    console.log("req.query");
-    console.log(req.query);
-    console.log("req.params");
-    console.log(req.params);
-    console.log("req.body");
-    console.log(req.body);
 
-}
+  const transaction = await walletTransactionModel.findOne({
+      reference : req.query.reference
+  }).exec();
 
+  if (req.body.status == "SUCCESSFUL") {
+    if(transaction.typeService == "recharge") {
 
-exports.successONR = async (req,res) => {
+      const wallet = await walletModel.findById(transaction.userWallet).exec();
 
-    const transaction = await walletTransactionModel.findOne({
-        reference : req.query.reference
-    }).exec();
+      wallet.balance = wallet.balance + transaction.amount;
 
-
-
+    }
     transaction.status = "SUCCESS";
+  } else {
+    transaction.status = "CANCELED";
     
+  }
 
-    transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-
-
-    const tf = await transaction.save();
+  transaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
 
 
+  const tf = await transaction.save();
 
-    
-    
+  res.sendFile(__dirname + "/success.html");
+
+
 }
+
 
 successFun =  async (req,res, means , reference) =>  {
     const transaction = await walletTransactionModel.findOne({

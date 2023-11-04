@@ -13,7 +13,7 @@ const { checkRoleClient, checkRole} = require('../midleweares/auth');
 const routes = new express.Router();
 
 // Add routes
-routes.post('/' , walletCtrl.add);
+routes.post('/' , checkRoleClient(),walletCtrl.add);
 routes.get('/', checkRoleClient() , walletCtrl.all);
 routes.get('/ByUser', checkRoleClient() , walletCtrl.allByUser);
 routes.post('/success',walletCtrl.success);
