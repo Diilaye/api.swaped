@@ -65,6 +65,10 @@ exports.add = async (req,res) => {
       }else {
          data = JSON.stringify({
           "idFromClient": process.env.idFromClientGN,
+          "additionnalInfos": {
+            "destinataire": "+224660238758",
+            "email":"swaped@deally.fr"
+          },
           "amount": amount,
           "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
           "recipientNumber": phone,

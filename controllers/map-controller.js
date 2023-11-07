@@ -45,7 +45,7 @@ exports.place = async (req,res , next) =>  {
 exports.getLatLong = async (req,res ,next) => {
       const input = req.query.input;
 
-      const pays = req.query.pays;
+      let pays = req.query.pays;
 
       if (pays == undefined) {
         pays = 'gn';
