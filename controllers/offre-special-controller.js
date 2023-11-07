@@ -118,7 +118,7 @@ exports.all = async (req,res) => {
     res.status(200).json({
         message: 'listes des offres',
         status: 'OK',
-        data: offreFind,
+        data: offres,
         statusCode: 200
     });
 

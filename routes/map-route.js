@@ -14,6 +14,7 @@ const routes = new express.Router();
 routes.get('/places',mapCtrl.place);
 routes.get('/getLgLat', mapCtrl.getLatLong);
 routes.get('/name', mapCtrl.address);
+routes.get('/distance', mapCtrl.distanceCourse);
 
 module.exports = routes;
     

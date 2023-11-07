@@ -1,53 +1,57 @@
 
 const axios = require('axios');
 
-var distance = require('google-distance-matrix');
-const { address } = require('../controllers/map-controller');
+const googleMapsClient = require('@google/maps').createClient({
+    key: process.env.MAPKEY
+});
+
+
 
 require('dotenv').config({
     path:'./.env'
 });
 
 
-distance.key(process.env.MAPKEY);
-
 exports.getLgLat = async (input) => {
-  
-    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
 
-   return axios.get(apiUrl ,{
-        params: {
-            input,
-            types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
-            key: process.env.MAPKEY,// Restreindre les résultats à la Guinée
-          }
-    })
-    .then(response => {
-        console.log(response.data.results[0].geometry);
-
-        const location = response.data.results[0].geometry.location;
-        const latitude = location.lat;
-        const longitude = location.lng;
-        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-        return response.data.results[0].geometry.location;
-
-    })
-    .catch(error => {
-        return {};
+    return new Promise((resolve ,reject  ) => {
+        return googleMapsClient.geocode({
+            address: input
+            }, (err, response) => {
+            if (err) {
+                console.log("err");
+                reject(err);
+            }
+    
+            if (response.json.status === 'OK') {
+    
+                const location = response.json.results[0].geometry.location;
+                resolve(response.json.results[0].geometry.location);
+            } else {
+                console.error(`Impossible de géocoder l'adresse : ${response.json.status}`);
+                reject(`Impossible de géocoder l'adresse : ${response.json.status}`);
+            }
+        });
     });
+
+   
+  
 }
 
 
 
-exports.getDistance =  (addressCible , addressPoint ) => {
+exports.getDistance =  (point1,point2 ) => {
 
-    const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${addressCible}&origins=${addressPoint}&units=metric&key=${process.env.MAPKEY}`;
+    const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?origins=${point1.lat},${point1.lng}&destinations=${point2.lat},${point2.lng}&key=${process.env.MAPKEY}`;
 
-    return axios.get(apiUrl )
+    try {
+        return axios.get(apiUrl )
      .then(response => {
+        console.log(response.data.rows[0].elements[0]);
         if (response.data.status === 'OK' ) {
            return response.data.rows[0].elements[0];
           } else {
+            console.log("else error");
             return {
                 distance: { text: '0 km', value: 100000000000 },
                 duration: { text: '0 mins', value: 0 },
@@ -56,8 +60,21 @@ exports.getDistance =  (addressCible , addressPoint ) => {
           }
      })
      .catch(error => {
-         return {};
+        console.log("error");
+        console.log(error);
+        return {
+            distance: { text: '0 km', value: 100000000000 },
+            duration: { text: '0 mins', value: 0 },
+            status: 'NOT OK'
+          };
      });
+    } catch (error) {
+        return {
+            distance: { text: '0 km', value: 100000000000 },
+            duration: { text: '0 mins', value: 0 },
+            status: 'NOT OK'
+          };
+    }
 
     
    

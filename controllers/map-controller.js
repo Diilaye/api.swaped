@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+const utiilsFnc = require('../utils/getLgLat');
+
 require('dotenv').config({
     path:'./.env'
 });
@@ -100,4 +102,31 @@ exports.address = async (req,res,next) => {
         status: 'NOT OK'
       });
     });
+}
+
+exports.distanceCourse = async (req,res) => {
+  try {
+    let {
+      depart ,
+      arrive
+    } = req.query;
+
+    console.log(req.query);
+  
+    result = await  utiilsFnc.getDistance(depart,arrive);
+  
+    res.status(200).json({
+        message: 'distance évaluer ',
+        status: 'OK',
+        data: result,
+        statusCode: 200
+    })
+  } catch (error) {
+    return res.status(404).json({
+      message: 'erreur serveur ',
+      statusCode: 404,
+      data: error,
+      status: 'NOT OK'
+    });
+  }
 }
