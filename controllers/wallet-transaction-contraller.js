@@ -8,7 +8,8 @@ const { request } = require('urllib');
 
 exports.add = async (req,res) => {
 
-    let  {
+    try {
+      let  {
        
         amount,
 
@@ -67,7 +68,6 @@ exports.add = async (req,res) => {
           "idFromClient": process.env.idFromClientGN,
           "additionnalInfos": {
             "destinataire": "+224660238758",
-            "email":"swaped@deally.fr"
           },
           "amount": amount,
           "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
@@ -84,6 +84,7 @@ exports.add = async (req,res) => {
     }
     
       request(url, options).then(async (value) => {
+        console.log(value.data.toString());
        const obj = Object.assign(JSON.parse(value.data.toString()));
        
        if(obj.status === "SUCCESSFUL") {
@@ -111,8 +112,23 @@ exports.add = async (req,res) => {
           data: JSON.parse(value.data.toString()),
           statusCode: 201
       });
+    }).catch((error) => {
+      return res.status(404).json({
+        message: 'erreur serveur',
+        status: 'NOT OK',
+        data: error,
+        statusCode: 404
+    });
     });
      
+    }
+    } catch (error) {
+        return res.status(404).json({
+          message: 'erreur serveur',
+          status: 'NOT OK',
+          data: error,
+          statusCode: 404
+      });
     }
 
    
