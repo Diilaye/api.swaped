@@ -103,6 +103,7 @@ exports.add = async (req,res) => {
              find.balance = find.balance + amount ;
 
              const tfW= await find.save();
+          }else {
           }
 
        }
@@ -213,10 +214,13 @@ exports.success = async (req,res)=> {
   if (req.body.status == "SUCCESSFUL") {
     if(transaction.typeService == "recharge") {
 
-      const wallet = await walletModel.findById(transaction.userWallet).exec();
+      if (transaction.means != "OM") {
+        const wallet = await walletModel.findById(transaction.userWallet).exec();
+        wallet.balance = wallet.balance + parseInt(transaction.amount);
+        await wallet.save();
+      }
 
-      wallet.balance = wallet.balance + parseInt(transaction.amount);
-      await wallet.save();
+      
     }
     transaction.status = "SUCCESS";
   } else {
