@@ -20,4 +20,4 @@ routes.post('/success',walletCtrl.success);
 routes.get('/failled',walletCtrl.failed);
 
 module.exports = routes;
-    
+        

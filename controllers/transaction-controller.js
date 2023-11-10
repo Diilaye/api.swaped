@@ -4,6 +4,8 @@ const  paypal = require('paypal-rest-sdk');
 const path = require('path');
 const walletModel = require('../models/wallet');
 
+const { request } = require('urllib');
+
 exports.add = async (req ,res) => {
 
     try {
@@ -294,4 +296,42 @@ exports.failed = async (req ,res ) => {
 
    res.sendFile(__dirname + "/failled.html");
 
+}
+
+
+exports.cashinSn = async (req,res) => {
+
+   
+
+    const options = {
+        method: 'POST',
+        url: 'https://apidist.gutouch.net/apidist/sec/DGNSN0001/cashin',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic MWJiZDEyMzQzYjg0MzhmOTMyMTRkN2I2YjUwNGY2ZWUyMzczY2NmMzRlZGZmMDMxMDE0YTcwNWRmNmFkNWI5NDpiM2E1MDY1MTg5N2ZiMjc0MzdlNTA3N2JmNTVhM2NhMWUxYmRmOTZjZThiMWMwMzc1MzU0ZTE1ZDJhNWU5OTdm'
+        },
+        data: {
+          service_id: 'SN_CASHIN_WAVE',
+          recipient_phone_number: '772488807',
+          amount: 100,
+          partner_id: 'PG05888203',
+          partner_transaction_id: '1699618189548',
+          login_api: '0772488807',
+          password_api: 'YFnWWTg6TH',
+          call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
+        }
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
+
+}
+
+exports.successIntouch = async (req,res) => {
+    console.log(req.body);
+    console.log(req.params);
+    console.log(req.query);
 }

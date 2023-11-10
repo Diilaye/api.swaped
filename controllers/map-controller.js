@@ -113,7 +113,7 @@ exports.distanceCourse = async (req,res) => {
 
     console.log(req.query);
   
-    result = await  utiilsFnc.getDistance(depart,arrive);
+    result = await  utiilsFnc.getDistance(arrive,depart);
   
     res.status(200).json({
         message: 'distance évaluer ',
@@ -129,4 +129,47 @@ exports.distanceCourse = async (req,res) => {
       status: 'NOT OK'
     });
   }
+}
+
+exports.livraison = async (req,res) => {
+
+  try {
+    let {
+      depart ,
+      arrive
+    } = req.query;
+
+    console.log(req.query);
+
+    const point1 = await utiilsFnc.getLgLat(depart);
+
+    console.log(point1);
+
+    const point2 = await utiilsFnc.getLgLat(arrive);
+
+    console.log(point2);
+
+    
+  
+    result = await  utiilsFnc.getDistance(point1,point2);
+
+    console.log(result['distance']);
+
+
+  
+    res.status(200).json({
+        message: 'distance évaluer ',
+        status: 'OK',
+        data: result,
+        statusCode: 200
+    })
+  } catch (error) {
+    return res.status(404).json({
+      message: 'erreur serveur ',
+      statusCode: 404,
+      data: error,
+      status: 'NOT OK'
+    });
+  }
+
 }

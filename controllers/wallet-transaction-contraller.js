@@ -122,6 +122,10 @@ exports.add = async (req,res) => {
     });
     });
      
+    }else if(pays == 'SN'){
+
+    }else {
+      
     }
     } catch (error) {
         return res.status(404).json({
