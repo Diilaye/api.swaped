@@ -374,8 +374,8 @@ exports.cashinSn = async (req,res) => {
         },
         data: {
           service_id: 'CASHINTIGOPART',
-          recipient_phone_number: '778036534',
-          amount: 100,
+          recipient_phone_number: '765116859',
+          amount: 200,
           partner_id: 'PG05888203',
           partner_transaction_id: 'flashTest-011111',
           login_api: '0772488807',
