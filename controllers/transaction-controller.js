@@ -351,7 +351,7 @@ exports.cashinSn = async (req,res) => {
           partner_transaction_id: '1699633098166',
           login_api: '0772488807',
           password_api: 'YFnWWTg6TH',
-          call_back_url: 'https://3f07-197-220-168-10.ngrok.io/intouchsenegal/callbak'
+          call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
         }
       };
       
