@@ -4,6 +4,8 @@ const  paypal = require('paypal-rest-sdk');
 const path = require('path');
 const walletModel = require('../models/wallet');
 
+const axios = require('axios');
+
 const { request } = require('urllib');
 
 exports.add = async (req ,res) => {
