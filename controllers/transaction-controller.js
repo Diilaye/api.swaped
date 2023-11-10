@@ -337,3 +337,24 @@ exports.successIntouch = async (req,res) => {
     console.log(req.params);
     console.log(req.query);
 }
+
+exprts.getBalance = async (req,res) => {
+    const options = {
+        method: 'POST',
+        url: 'https://api.gutouch.com/v1/DGNSN0001/get_balance',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic MWJiZDEyMzQzYjg0MzhmOTMyMTRkN2I2YjUwNGY2ZWUyMzczY2NmMzRlZGZmMDMxMDE0YTcwNWRmNmFkNWI5NDpiM2E1MDY1MTg5N2ZiMjc0MzdlNTA3N2JmNTVhM2NhMWUxYmRmOTZjZThiMWMwMzc1MzU0ZTE1ZDJhNWU5OTdm'
+        },
+        data: {partner_id: 'PG05888203', login_api: '0772488807', password_api: 'YFnWWTg6TH'}
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+        res.json({
+            data : response.data
+        })
+      }).catch(function (error) {
+        console.error(error);
+      });
+}
