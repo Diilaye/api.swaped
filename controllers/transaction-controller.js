@@ -407,7 +407,7 @@ exports.successIntouch = async (req,res) => {
 exports.getBalance = async (req,res) => {
     const options = {
         method: 'POST',
-        url: 'https://api.gutouch.com/v1/DGNSN0001/get_balance',
+        url: 'https://apidist.gutouch.net/apidist/sec/DGNSN0001/get_balance',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Basic MWJiZDEyMzQzYjg0MzhmOTMyMTRkN2I2YjUwNGY2ZWUyMzczY2NmMzRlZGZmMDMxMDE0YTcwNWRmNmFkNWI5NDpiM2E1MDY1MTg5N2ZiMjc0MzdlNTA3N2JmNTVhM2NhMWUxYmRmOTZjZThiMWMwMzc1MzU0ZTE1ZDJhNWU5OTdm'
