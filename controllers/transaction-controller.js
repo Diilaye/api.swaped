@@ -338,7 +338,7 @@ exports.successIntouch = async (req,res) => {
     console.log(req.query);
 }
 
-exprts.getBalance = async (req,res) => {
+exports.getBalance = async (req,res) => {
     const options = {
         method: 'POST',
         url: 'https://api.gutouch.com/v1/DGNSN0001/get_balance',

@@ -18,6 +18,7 @@ routes.post('/',checkRoleClient() , transactionCtrl.add);
 routes.get('/success',transactionCtrl.success);
 routes.post('/success-intouch',transactionCtrl.successIntouch);
 routes.get('/cashin' , transactionCtrl.cashinSn);
+routes.get('/getBalance' , transactionCtrl.getBalance);
 
 routes.get('/failled',transactionCtrl.failed);
 
