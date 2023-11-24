@@ -85,7 +85,7 @@ exports.add = async (req,res) => {
             
                 data = JSON.stringify({
                 "idFromClient": process.env.idFromClientGN,
-                "amount": prix_total,
+                "amount": 1000,
                 "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                 "additionnalInfos": {
                     "destinataire": phonePaiement,
@@ -102,7 +102,7 @@ exports.add = async (req,res) => {
                 "additionnalInfos": {
                     "destinataire": "+224660238758",
                 },
-                "amount": amount,
+                "amount": 1000,
                 "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                 "recipientNumber": phone,
                 "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
@@ -147,7 +147,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement, 
                             "otp" : otp
                         },
-                        "amount": amount,
+                        "amount": prix_total,
                         "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                         "recipientNumber": phonePaiement,
                         "serviceCode": "PAIEMENTMARCHANDOMSN2"  
@@ -162,7 +162,7 @@ exports.add = async (req,res) => {
                         "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                         "currency": "XOF"
                     },
-                    "amount": amount,
+                    "amount": 100,
                     "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "SNPAIEMENTWAVE"
@@ -173,7 +173,7 @@ exports.add = async (req,res) => {
                     "additionnalInfos": {
                         "destinataire":phonePaiement
                       },
-                      "amount": amount,
+                      "amount": prix_total,
                       "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                       "recipientNumber": phonePaiement,
                       "serviceCode": "PAIEMENTMARCHANDTIGO" 
@@ -218,7 +218,7 @@ exports.add = async (req,res) => {
                     "additionnalInfos": { 
                         "destinataire":phonePaiement  
                     },   
-                    "amount": amount,   
+                    "amount": prix_total,   
                     "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHANDOM"  
@@ -232,7 +232,7 @@ exports.add = async (req,res) => {
                         "return_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                         "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference
                     },
-                    "amount": amount,
+                    "amount": prix_total,
                     "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "CI_PAIEMENTWAVE_TP"
@@ -243,7 +243,7 @@ exports.add = async (req,res) => {
                     "additionnalInfos": { 
                         "destinataire":phonePaiement  
                     },   
-                    "amount": amount,   
+                    "amount": prix_total,   
                     "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MOOV_CI"  
@@ -254,7 +254,7 @@ exports.add = async (req,res) => {
                     "additionnalInfos": { 
                         "destinataire":phonePaiement  
                     },   
-                    "amount": amount,   
+                    "amount": prix_total,   
                     "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MTN_CI"  
