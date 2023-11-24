@@ -20,6 +20,7 @@ const SpecialMenu = new Schema({
         enum: ['gn','ci','sn'],
         default: 'gn'
     },
+
     
     titre : {
         type: String,

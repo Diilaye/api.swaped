@@ -16,6 +16,7 @@ routes.get('/getLgLat', mapCtrl.getLatLong);
 routes.get('/name', mapCtrl.address);
 routes.get('/distance', mapCtrl.distanceCourse);
 routes.get('/livraison', mapCtrl.livraison);
+routes.get('/livraison-depart', mapCtrl.livraisonDepart);
 
 module.exports = routes;
     

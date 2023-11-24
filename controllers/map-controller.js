@@ -6,6 +6,8 @@ require('dotenv').config({
     path:'./.env'
 });
 
+const { getPriceLivriason } =require('../utils/get-livraison-price');
+
 
 
 exports.place = async (req,res , next) =>  {
@@ -135,26 +137,62 @@ exports.livraison = async (req,res) => {
 
   try {
     let {
-      depart ,
+      lat ,
+      lng,
       arrive
     } = req.query;
 
-    console.log(req.query);
-
-    const point1 = await utiilsFnc.getLgLat(depart);
-
-    console.log(point1);
-
     const point2 = await utiilsFnc.getLgLat(arrive);
 
-    console.log(point2);
+    result = await  utiilsFnc.getDistance({
+      lat : parseFloat(lat),
+      lng : parseFloat(lng)
+    },point2);
 
-    
+
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+
+    result["depart"] = {
+      lat : parseFloat(lat),
+      lng : parseFloat(lng)
+    };
+    result["arrive"] = point2;
   
+    res.status(200).json({
+        message: 'distance évaluer ',
+        status: 'OK',
+        data: result,
+        statusCode: 200
+    })
+  } catch (error) {
+    return res.status(404).json({
+      message: 'erreur serveur ',
+      statusCode: 404,
+      data: error,
+      status: 'NOT OK'
+    });
+  }
+
+}
+
+exports.livraisonDepart = async (req,res) => {
+
+  try {
+    let {
+      depart,
+      arrive
+    } = req.query;
+
+    const point1 = await utiilsFnc.getLgLat(depart);
+    const point2 = await utiilsFnc.getLgLat(arrive);
+
     result = await  utiilsFnc.getDistance(point1,point2);
 
-    console.log(result['distance']);
 
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+
+    result["depart"] = point1;
+    result["arrive"] = point2;
 
   
     res.status(200).json({

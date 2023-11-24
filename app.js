@@ -42,6 +42,8 @@ const platsRoute = require('./routes/plats-routes');
 
 const offreSpecialRoute = require('./routes/offre-special-route');
 
+const offreSpecialCommandeRoute = require('./routes/offre-special-commande-routes');
+
 const reservationRestaurant = require('./routes/reservation-restaurant-route');
 
 
@@ -105,6 +107,8 @@ app.use('/v1/api/restaurants' ,restaurantRoute);
 app.use('/v1/api/plats' ,platsRoute);
 
 app.use('/v1/api/special-offres' ,offreSpecialRoute);
+
+app.use('/v1/api/special-offres-commandes' ,offreSpecialCommandeRoute);
 
 app.use('/v1/api/reservations-restaurant' ,reservationRestaurant);
 
