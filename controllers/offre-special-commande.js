@@ -304,7 +304,81 @@ exports.add = async (req,res) => {
 
 }
 
+exports.all = async (req,res) => {
 
+    try {
+
+        const allOffre = await offreSpecialCommandeModel.find().exec();
+
+        return res.status(201).json({
+            message: 'liste offres special commande',
+            status: 'OK',
+            data: allOffre,
+            statusCode: 201
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data:error,
+            statusCode: 404
+        });
+    }
+
+}
+
+exports.allByClient = async (req,res) => {
+
+    try {
+
+        const allOffre = await offreSpecialCommandeModel.find({
+            client : req.user.id_user
+        }).exec();
+
+        return res.status(201).json({
+            message: 'liste offres special commande',
+            status: 'OK',
+            data: allOffre,
+            statusCode: 201
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data:error,
+            statusCode: 404
+        });
+    }
+
+}
+
+exports.allByRestaurant = async (req,res) => {
+
+    try {
+
+        const allOffre = await offreSpecialCommandeModel.find({
+            restaurant : req.user.id_user
+        }).exec();
+
+        return res.status(201).json({
+            message: 'liste offres special commande',
+            status: 'OK',
+            data: allOffre,
+            statusCode: 201
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data:error,
+            statusCode: 404
+        });
+    }
+
+}
 
 
 exports.success = async (req,res)=> {
