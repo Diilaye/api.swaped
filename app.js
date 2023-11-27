@@ -46,6 +46,8 @@ const offreSpecialCommandeRoute = require('./routes/offre-special-commande-route
 
 const reservationRestaurant = require('./routes/reservation-restaurant-route');
 
+const pannierRoute = require('./routes/pannier-route');
+
 
 const  paypal = require('paypal-rest-sdk');
 
@@ -111,6 +113,9 @@ app.use('/v1/api/special-offres' ,offreSpecialRoute);
 app.use('/v1/api/special-offres-commandes' ,offreSpecialCommandeRoute);
 
 app.use('/v1/api/reservations-restaurant' ,reservationRestaurant);
+
+app.use('/v1/api/pannier' ,pannierRoute);
+
 
 
 app.get('/', (req,res) => {
