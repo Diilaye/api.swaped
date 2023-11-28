@@ -2,6 +2,12 @@ const pannierModel = require('../models/pannier');
 
 const platModel = require('../models/plats-model');
 
+const populateObject = [{
+    path :'plat',
+    populate : [{
+    path : 'galery'
+}]
+}];
 
 exports.add = async (req, res) => {
 
@@ -12,8 +18,6 @@ exports.add = async (req, res) => {
             complements,
             prix_total
         } = req.body ;
-
-        console.log("vkllhjhkjkhjkmljkjghklk");
     
         const plats = await platModel.findById(plat).exec();
     
@@ -67,9 +71,9 @@ exports.byClient = async (req,res) => {
         const pannierClient = await pannierModel.find({
             client : req.user.id_user,
             restaurant : req.query.idRestaurant
-        }).exec();
+        }).populate(populateObject).exec();
         
-        return res.status(201).json({
+        return res.status(200).json({
             message: 'pannier Client pannier',
             status: 'OK',
             data: pannierClient,
@@ -95,7 +99,7 @@ exports.update = async (req ,res ) => {
 
         const pSve = await pannierClient.save(); 
 
-        return res.status(201).json({
+        return res.status(200).json({
             message: 'update Client pannier',
             status: 'OK',
             data: pSve,
