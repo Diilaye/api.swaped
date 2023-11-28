@@ -12,6 +12,8 @@ exports.add = async (req, res) => {
             complements,
             prix_total
         } = req.body ;
+
+        console.log("vkllhjhkjkhjkmljkjghklk");
     
         const plats = await platModel.findById(plat).exec();
     
@@ -74,6 +76,33 @@ exports.byClient = async (req,res) => {
             statusCode: 404
         });
 
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+}
+ 
+exports.update = async (req ,res ) => {
+
+    try {
+        const pannierClient = await pannierModel.findById(req.params.id);
+
+        pannierClient.quantity = req.body.quantity;
+
+        const pSve = await pannierClient.save(); 
+
+        return res.status(201).json({
+            message: 'update Client pannier',
+            status: 'OK',
+            data: pSve,
+            statusCode: 200
+        });
+
+        
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',

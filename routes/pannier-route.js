@@ -6,10 +6,12 @@ const pannierRoute = require('../controllers/pannier-controller');
 
 const {checkRoleClient} = require('../midleweares/auth');
 
-router.post('/' , checkRoleClient , pannierRoute.add);
+router.post('/' , checkRoleClient() , pannierRoute.add);
 
-router.get('/', checkRoleClient , pannierRoute.byClient);
+router.get('/', checkRoleClient() , pannierRoute.byClient);
 
-router.delete('/:id' , checkRoleClient , pannierRoute.delete);
+router.put('/:id' , checkRoleClient() , pannierRoute.update);
+
+router.delete('/:id' , checkRoleClient() , pannierRoute.delete);
 
 module.exports = router ;
