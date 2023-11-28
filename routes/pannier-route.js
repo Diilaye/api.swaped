@@ -10,7 +10,7 @@ router.post('/' , checkRoleClient() , pannierRoute.add);
 
 router.get('/', checkRoleClient() , pannierRoute.byClient);
 
-router.put('/:id' , checkRoleClient() , pannierRoute.update);
+router.put('/:id' , checkRoleClient() , pannierRoute.deleteComplement);
 
 router.delete('/:id' , checkRoleClient() , pannierRoute.delete);
 

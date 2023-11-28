@@ -90,12 +90,12 @@ exports.byClient = async (req,res) => {
     }
 }
  
-exports.update = async (req ,res ) => {
+exports.deleteComplement = async (req ,res ) => {
 
     try {
         const pannierClient = await pannierModel.findById(req.params.id);
 
-        pannierClient.quantity = req.body.quantity;
+        pannierClient.complements = [];
 
         const pSve = await pannierClient.save(); 
 
