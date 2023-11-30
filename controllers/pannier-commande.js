@@ -7,6 +7,24 @@ const { DateTime } = require('luxon');
 
 const { request } = require('urllib');
 
+const populateObject = [{
+    path : 'panniers',
+    populate : [{
+        path : 'plat',
+        populate : [{
+            path : 'galery'
+        }]
+    }]
+},{
+    path :'client'
+},{
+    path : 'restaurant',
+    populate  : [{
+        path :'gallerie'
+    },{
+        path :'photoCover',
+    }]
+}];
 
 
 exports.add = async (req,res) => {
@@ -331,7 +349,7 @@ exports.allByClient = async (req,res) => {
 
         const allOffre = await pannierCommandeModel.find({
             client : req.user.id_user
-        }).exec();
+        }).populate(populateObject).exec();
 
         return res.status(201).json({
             message: 'liste commandes  clients',
