@@ -399,12 +399,19 @@ exports.allByRestaurant = async (req,res) => {
 
 exports.success = async (req,res)=> {
 
+    console.log(req.body);
+    console.log(req.params);
+    console.log(req.query);
+
     try {
         const offreCommande = await pannierCommandeModel.findOne({
             reference : req.query.reference
         }).exec();
+
+        console.log(offreCommande);
       
         if (req.body.status == "SUCCESSFUL") {
+
             offreCommande.status =  "SUCCESS";
 
             for await (element of offreCommande.panniers) {
