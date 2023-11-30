@@ -12,15 +12,11 @@ const PannierCommande = new Schema({
 
     },
 
-    quantity : {
-        type : Number,
-        default : 1
-    },
-
-    plat : {
+   panniers : [{
         type: Schema.Types.ObjectId,
-        ref: "plats",
-    },
+        ref: "pannier",
+        default: []
+    }],  
 
     restaurant : {
         type: Schema.Types.ObjectId,

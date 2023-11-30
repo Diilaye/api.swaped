@@ -11,73 +11,72 @@ const { request } = require('urllib');
 
 exports.add = async (req,res) => {
 
-    let {
-
-        quantity ,
-    
-        plat ,
-    
-        prix_total ,
-    
-        prix_offre ,
-    
-        prix_livraison ,
-    
-        pointDepart ,
-    
-        pointArrive ,
-          
-        statusLivraison,
-
-        contriePaiement,
-
-        phonePaiement,
+    try {
+        let {
         
-        means,
-
-        otp,
-
-        creneaux
+            panniers ,
+        
+            prix_total ,
+        
+            prix_offre ,
+        
+            prix_livraison ,
+        
+            pointDepart ,
+        
+            pointArrive ,
+              
+            statusLivraison,
     
-    } = req.body ;
-
-
-    const offreFind = await platModel.findById(plat).exec();
-
-    if (offreFind) {
-
+            contriePaiement,
+    
+            phonePaiement,
+            
+            means,
+    
+            otp,
+    
+            creneaux,
+    
+            restaurant
+        
+        } = req.body ;
+    
+    
         const pannierCommande = pannierCommandeModel();
-
+    
         pannierCommande.reference = DateTime.now().ts;
-
-        pannierCommande.plat = plat;
-
+    
+        pannierCommande.panniers = panniers;
+    
         pannierCommande.quantity = quantity;
-
-        pannierCommande.restaurant = offreFind.idRestaurant;
-
+    
+        pannierCommande.restaurant = restaurant;
+    
         pannierCommande.client = req.user.id_user;
-
+    
         pannierCommande.prix_total = prix_total;
-
+    
         pannierCommande.prix_offre = prix_offre;
-
+    
         pannierCommande.prix_livraison = prix_livraison ;
-
+    
         pannierCommande.statusLivraison = statusLivraison;
-
+    
         pannierCommande.pointDepart = pointDepart;
-
+    
         pannierCommande.pointArrive = pointArrive;
-
+    
         pannierCommande.contriePaiement = contriePaiement;
-
+    
         pannierCommande.phonePaiement = phonePaiement;
-
+    
         pannierCommande.means = means;
-
+    
+        pannierCommande.creneaux = creneaux;
+    
         const pannierCommandeSave = await pannierCommande.save();
-
+    
         if(contriePaiement == 'GN') {
             const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
             let data = {};
@@ -86,7 +85,7 @@ exports.add = async (req,res) => {
                 data = JSON.stringify({
                 "idFromClient": process.env.idFromClientGN,
                 "amount": 1000,
-                "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                 "additionnalInfos": {
                     "destinataire": phonePaiement,
                     "otp": otp,
@@ -103,29 +102,29 @@ exports.add = async (req,res) => {
                     "destinataire": "+224660238758",
                 },
                 "amount": 1000,
-                "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                 "recipientNumber": phone,
                 "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
                 });
             }
-
+    
             options = {
                 method: 'PUT',
                 rejectUnauthorized: false,
                 digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
                 data :  data
             }
-
+    
             request(url,options).then(async (value) => {
                 const obj = Object.assign(JSON.parse(value.data.toString()));
-
+    
                 return res.status(201).json({
                     message: 'paiement initie',
                     status: 'OK',
                     data: JSON.parse(value.data.toString()),
                     statusCode: 201
                 });
-
+    
             }).catch((error) => {
                 return res.status(404).json({
                     message: 'erreur serveur',
@@ -135,11 +134,11 @@ exports.add = async (req,res) => {
                 });
             });
         }else if(contriePaiement == 'SN') {
-
+    
             const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceSN+'/transaction?loginAgent='+process.env.loginAgentSN+'&passwordAgent='+process.env.passwordAgentSN;
-
+    
             let data = {};
-
+    
             if (means =="OM") {
                 data = JSON.stringify({
                     "idFromClient":  DateTime.now().ts,
@@ -148,7 +147,7 @@ exports.add = async (req,res) => {
                             "otp" : otp
                         },
                         "amount": prix_total,
-                        "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                        "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                         "recipientNumber": phonePaiement,
                         "serviceCode": "PAIEMENTMARCHANDOMSN2"  
                 });
@@ -158,12 +157,12 @@ exports.add = async (req,res) => {
                     "additionnalInfos": {
                         "destinataire": phonePaiement,
                         "partner_name": "SwApp",
-                        "return_url":"https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
-                        "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                        "return_url":"https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                         "currency": "XOF"
                     },
                     "amount": 100,
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "SNPAIEMENTWAVE"
                 });
@@ -174,30 +173,30 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement
                       },
                       "amount": prix_total,
-                      "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                      "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                       "recipientNumber": phonePaiement,
                       "serviceCode": "PAIEMENTMARCHANDTIGO" 
                 });
             }
-
-
+    
+    
             options = {
                 method: 'PUT',
                 rejectUnauthorized: false,
                 digestAuth: `${process.env.UsernameDisgestSN}:${process.env.PasswordDisgestSN}`,
                 data :  data
             }
-
+    
             request(url,options).then(async (value) => {
                 const obj = Object.assign(JSON.parse(value.data.toString()));
-
+    
                 return res.status(201).json({
                     message: 'paiement initie',
                     status: 'OK',
                     data: JSON.parse(value.data.toString()),
                     statusCode: 201
                 });
-
+    
             }).catch((error) => {
                 return res.status(404).json({
                     message: 'erreur serveur',
@@ -207,11 +206,11 @@ exports.add = async (req,res) => {
                 });
             });
         }else {
-
+    
             const url = "https://api.gutouch.com/dist/api/touchpayapi/v1/"+process.env.agenceCI+"/transaction?loginAgent="+process.env.loginAgentCI+"&passwordAgent="+process.env.passwordAgentCI;
-
+    
             let data  = {};
-
+    
             if (means == "OM") {
                 data = JSON.stringify( {  
                     "idFromClient": process.env.idFromClientCI,   
@@ -219,7 +218,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHANDOM"  
                 });
@@ -229,11 +228,11 @@ exports.add = async (req,res) => {
                     "additionnalInfos": {
                         "destinataire": phonePaiement,
                         "partner_name": "Swapp",
-                        "return_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
-                        "cancel_url": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference
+                        "return_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference
                     },
                     "amount": prix_total,
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "CI_PAIEMENTWAVE_TP"
                 });
@@ -244,7 +243,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MOOV_CI"  
                 });
@@ -255,30 +254,30 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MTN_CI"  
                 });
             }
-
-
+    
+    
             options = {
                 method: 'PUT',
                 rejectUnauthorized: false,
                 digestAuth: `${process.env.UsernameDisgestCI}:${process.env.PasswordDisgestCI}`,
                 data :  data
             }
-
+    
             request(url,options).then(async (value) => {
                 const obj = Object.assign(JSON.parse(value.data.toString()));
-
+    
                 return res.status(201).json({
                     message: 'paiement initie',
                     status: 'OK',
                     data: JSON.parse(value.data.toString()),
                     statusCode: 201
                 });
-
+    
             }).catch((error) => {
                 return res.status(404).json({
                     message: 'erreur serveur',
@@ -287,17 +286,13 @@ exports.add = async (req,res) => {
                     statusCode: 404
                 });
             });
-
+    
         }
-
-
-
-        
-    }else {
-       return res.status(404).json({
+    } catch (error) {
+        return res.status(404).json({
             message: 'erreur serveur',
             status: 'NOT OK',
-            data: "Offre not found",
+            data: error,
             statusCode: 404
         });
     }
