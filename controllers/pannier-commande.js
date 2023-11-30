@@ -242,6 +242,9 @@ exports.add = async (req,res) => {
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHANDOM"  
                 });
+                console.log("OM GUINNES");
+                console.log(data);
+
             } else if(means == "WAVE") {
                 data = JSON.stringify({
                     "idFromClient": DateTime.now().ts ,
@@ -399,51 +402,59 @@ exports.allByRestaurant = async (req,res) => {
 
 exports.success = async (req,res)=> {
 
-    console.log(req.body);
+    
+
+    try {
+        console.log(req.body);
     console.log(req.params);
     console.log(req.query);
 
-    try {
-        const offreCommande = await pannierCommandeModel.findOne({
-            reference : req.query.reference
-        }).exec();
+    const offreCommande = await pannierCommandeModel.findOne({
+        reference : req.query.reference
+    }).exec();
 
-        console.log(offreCommande);
-      
-        if (req.body.status == "SUCCESSFUL") {
+    console.log(offreCommande.panniers);
 
-            offreCommande.status =  "SUCCESS";
+  
+    if (req.body.status == "SUCCESSFUL") {
 
-            for await (element of offreCommande.panniers) {
-                const p = await pannierModel.findById(element).excec();
-    
-                p.status = "accept";
+        offreCommande.status =  "SUCCESS";
 
-                await p.save();
-            }
+        for await (element of offreCommande.panniers) {
+            // console.log(element);
+            const p = await pannierModel.findById(element).exec();
 
+            p.status = "accept";
 
-        } else {
-
-            offreCommande.status = "CANCELED";
-
-            for await (element of offreCommande.panniers) {
-                const p = await pannierModel.findById(element).excec();
-    
-                p.status = "cancel";
-
-                await p.save();
-            }
+            await p.save();
         }
-      
-        offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-      
-      
-        const tf = await offreCommande.save();
-      
-        console.log(tf);
-      
-       return res.sendFile(__dirname + "/success.html");
+
+
+    } else {
+
+        offreCommande.status = "CANCELED";
+
+        for await (element of offreCommande.panniers) {
+            // console.log(element);
+
+            const p = await pannierModel.findById(element).exec();
+
+            console.log(p);
+
+            p.status = "cancel";
+
+            await p.save();
+        }
+    }
+  
+    offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+  
+  
+    const tf = await offreCommande.save();
+  
+    console.log(tf);
+  
+   return res.sendFile(__dirname + "/success.html");
       
     } catch (error) {
         return res.status(404).json({
