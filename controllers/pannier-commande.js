@@ -11,7 +11,10 @@ const { request } = require('urllib');
 
 exports.add = async (req,res) => {
 
+    
+
     try {
+
         let {
         
             panniers ,
@@ -49,8 +52,6 @@ exports.add = async (req,res) => {
     
         pannierCommande.panniers = panniers;
     
-        pannierCommande.quantity = quantity;
-    
         pannierCommande.restaurant = restaurant;
     
         pannierCommande.client = req.user.id_user;
@@ -85,7 +86,7 @@ exports.add = async (req,res) => {
                 data = JSON.stringify({
                 "idFromClient": process.env.idFromClientGN,
                 "amount": 1000,
-                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                 "additionnalInfos": {
                     "destinataire": phonePaiement,
                     "otp": otp,
@@ -102,8 +103,8 @@ exports.add = async (req,res) => {
                     "destinataire": "+224660238758",
                 },
                 "amount": 1000,
-                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
-                "recipientNumber": phone,
+                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
+                "recipientNumber": phonePaiement,
                 "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
                 });
             }
@@ -147,7 +148,7 @@ exports.add = async (req,res) => {
                             "otp" : otp
                         },
                         "amount": prix_total,
-                        "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                        "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                         "recipientNumber": phonePaiement,
                         "serviceCode": "PAIEMENTMARCHANDOMSN2"  
                 });
@@ -157,12 +158,12 @@ exports.add = async (req,res) => {
                     "additionnalInfos": {
                         "destinataire": phonePaiement,
                         "partner_name": "SwApp",
-                        "return_url":"https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
-                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                        "return_url":"https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
+                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                         "currency": "XOF"
                     },
                     "amount": 100,
-                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "SNPAIEMENTWAVE"
                 });
@@ -173,7 +174,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement
                       },
                       "amount": prix_total,
-                      "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                      "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                       "recipientNumber": phonePaiement,
                       "serviceCode": "PAIEMENTMARCHANDTIGO" 
                 });
@@ -218,7 +219,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHANDOM"  
                 });
@@ -228,11 +229,11 @@ exports.add = async (req,res) => {
                     "additionnalInfos": {
                         "destinataire": phonePaiement,
                         "partner_name": "Swapp",
-                        "return_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
-                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference
+                        "return_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
+                        "cancel_url": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference
                     },
                     "amount": prix_total,
-                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
                     "recipientNumber": phonePaiement,
                     "serviceCode": "CI_PAIEMENTWAVE_TP"
                 });
@@ -243,7 +244,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MOOV_CI"  
                 });
@@ -254,7 +255,7 @@ exports.add = async (req,res) => {
                         "destinataire":phonePaiement  
                     },   
                     "amount": prix_total,   
-                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+offreCommandeSave.reference,   
+                    "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,   
                     "recipientNumber": phonePaiement,  
                     "serviceCode": "PAIEMENTMARCHAND_MTN_CI"  
                 });
@@ -288,6 +289,7 @@ exports.add = async (req,res) => {
             });
     
         }
+        
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
