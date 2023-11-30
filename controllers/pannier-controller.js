@@ -70,7 +70,8 @@ exports.byClient = async (req,res) => {
 
         const pannierClient = await pannierModel.find({
             client : req.user.id_user,
-            restaurant : req.query.idRestaurant
+            restaurant : req.query.idRestaurant,
+            status : 'pannier'
         }).populate(populateObject).exec();
         
         return res.status(200).json({

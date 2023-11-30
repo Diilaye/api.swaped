@@ -30,6 +30,12 @@ const Pannier = new Schema({
         type: Array,
         default :[]
     },
+
+    status : {
+        type : String,
+        enum: ['pannier','cancel' ,'accept'],
+        default: 'pannier'
+    },
   
     prix_total : {
         type : Number

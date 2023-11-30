@@ -1,7 +1,8 @@
 
 const pannierCommandeModel = require('../models/pannier-commande');
 
-const platModel = require('../models/plats-model');
+const pannierModel = require('../models/pannier');
+
 
 const { DateTime } = require('luxon');
 
@@ -62,7 +63,7 @@ exports.add = async (req,res) => {
             restaurant
         
         } = req.body ;
-    
+
     
         const pannierCommande = pannierCommandeModel();
     
@@ -405,8 +406,27 @@ exports.success = async (req,res)=> {
       
         if (req.body.status == "SUCCESSFUL") {
             offreCommande.status =  "SUCCESS";
+
+            for await (element of offreCommande.panniers) {
+                const p = await pannierModel.findById(element).excec();
+    
+                p.status = "accept";
+
+                await p.save();
+            }
+
+
         } else {
+
             offreCommande.status = "CANCELED";
+
+            for await (element of offreCommande.panniers) {
+                const p = await pannierModel.findById(element).excec();
+    
+                p.status = "cancel";
+
+                await p.save();
+            }
         }
       
         offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
