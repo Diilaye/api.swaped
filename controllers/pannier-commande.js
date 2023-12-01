@@ -403,11 +403,11 @@ exports.updateStatusLivraison = async (req,res) => {
 
     try {
 
-        const {statusLivraison}=req.body ;
+        const {etatLivraison}=req.body ;
 
         const pannier = pannierCommandeModel.findById(req.params.id).exec();
 
-        pannier.statusLivraison = statusLivraison ; 
+        pannier.etatLivraison = etatLivraison ; 
 
         const pSave = pannier.save();
 
