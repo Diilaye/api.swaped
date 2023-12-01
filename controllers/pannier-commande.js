@@ -399,6 +399,37 @@ exports.allByRestaurant = async (req,res) => {
 
 }
 
+exports.updateStatusLivraison = async (req,res) => {
+
+    try {
+
+        const {statusLivraison}=req.body ;
+
+        const pannier = pannierCommandeModel.findById(req.params.id).exec();
+
+        pannier.statusLivraison = statusLivraison ; 
+
+        const pSave = pannier.save();
+
+        return res.status(201).json({
+            message: 'modifications commande',
+            status: 'OK',
+            data: pSave,
+            statusCode: 201
+        });
+
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data:error,
+            statusCode: 404
+        });
+    }
+
+}
+
 
 exports.success = async (req,res)=> {
 
