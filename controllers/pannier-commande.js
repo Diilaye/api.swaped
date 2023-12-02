@@ -385,7 +385,7 @@ exports.allByRestaurant = async (req,res) => {
 
         const allOffre = await pannierCommandeModel.find({
             restaurant : restaurant.id
-        }).exec();
+        }).populate(populateObject).exec();
 
         return res.status(201).json({
             message: 'liste offres special commande',
