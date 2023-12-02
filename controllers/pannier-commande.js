@@ -3,6 +3,8 @@ const pannierCommandeModel = require('../models/pannier-commande');
 
 const pannierModel = require('../models/pannier');
 
+const restaurantModel = require('../models/restaurant-model');
+
 
 const { DateTime } = require('luxon');
 
@@ -377,8 +379,12 @@ exports.allByRestaurant = async (req,res) => {
 
     try {
 
+        const restaurant = await restaurantModel.findOne({
+            idParent : req.user.id_user
+        }).exec();
+
         const allOffre = await pannierCommandeModel.find({
-            restaurant : req.user.id_user
+            restaurant : restaurant.id
         }).exec();
 
         return res.status(201).json({
