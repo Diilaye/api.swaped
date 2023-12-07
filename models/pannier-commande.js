@@ -56,6 +56,16 @@ const PannierCommande = new Schema({
             lng:0
         }
     },
+
+    addresseLivraion : {
+        type : String,
+        default : ''
+    },
+
+    addresseRestaurant : {
+        type : String,
+        default : ''
+    },
    
       
     statusLivraison: {

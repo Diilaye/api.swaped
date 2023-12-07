@@ -37,7 +37,12 @@ exports.add = async (req,res) => {
 
         otp,
 
-        creneaux
+        creneaux,
+
+        addresseLivraion,
+        
+        addresseRestaurant
+
     
     } = req.body ;
 
@@ -70,9 +75,15 @@ exports.add = async (req,res) => {
 
         offreCommande.pointArrive = pointArrive;
 
+        offreCommande.addresseLivraion = addresseLivraion;
+
+        offreCommande.addresseRestaurant = addresseRestaurant;
+
         offreCommande.contriePaiement = contriePaiement;
 
         offreCommande.phonePaiement = phonePaiement;
+
+        offreCommande.creneaux = creneaux;
 
         offreCommande.means = means;
 
