@@ -337,7 +337,7 @@ exports.all = async (req,res) => {
 
     try {
 
-        const allOffre = await pannierCommandeModel.find().exec();
+        const allOffre = await pannierCommandeModel.find().populate(populateObject).exec();
 
         return res.status(201).json({
             message: 'liste offres special commande',
