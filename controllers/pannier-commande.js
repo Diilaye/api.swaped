@@ -414,16 +414,16 @@ exports.allByRestaurant = async (req,res) => {
 }
 
 exports.updateStatusLivraison = async (req,res) => {
-
+    
     try {
 
         const {etatLivraison}=req.body ;
 
-        const pannier = pannierCommandeModel.findById(req.params.id).exec();
+        const pannier = await pannierCommandeModel.findById(req.params.id).exec();
 
         pannier.etatLivraison = etatLivraison ; 
 
-        const pSave = pannier.save();
+        const pSave = await pannier.save();
 
         return res.status(201).json({
             message: 'modifications commande',
