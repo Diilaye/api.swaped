@@ -62,7 +62,11 @@ exports.add = async (req,res) => {
     
             creneaux,
     
-            restaurant
+            restaurant,
+            
+            addresseLivraion,
+
+            addresseRestaurant
         
         } = req.body ;
 
@@ -96,6 +100,10 @@ exports.add = async (req,res) => {
         pannierCommande.means = means;
     
         pannierCommande.creneaux = creneaux;
+
+        pannierCommande.addresseLivraion = addresseLivraion;
+
+        pannierCommande.addresseRestaurant = addresseRestaurant;
     
         const pannierCommandeSave = await pannierCommande.save();
     
