@@ -40,7 +40,7 @@ exports.add = async (req,res) => {
         creneaux,
 
         addresseLivraion,
-        
+
         addresseRestaurant
 
     
@@ -391,6 +391,18 @@ exports.allByRestaurant = async (req,res) => {
 
 }
 
+// exports.updateStatus = async (req,res) => {
+
+//         let {etatLivraison} = req.body ;
+
+//         const find = await offreSpecialCommandeModel.findById(req.params.id).exec();
+
+//         find.etatLivraison = etatLivraison;
+
+//         awi
+
+// }
+
 
 exports.success = async (req,res)=> {
 
@@ -422,4 +434,4 @@ exports.success = async (req,res)=> {
             statusCode: 404
         });
     }
-  }
+}
