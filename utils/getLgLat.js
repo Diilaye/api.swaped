@@ -6,13 +6,15 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 
 
-
 require('dotenv').config({
     path:'./.env'
 });
 
 
 exports.getLgLat = async (input) => {
+
+    
+   
 
     return new Promise((resolve ,reject  ) => {
         return googleMapsClient.geocode({
@@ -26,6 +28,7 @@ exports.getLgLat = async (input) => {
             if (response.json.status === 'OK') {
     
                 const location = response.json.results[0].geometry.location;
+                console.log(location);
                 resolve(response.json.results[0].geometry.location);
             } else {
                 console.error(`Impossible de géocoder l'adresse : ${response.json.status}`);

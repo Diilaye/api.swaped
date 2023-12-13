@@ -50,6 +50,8 @@ const pannierRoute = require('./routes/pannier-route');
 
 const pannierCommandeRoute = require('./routes/pannier-commande-route');
 
+const deplacementRoute = require('./routes/deplacement-route');
+
 
 const  paypal = require('paypal-rest-sdk');
 
@@ -119,6 +121,8 @@ app.use('/v1/api/reservations-restaurant' ,reservationRestaurant);
 app.use('/v1/api/pannier' ,pannierRoute);
 
 app.use('/v1/api/pannier-commande' ,pannierCommandeRoute);
+
+app.use('/v1/api/courses' ,deplacementRoute);
 
 
 

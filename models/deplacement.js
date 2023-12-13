@@ -2,30 +2,23 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const DeplacementModels = new Schema({
 
-
-const PannierCommande = new Schema({
-    
     reference: {
         type: String ,
         unique : true,
 
     },
 
-   panniers : [{
-        type: Schema.Types.ObjectId,
-        ref: "pannier",
-        default: []
-    }],  
-
-    restaurant : {
-        type: Schema.Types.ObjectId,
-        ref: "restaurant",
-    },
-
     client : {
         type: Schema.Types.ObjectId,
         ref: "user-client",
+    },
+
+    mobilite : {
+        type: Schema.Types.ObjectId,
+        ref: "user-client",
+        default : null
     },
 
     prix_total : {
@@ -34,12 +27,7 @@ const PannierCommande = new Schema({
 
     prix_offre : {
         type : Number
-    },
-
-    prix_livraison : {
-        type : Number
-    },
-
+    },    
 
     pointDepart : {
         type : Map,
@@ -57,29 +45,22 @@ const PannierCommande = new Schema({
         }
     },
 
-    addresseLivraion : {
+    addresseDepart : {
         type : String,
         default : ''
     },
 
-    addresseRestaurant : {
+    addresseArrive : {
         type : String,
         default : ''
     },
-   
-      
+
     statusLivraison: {
         type: String,
-        enum: ['emporter', 'livraison'],
+        enum: ['deplacement', 'livraison'],
         default: 'livraison'
     },
 
-    creneaux: {
-        type : String,
-        enum: ['30','60','120'],
-        default: '30'
-    },
-    
     status: {
         type: String,
         enum: ['PENDING', 'SUCCESS','CANCELED'],
@@ -88,7 +69,7 @@ const PannierCommande = new Schema({
 
     etatLivraison: {
         type: String,
-        enum: ['PENDING', 'PREPARATION','LIVRAISON','BLOCK-LIVRAISON','SUCCESS' , 'CANCEL'],
+        enum: ['PENDING', 'DEPART-MOTO','DEPRAT-COURSE','SUCCESS' , 'CANCEL'],
         default: 'PENDING'
     },
 
@@ -111,7 +92,7 @@ const PannierCommande = new Schema({
         type: String,
         default : ""
     },
-
+  
 },{
     toJSON: {
         transform: function (doc, ret) {
@@ -124,4 +105,4 @@ const PannierCommande = new Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('pannier-commande', PannierCommande);
+module.exports = mongoose.model('deplacement', DeplacementModels) ;

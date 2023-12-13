@@ -54,28 +54,35 @@ exports.getLatLong = async (req,res ,next) => {
       }
   
       const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
-  
-      axios.get(apiUrl ,{
-          params: {
-              input,
-              types: 'establishment', // Vous pouvez ajuster les types de résultats que vous voulez ici
-              key: process.env.MAPKEY,
-              components: 'country:'+pays, // Restreindre les résultats à la Guinée
+
+      axios.get(apiUrl, {
+        params: {
+            address: input,
+            key: process.env.MAPKEY,
+            components: 'country:' + pays,
+        }
+    })
+        .then(response => {
+            console.log('Geocoding API Response:', response.data);
+    
+            const results = response.data.results;
+    
+            if (results.length > 0) {
+                const location = results[0].geometry.location;
+                const latitude = location.lat;
+                const longitude = location.lng;
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                res.json(location);
+            } else {
+                console.error('No results found for the given address.');
+                res.status(404).json({ error: 'No results found for the given address.' });
             }
-      })
-      .then(response => {
-          console.log(response.data.results[0].geometry);
-  
-          const location = response.data.results[0].geometry.location;
-          const latitude = location.lat;
-          const longitude = location.lng;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-          res.json(response.data.results[0].geometry.location);
-  
-      })
-      .catch(error => {
-          console.error('Error:', error.message);
-      });
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            res.status(500).json({ error: 'An error occurred while fetching the location.' });
+        });
+    
 }
 
 exports.address = async (req,res,next) => {

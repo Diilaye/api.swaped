@@ -1,111 +1,62 @@
-
-const pannierCommandeModel = require('../models/pannier-commande');
-
-const pannierModel = require('../models/pannier');
-
-const restaurantModel = require('../models/restaurant-model');
-
+const deplacementModel = require("../models/deplacement");
 
 const { DateTime } = require('luxon');
 
-const { request } = require('urllib');
-
-const populateObject = [{
-    path : 'panniers',
-    populate : [{
-        path : 'plat',
-        populate : [{
-            path : 'galery'
-        }]
-    }]
-},{
-    path :'client'
-},{
-    path : 'restaurant',
-    populate  : [{
-        path :'gallerie'
-    },{
-        path :'photoCover',
-    }]
-}];
-
-
-exports.add = async (req,res) => {
-
-    
+exports.store = async (req ,  res) => {
 
     try {
-
+        
         let {
         
-            panniers ,
+            prix_total,
         
-            prix_total ,
-        
-            prix_offre ,
-        
-            prix_livraison ,
+            prix_offre ,    
         
             pointDepart ,
         
             pointArrive ,
-              
+        
+            addresseDepart ,
+        
+            addresseArrive ,
+        
             statusLivraison,
-    
-            contriePaiement,
-    
+        
             phonePaiement,
-            
+        
+            contriePaiement ,
+        
             means,
     
-            otp,
-    
-            creneaux,
-    
-            restaurant,
-            
-            addresseLivraion,
-
-            addresseRestaurant
-        
         } = req.body ;
-
     
-        const pannierCommande = pannierCommandeModel();
+        const deplacement = deplacementModel();
     
-        pannierCommande.reference = DateTime.now().ts;
+        deplacement.reference  = DateTime.now().ts;
     
-        pannierCommande.panniers = panniers;
+        deplacement.client = req.user.id_user;
     
-        pannierCommande.restaurant = restaurant;
+        deplacement.prix_total = prix_total;
     
-        pannierCommande.client = req.user.id_user;
+        deplacement.prix_offre = prix_offre;
     
-        pannierCommande.prix_total = prix_total;
+        deplacement.pointDepart = pointDepart;
+        
+        deplacement.pointArrive = pointArrive;
     
-        pannierCommande.prix_offre = prix_offre;
+        deplacement.addresseDepart = addresseDepart;
     
-        pannierCommande.prix_livraison = prix_livraison ;
+        deplacement.addresseArrive = addresseArrive;
     
-        pannierCommande.statusLivraison = statusLivraison;
+        deplacement.statusLivraison = statusLivraison;
     
-        pannierCommande.pointDepart = pointDepart;
+        deplacement.phonePaiement = phonePaiement;
     
-        pannierCommande.pointArrive = pointArrive;
+        deplacement.contriePaiement = contriePaiement;
     
-        pannierCommande.contriePaiement = contriePaiement;
+        deplacement.means = means;
     
-        pannierCommande.phonePaiement = phonePaiement;
-    
-        pannierCommande.means = means;
-    
-        pannierCommande.creneaux = creneaux;
-
-        pannierCommande.addresseLivraion = addresseLivraion;
-
-        pannierCommande.addresseRestaurant = addresseRestaurant;
-    
-        const pannierCommandeSave = await pannierCommande.save();
+        const deplaceSave = await deplacement.save();
     
         if(contriePaiement == 'GN') {
             const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
@@ -254,7 +205,7 @@ exports.add = async (req,res) => {
                 });
                 console.log("OM GUINNES");
                 console.log(data);
-
+    
             } else if(means == "WAVE") {
                 data = JSON.stringify({
                     "idFromClient": DateTime.now().ts ,
@@ -321,7 +272,7 @@ exports.add = async (req,res) => {
             });
     
         }
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
@@ -330,120 +281,12 @@ exports.add = async (req,res) => {
             statusCode: 404
         });
     }
-
-}
-
-exports.all = async (req,res) => {
-
-    try {
-
-        const allOffre = await pannierCommandeModel.find().populate(populateObject).exec();
-
-        return res.status(201).json({
-            message: 'liste offres special commande',
-            status: 'OK',
-            data: allOffre,
-            statusCode: 201
-        });
-        
-    } catch (error) {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data:error,
-            statusCode: 404
-        });
-    }
-
-}
-
-exports.allByClient = async (req,res) => {
-
-    try {
-
-        const allOffre = await pannierCommandeModel.find({
-            client : req.user.id_user
-        }).populate(populateObject).exec();
-
-        return res.status(201).json({
-            message: 'liste commandes  clients',
-            status: 'OK',
-            data: allOffre,
-            statusCode: 201
-        });
-        
-    } catch (error) {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data:error,
-            statusCode: 404
-        });
-    }
-
-}
-
-exports.allByRestaurant = async (req,res) => {
-
-    try {
-
-        const restaurant = await restaurantModel.findOne({
-            idParent : req.user.id_user
-        }).exec();
-
-        const allOffre = await pannierCommandeModel.find({
-            restaurant : restaurant.id
-        }).populate(populateObject).exec();
-
-        return res.status(201).json({
-            message: 'liste offres special commande',
-            status: 'OK',
-            data: allOffre,
-            statusCode: 201
-        });
-        
-    } catch (error) {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data:error,
-            statusCode: 404
-        });
-    }
-
-}
-
-exports.updateStatusLivraison = async (req,res) => {
     
-    try {
 
-        const {etatLivraison}=req.body ;
 
-        const pannier = await pannierCommandeModel.findById(req.params.id).exec();
 
-        pannier.etatLivraison = etatLivraison ; 
-
-        const pSave = await pannier.save();
-
-        return res.status(201).json({
-            message: 'modifications commande',
-            status: 'OK',
-            data: pSave,
-            statusCode: 201
-        });
-
-        
-    } catch (error) {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data:error,
-            statusCode: 404
-        });
-    }
 
 }
-
 
 exports.success = async (req,res)=> {
 
@@ -451,55 +294,32 @@ exports.success = async (req,res)=> {
 
     try {
         console.log(req.body);
-    console.log(req.params);
-    console.log(req.query);
+        console.log(req.params);
+        console.log(req.query);
 
-    const offreCommande = await pannierCommandeModel.findOne({
-        reference : req.query.reference
-    }).exec();
+        const deplacement = await deplacementModel.findOne({
+            reference : req.query.reference
+        }).exec();
 
-    console.log(offreCommande.panniers);
 
-  
-    if (req.body.status == "SUCCESSFUL") {
+    
+        if (req.body.status == "SUCCESSFUL") {
 
-        offreCommande.status =  "SUCCESS";
+            deplacement.status =  "SUCCESS";
 
-        for await (element of offreCommande.panniers) {
-            // console.log(element);
-            const p = await pannierModel.findById(element).exec();
+        } else {
 
-            p.status = "accept";
-
-            await p.save();
+            deplacement.status = "CANCELED";
         }
-
-
-    } else {
-
-        offreCommande.status = "CANCELED";
-
-        for await (element of offreCommande.panniers) {
-            // console.log(element);
-
-            const p = await pannierModel.findById(element).exec();
-
-            console.log(p);
-
-            p.status = "cancel";
-
-            await p.save();
-        }
-    }
-  
-    offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-  
-  
-    const tf = await offreCommande.save();
-  
-    console.log(tf);
-  
-   return res.sendFile(__dirname + "/success.html");
+    
+        deplacement.dateTransactionSuccess = new Date().toLocaleString().split('/').join("-");
+    
+    
+        const tf = await deplacement.save();
+    
+        console.log(tf);
+    
+    return res.sendFile(__dirname + "/success.html");
       
     } catch (error) {
         return res.status(404).json({
