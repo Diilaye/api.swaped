@@ -11,31 +11,41 @@ require('dotenv').config({
 });
 
 
-exports.getLgLat = async (input) => {
+exports.getLgLatFunc = async (input , pays) => {
 
     
    
 
-    return new Promise((resolve ,reject  ) => {
-        return googleMapsClient.geocode({
-            address: input
-            }, (err, response) => {
-            if (err) {
-                console.log("err");
-                reject(err);
-            }
+    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
+
+    return  axios.get(apiUrl, {
+        params: {
+            address: input,
+            key: process.env.MAPKEY,
+            components: 'country:' + pays,
+        }
+    })
+        .then(response => {
+            console.log('Geocoding API Response:', response.data);
     
-            if (response.json.status === 'OK') {
+            const results = response.data.results;
     
-                const location = response.json.results[0].geometry.location;
-                console.log(location);
-                resolve(response.json.results[0].geometry.location);
+            if (results.length > 0) {
+                const location = results[0].geometry.location;
+                const latitude = location.lat;
+                const longitude = location.lng;
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                return location;
             } else {
-                console.error(`Impossible de géocoder l'adresse : ${response.json.status}`);
-                reject(`Impossible de géocoder l'adresse : ${response.json.status}`);
+                console.error('No results found for the given address.');
+                return 'No results found for the given address.';
             }
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            // res.status(500).json({ error: 'An error occurred while fetching the location.' });
+            return  error.message;
         });
-    });
 
    
   

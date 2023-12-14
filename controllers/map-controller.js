@@ -45,6 +45,7 @@ exports.place = async (req,res , next) =>  {
 }
 
 exports.getLatLong = async (req,res ,next) => {
+
       const input = req.query.input;
 
       let pays = req.query.pays;
@@ -53,35 +54,9 @@ exports.getLatLong = async (req,res ,next) => {
         pays = 'gn';
       }
   
-      const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
+     const location = await utiilsFnc.getLgLatFunc(input,pays);
 
-      axios.get(apiUrl, {
-        params: {
-            address: input,
-            key: process.env.MAPKEY,
-            components: 'country:' + pays,
-        }
-    })
-        .then(response => {
-            console.log('Geocoding API Response:', response.data);
-    
-            const results = response.data.results;
-    
-            if (results.length > 0) {
-                const location = results[0].geometry.location;
-                const latitude = location.lat;
-                const longitude = location.lng;
-                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                res.json(location);
-            } else {
-                console.error('No results found for the given address.');
-                res.status(404).json({ error: 'No results found for the given address.' });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error.message);
-            res.status(500).json({ error: 'An error occurred while fetching the location.' });
-        });
+     res.json(location);
     
 }
 
@@ -142,6 +117,44 @@ exports.distanceCourse = async (req,res) => {
 
 exports.livraison = async (req,res) => {
 
+  let {
+    lat ,
+    lng,
+    arrive
+  } = req.query;
+
+  let pays = req.query.pays;
+
+  if (pays == undefined) {
+    pays = 'gn';
+  }
+
+
+  const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
+
+  console.log(point2);
+
+  result = await  utiilsFnc.getDistance({
+    lat : parseFloat(lat),
+    lng : parseFloat(lng)
+  },point2);
+
+
+  result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+
+  result["depart"] = {
+    lat : parseFloat(lat),
+    lng : parseFloat(lng)
+  };
+  result["arrive"] = point2;
+
+  return res.status(200).json({
+      message: 'distance évaluer ',
+      status: 'OK',
+      data: result,
+      statusCode: 200
+  })
+
   try {
     let {
       lat ,
@@ -149,7 +162,11 @@ exports.livraison = async (req,res) => {
       arrive
     } = req.query;
 
+    console.log(req.query);
+
     const point2 = await utiilsFnc.getLgLat(arrive);
+
+    console.log(point2);
 
     result = await  utiilsFnc.getDistance({
       lat : parseFloat(lat),
@@ -182,16 +199,54 @@ exports.livraison = async (req,res) => {
 
 }
 
+
+
 exports.livraisonDepart = async (req,res) => {
+
+  let {
+    depart,
+    arrive,
+    pays
+  } = req.query;
+
+
+if (pays == undefined) {
+  pays = 'gn';
+}
+
+  const point1 = await utiilsFnc.getLgLatFunc(depart,pays);
+  const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
+
+  result = await  utiilsFnc.getDistance(point1,point2);
+
+
+  result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+
+  result["depart"] = point1;
+  result["arrive"] = point2;
+
+
+ return res.status(200).json({
+      message: 'distance évaluer ',
+      status: 'OK',
+      data: result,
+      statusCode: 200
+  })
 
   try {
     let {
       depart,
-      arrive
+      arrive,
+      pays
     } = req.query;
 
-    const point1 = await utiilsFnc.getLgLat(depart);
-    const point2 = await utiilsFnc.getLgLat(arrive);
+
+  if (pays == undefined) {
+    pays = 'gn';
+  }
+
+    const point1 = await utiilsFnc.getLgLat(depart,pays);
+    const point2 = await utiilsFnc.getLgLat(arrive,pays);
 
     result = await  utiilsFnc.getDistance(point1,point2);
 
@@ -202,7 +257,7 @@ exports.livraisonDepart = async (req,res) => {
     result["arrive"] = point2;
 
   
-    res.status(200).json({
+   return res.status(200).json({
         message: 'distance évaluer ',
         status: 'OK',
         data: result,
