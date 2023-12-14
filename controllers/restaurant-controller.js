@@ -292,7 +292,7 @@ exports.update = async (req,res) => {
 
             restaurant.adresse = adresse;
 
-            restaurant.localisation = await utiilsFnc.getLgLat(adresse);
+            restaurant.localisation = await utiilsFnc.getLgLatFunc(adresse,restaurant.pays);
         }
 
         if(heureOuverture != undefined) {
