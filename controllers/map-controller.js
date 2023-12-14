@@ -117,43 +117,7 @@ exports.distanceCourse = async (req,res) => {
 
 exports.livraison = async (req,res) => {
 
-  let {
-    lat ,
-    lng,
-    arrive
-  } = req.query;
-
-  let pays = req.query.pays;
-
-  if (pays == undefined) {
-    pays = 'gn';
-  }
-
-
-  const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
-
-  console.log(point2);
-
-  result = await  utiilsFnc.getDistance({
-    lat : parseFloat(lat),
-    lng : parseFloat(lng)
-  },point2);
-
-
-  result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-
-  result["depart"] = {
-    lat : parseFloat(lat),
-    lng : parseFloat(lng)
-  };
-  result["arrive"] = point2;
-
-  return res.status(200).json({
-      message: 'distance évaluer ',
-      status: 'OK',
-      data: result,
-      statusCode: 200
-  })
+  
 
   try {
     let {
@@ -161,28 +125,33 @@ exports.livraison = async (req,res) => {
       lng,
       arrive
     } = req.query;
-
-    console.log(req.query);
-
-    const point2 = await utiilsFnc.getLgLat(arrive);
-
+  
+    let pays = req.query.pays;
+  
+    if (pays == undefined) {
+      pays = 'gn';
+    }
+  
+  
+    const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
+  
     console.log(point2);
-
+  
     result = await  utiilsFnc.getDistance({
       lat : parseFloat(lat),
       lng : parseFloat(lng)
     },point2);
-
-
+  
+  
     result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-
+  
     result["depart"] = {
       lat : parseFloat(lat),
       lng : parseFloat(lng)
     };
     result["arrive"] = point2;
   
-    res.status(200).json({
+    return res.status(200).json({
         message: 'distance évaluer ',
         status: 'OK',
         data: result,
@@ -203,59 +172,62 @@ exports.livraison = async (req,res) => {
 
 exports.livraisonDepart = async (req,res) => {
 
-  let {
-    depart,
-    arrive,
-    pays
-  } = req.query;
-
-
-if (pays == undefined) {
-  pays = 'gn';
-}
-
-  const point1 = await utiilsFnc.getLgLatFunc(depart,pays);
-  const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
-
-  result = await  utiilsFnc.getDistance(point1,point2);
-
-
-  result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-
-  result["depart"] = point1;
-  result["arrive"] = point2;
-
-
- return res.status(200).json({
-      message: 'distance évaluer ',
-      status: 'OK',
-      data: result,
-      statusCode: 200
-  })
+  
 
   try {
     let {
       depart,
       arrive,
-      pays
+      pays,
+      typeVehicule,
+      nuit
     } = req.query;
 
-
+    console.log(req.query);
+  
+  
   if (pays == undefined) {
     pays = 'gn';
   }
 
-    const point1 = await utiilsFnc.getLgLat(depart,pays);
-    const point2 = await utiilsFnc.getLgLat(arrive,pays);
+  if (typeVehicule == undefined) {
+    typeVehicule = 'moto';
+  }
 
+  if (nuit == undefined) {
+    nuit = '0';
+  }
+  
+    const point1 = await utiilsFnc.getLgLatFunc(depart,pays);
+    const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
+  
     result = await  utiilsFnc.getDistance(point1,point2);
 
-
-    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-
+    
+    if (typeVehicule == "moto") {
+      if (nuit =="1") {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
+      }else {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+      }
+    } else if(typeVehicule =="standard") {
+      if (nuit =="1") {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+      }else {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
+      }
+    }else {
+      if (nuit =="1") {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
+      }else {
+        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+      }
+    }
+  
+  
     result["depart"] = point1;
     result["arrive"] = point2;
-
+  
   
    return res.status(200).json({
         message: 'distance évaluer ',
