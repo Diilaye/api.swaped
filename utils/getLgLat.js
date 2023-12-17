@@ -53,7 +53,7 @@ exports.getLgLatFunc = async (input , pays) => {
 
 
 
-exports.getDistance =  (point1,point2 ) => {
+exports.getDistance =  (point1,point2,vehicule) => {
 
     const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?origins=${point1.lat},${point1.lng}&destinations=${point2.lat},${point2.lng}&key=${process.env.MAPKEY}`;
 

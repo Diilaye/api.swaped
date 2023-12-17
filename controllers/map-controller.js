@@ -179,7 +179,6 @@ exports.livraisonDepart = async (req,res) => {
       depart,
       arrive,
       pays,
-      typeVehicule,
       nuit
     } = req.query;
 
@@ -188,10 +187,6 @@ exports.livraisonDepart = async (req,res) => {
   
   if (pays == undefined) {
     pays = 'gn';
-  }
-
-  if (typeVehicule == undefined) {
-    typeVehicule = 'moto';
   }
 
   if (nuit == undefined) {
@@ -203,29 +198,21 @@ exports.livraisonDepart = async (req,res) => {
   
     result = await  utiilsFnc.getDistance(point1,point2);
 
-    
-    if (typeVehicule == "moto") {
-      if (nuit =="1") {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
-      }else {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-      }
-    } else if(typeVehicule =="standard") {
-      if (nuit =="1") {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
-      }else {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
-      }
+
+
+    if (nuit =="1") {
+      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
+      result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+      result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
     }else {
-      if (nuit =="1") {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
-      }else {
-        result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
-      }
+      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+      result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
+      result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
     }
   
   
     result["depart"] = point1;
+
     result["arrive"] = point2;
   
   
