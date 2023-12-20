@@ -13,8 +13,8 @@ require('dotenv').config({
 
 exports.getLgLatFunc = async (input , pays) => {
 
-    
-   
+
+
 
     const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
 
@@ -23,6 +23,8 @@ exports.getLgLatFunc = async (input , pays) => {
             address: input,
             key: process.env.MAPKEY,
             components: 'country:' + pays,
+            result_type: 'street_address', // Specify the result type (e.g., street_address)
+            location_type: 'ROOFTOP', 
         }
     })
         .then(response => {
@@ -53,14 +55,14 @@ exports.getLgLatFunc = async (input , pays) => {
 
 
 
-exports.getDistance =  (point1,point2,vehicule) => {
+exports.getDistance =  (point1,point2) => {
 
-    const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?origins=${point1.lat},${point1.lng}&destinations=${point2.lat},${point2.lng}&key=${process.env.MAPKEY}`;
+    const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${point1.lat},${point1.lng}&destinations=${point2.lat},${point2.lng}&key=${process.env.MAPKEY}`;
+    // const apiUrl = ` https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=9.5931300,-13.6456790&destinations=9.5754717,-13.6198829&key=${process.env.MAPKEY}`;
 
     try {
         return axios.get(apiUrl )
      .then(response => {
-        console.log(response.data.rows[0].elements[0]);
         if (response.data.status === 'OK' ) {
            return response.data.rows[0].elements[0];
           } else {

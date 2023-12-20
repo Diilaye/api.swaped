@@ -173,7 +173,6 @@ exports.livraison = async (req,res) => {
 exports.livraisonDepart = async (req,res) => {
 
   
-
   try {
     let {
       depart,
@@ -195,7 +194,10 @@ exports.livraisonDepart = async (req,res) => {
   
     const point1 = await utiilsFnc.getLgLatFunc(depart,pays);
     const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
-  
+
+    console.log(point1);
+    console.log(point2);
+
     result = await  utiilsFnc.getDistance(point1,point2);
 
 
@@ -232,3 +234,11 @@ exports.livraisonDepart = async (req,res) => {
   }
 
 }
+
+function areCoordinatesEqual(coord1, coord2, tolerance = 0.0001) {
+  const latDiff = Math.abs(coord1.latitude - coord2.latitude);
+  const lngDiff = Math.abs(coord1.longitude - coord2.longitude);
+
+  return latDiff < tolerance && lngDiff < tolerance;
+}
+

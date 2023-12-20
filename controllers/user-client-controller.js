@@ -1,5 +1,7 @@
 const userClientModel = require('../models/user-client');
 
+const adminUser = require('../models/admin');
+
 const bcrytjs = require('bcryptjs');
 
 const axios = require('axios');
@@ -72,7 +74,6 @@ exports.auth = async (req, res) =>{
     try {
 
         let{password , telephone } = req.body;
-
       
         const findUserAdmin = await userClientModel.findOne({
             telephone : telephone
@@ -105,12 +106,46 @@ exports.auth = async (req, res) =>{
                 });
             }
         }else {
-            return res.status(404).json({
-                message: 'Identifiant incorrect',
-                status: 'NOT OK',
-                data: null,
-                statusCode: 404
-            });
+
+            const admin = await adminUser.findOne({
+                telephone : telephone
+            }).exec();
+
+            if (admin != undefined) {
+                if (bcrytjs.compareSync(password, admin.password)) {
+
+                    const token = jwt.sign({
+                        id_user: admin.id,
+                    }, process.env.JWT_SECRET, { expiresIn: '8784h' });
+    
+                    admin.token = token ;
+    
+                    const saveUserAdmin = await admin.save();
+    
+                    return res.status(200).json({
+                        message: 'Connection réussi',
+                        status: 'OK',
+                        data:saveUserAdmin,
+                        statusCode: 200
+                    });
+                }else {
+                    return res.status(404).json({
+                        message: 'Identifiant incorrect',
+                        status: 'NOT OK',
+                        data: null,
+                        statusCode: 404
+                    });
+                }
+            }else {
+                return res.status(404).json({
+                    message: 'Identifiant incorrect',
+                    status: 'NOT OK',
+                    data: null,
+                    statusCode: 404
+                });
+            }
+
+            
         }
 
     } catch (error) {
