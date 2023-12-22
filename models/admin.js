@@ -6,7 +6,7 @@ const AdminModels = new Schema({
 
     service: {
         type : String,
-        enum: ['restaurant','logement' ,"admin",'commercial'],
+        enum: ['restaurant','logement' ,"admin",'commercial',"mobilite"],
         default: 'logement'
     },
 
@@ -16,6 +16,11 @@ const AdminModels = new Schema({
     },
 
     prenom : {
+        type: String,
+        default :""
+    },
+
+    telephone : {
         type: String,
         default :""
     },

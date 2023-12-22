@@ -105,6 +105,7 @@ try {
 
 exports.addPartenaire = async (req,res ,next) => {
 
+    
    
 
         try {
@@ -148,10 +149,12 @@ exports.addPartenaire = async (req,res ,next) => {
                 user.service = service;
             
                 user.nom = nom;
-
+        
                 user.idPartenaire = partenaireFind.id;
             
                 user.prenom = prenom;
+        
+                user.telephone = partenaireFind.telephoneInterlocuteur;
             
                 user.password = passwordCrypt;
             
@@ -175,7 +178,7 @@ exports.addPartenaire = async (req,res ,next) => {
         
                     logement.service = "logement";
                     logement.pays = partenaireFind.pays;
-
+        
                     logement.idParent = userSave.id;
                     logement.nomEntreprise = partenaireFind.nomEntreprise ;
                     logement.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
@@ -187,19 +190,19 @@ exports.addPartenaire = async (req,res ,next) => {
         
                 }else if(service =="restaurant"){
                     const restaurant = restaurantModel();
-
+        
                     restaurant.service = "restaurant";
-
+        
                     restaurant.pays = partenaireFind.pays;
-
+        
                     restaurant.idParent = userSave.id ;
-
+        
                     restaurant.nomEntreprise = partenaireFind.nomEntreprise ;
-
+        
                     restaurant.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
-
+        
                     restaurant.telephone = partenaireFind.telephoneInterlocuteur ;
-
+        
                     restaurant.photoCover = partenaireFind.photoExterieur[0] ;
                     
                     restaurant.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne] ;
@@ -208,67 +211,63 @@ exports.addPartenaire = async (req,res ,next) => {
                     
                 }
                 else {
-
-
+        
+        
                     const wallet = walletModel();
-
+        
                     wallet.userId = userSave.id ;
                     
                     wallet.phoneWallet = user.telephone ;
-
+        
                     wallet.idWallet = DateTime.now().ts;
-
-                    wallet.typeWallet = typeWallet ;
-
+        
+                    wallet.typeWallet = "admin" ;
+        
                     const walletSave = await wallet.save();
                     
                     const vehicule = vehiculeModel();
-
+        
                     vehicule.service ="mobilite";
                 
                     vehicule.pays = partenaireFind.pays;
                 
                     vehicule.idParent = userSave.id ;
                 
-                    nomEntreprise ,
+                    vehicule.telephone  = partenaireFind.telephoneInterlocuteur ; 
                 
-                    descriptionEntreprise ,
+                    vehicule.photoProfile = partenaireFind.photoExterieur[0] ;
                 
-                    telephone  = partenaireFind.telephoneInterlocuteur ; 
+                    vehicule.pieceIdentite = partenaireFind.photoExterieur[1]  ;
                 
-                    vehicule.photoProfile = photoExterieur[0] ;
+                    vehicule.permisConduire = partenaireFind.photoInterne[0] ;
                 
-                    pieceIdentite = photoExterieur[1]  ;
+                    vehicule.photoVehicule  = partenaireFind.photoInterne[3] ;
                 
-                    permisConduire = photoInterne[0] ;
+                    vehicule.assurance  = partenaireFind.photoInterne[1] ;
                 
-                    photoVehicule  = photoInterne[3] ;
+                    vehicule.carteGrise  = partenaireFind.photoInterne[2] ;
                 
-                    assurance  = photoInterne[1] ;
-                
-                    carteGrise  = photoInterne[2] ;
-                
-                    walletDriver = walletSave.id; 
-
+                    vehicule.walletDriver = walletSave.id; 
+        
                     vehicule.status = "active";
-
+        
                     vehicule.nom =partenaireFind.nomInterlocuteur;
-
+        
                     vehicule.prenom =partenaireFind.prenomInterlocuteur;
         
                     vehicule.immatriculation  = partenaireFind.descriptionEntreprise.split(" |0")[0];
-
+        
                     vehicule.marque  = partenaireFind.descriptionEntreprise.split(" |0")[1];
-
+        
                     vehicule.modelVehicule  = partenaireFind.descriptionEntreprise.split(" |0")[2];
-
+        
                     vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
-
-                    vehicule.typeVehicule= nomEntreprise.split("++")[0];
-
-                    vehicule.typeLuxe= nomEntreprise.split("++")[0];
+        
+                    vehicule.typeVehicule= nomEntreprise.split("++")[1];
+        
+                    vehicule.typeLuxe= nomEntreprise.split("++")[2];
                 
-
+        
                     const saveVehicule = await vehicule.save();
                 }
             
