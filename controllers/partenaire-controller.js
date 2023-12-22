@@ -6,7 +6,13 @@ const logementModel = require('../models/logement-model');
 
 const restaurantModel = require('../models/restaurant-model');
 
+const vehiculeModel = require('../models/vehicule');
+
 const bcrytjs = require('bcryptjs');
+
+const walletModel = require('../models/wallet');
+
+const { DateTime } = require('luxon');
 
 
 const salt = bcrytjs.genSaltSync(10);
@@ -202,7 +208,68 @@ exports.addPartenaire = async (req,res ,next) => {
                     
                 }
                 else {
+
+
+                    const wallet = walletModel();
+
+                    wallet.userId = userSave.id ;
+                    
+                    wallet.phoneWallet = user.telephone ;
+
+                    wallet.idWallet = DateTime.now().ts;
+
+                    wallet.typeWallet = typeWallet ;
+
+                    const walletSave = await wallet.save();
+                    
+                    const vehicule = vehiculeModel();
+
+                    vehicule.service ="mobilite";
+                
+                    vehicule.pays = partenaireFind.pays;
+                
+                    vehicule.idParent = userSave.id ;
+                
+                    nomEntreprise ,
+                
+                    descriptionEntreprise ,
+                
+                    telephone  = partenaireFind.telephoneInterlocuteur ; 
+                
+                    vehicule.photoProfile = photoExterieur[0] ;
+                
+                    pieceIdentite = photoExterieur[1]  ;
+                
+                    permisConduire = photoInterne[0] ;
+                
+                    photoVehicule  = photoInterne[3] ;
+                
+                    assurance  = photoInterne[1] ;
+                
+                    carteGrise  = photoInterne[2] ;
+                
+                    walletDriver = walletSave.id; 
+
+                    vehicule.status = "active";
+
+                    vehicule.nom =partenaireFind.nomInterlocuteur;
+
+                    vehicule.prenom =partenaireFind.prenomInterlocuteur;
         
+                    vehicule.immatriculation  = partenaireFind.descriptionEntreprise.split(" |0")[0];
+
+                    vehicule.marque  = partenaireFind.descriptionEntreprise.split(" |0")[1];
+
+                    vehicule.modelVehicule  = partenaireFind.descriptionEntreprise.split(" |0")[2];
+
+                    vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
+
+                    vehicule.typeVehicule= nomEntreprise.split("++")[0];
+
+                    vehicule.typeLuxe= nomEntreprise.split("++")[0];
+                
+
+                    const saveVehicule = await vehicule.save();
                 }
             
                 return  res.status(201).json({
