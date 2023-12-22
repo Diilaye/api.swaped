@@ -262,6 +262,8 @@ exports.addPartenaire = async (req,res ,next) => {
                     vehicule.modelVehicule  = partenaireFind.descriptionEntreprise.split(" |0")[2];
         
                     vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
+
+                    console.log(nomEntreprise.split("++").length );
         
                     if(nomEntreprise.split("++").length != 3) {
                         vehicule.typeVehicule= "moto";
