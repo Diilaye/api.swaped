@@ -483,7 +483,13 @@ exports.suspendre = async (req,res) =>{
    try {
     const partenaireFind = await partenaireModel.findById(req.params.id).populate(populateObject).exec();
 
-    partenaireFind.status = "canceled";
+    if(partenaireFind.status == "active") {
+        partenaireFind.status = "canceled";
+    }else {
+        partenaireFind.status = "active";
+
+    }
+
 
     const savePartenaire = await partenaireFind.save();
 
