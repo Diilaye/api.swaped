@@ -52,6 +52,8 @@ const pannierCommandeRoute = require('./routes/pannier-commande-route');
 
 const deplacementRoute = require('./routes/deplacement-route');
 
+const coursesRouter = require('./routes/courses-route')
+
 
 const  paypal = require('paypal-rest-sdk');
 

@@ -49,6 +49,7 @@ const ClientModels = new Schema({
         type: String,
         default :"active"
    },
+
   
    token : {
     type: String,

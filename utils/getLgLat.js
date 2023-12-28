@@ -23,12 +23,12 @@ exports.getLgLatFunc = async (input , pays) => {
             address: input,
             key: process.env.MAPKEY,
             components: 'country:' + pays,
-            result_type: 'street_address', // Specify the result type (e.g., street_address)
-            location_type: 'ROOFTOP', 
+            result_type: 'establishment', // Specify the result type (e.g., street_address)
+            location_type: 'APPROXIMATE', 
         }
     })
         .then(response => {
-            console.log('Geocoding API Response:', response.data);
+            // console.log('Geocoding API Response:', response.data);
     
             const results = response.data.results;
     
@@ -36,7 +36,7 @@ exports.getLgLatFunc = async (input , pays) => {
                 const location = results[0].geometry.location;
                 const latitude = location.lat;
                 const longitude = location.lng;
-                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                // console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
                 return location;
             } else {
                 console.error('No results found for the given address.');

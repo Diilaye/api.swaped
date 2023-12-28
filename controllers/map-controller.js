@@ -173,35 +173,52 @@ exports.livraison = async (req,res) => {
 exports.livraisonDepart = async (req,res) => {
 
   
+  
   try {
     let {
+      lat ,
+      lng,
       depart,
       arrive,
       pays,
       nuit
     } = req.query;
-
+  
     console.log(req.query);
   
   
   if (pays == undefined) {
     pays = 'gn';
   }
-
+  
   if (nuit == undefined) {
     nuit = '0';
   }
   
-    const point1 = await utiilsFnc.getLgLatFunc(depart,pays);
+  let  point1 = {};
+  
+  if(lat != undefined && lng != undefined) {
+  
+    point1 = {lat,lng};
+    console.log(point1);
+    console.log("await utiilsFnc.getLgLatFunc(depart,pays)");
+  
+  }else {
+     point1 = await utiilsFnc.getLgLatFunc(depart,pays);
+  
+  }
+  
     const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
-
+  
     console.log(point1);
     console.log(point2);
-
+  
     result = await  utiilsFnc.getDistance(point1,point2);
-
-
-
+  
+    console.log(result);
+  
+  
+  
     if (nuit =="1") {
       result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
       result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
@@ -214,7 +231,7 @@ exports.livraisonDepart = async (req,res) => {
   
   
     result["depart"] = point1;
-
+  
     result["arrive"] = point2;
   
   
@@ -224,6 +241,7 @@ exports.livraisonDepart = async (req,res) => {
         data: result,
         statusCode: 200
     })
+  
   } catch (error) {
     return res.status(404).json({
       message: 'erreur serveur ',
