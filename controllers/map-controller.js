@@ -6,7 +6,7 @@ require('dotenv').config({
     path:'./.env'
 });
 
-const { getPriceLivriason } =require('../utils/get-livraison-price');
+const { getPriceLivriason, getFee } =require('../utils/get-livraison-price');
 
 
 
@@ -199,13 +199,13 @@ exports.livraisonDepart = async (req,res) => {
   
   if(lat != undefined && lng != undefined) {
   
-    point1 = {lat,lng};
-    console.log(point1);
-    console.log("await utiilsFnc.getLgLatFunc(depart,pays)");
+    point1 = { 
+      lat : parseFloat(lat), 
+      lng: parseFloat(lng)
+    };
   
   }else {
      point1 = await utiilsFnc.getLgLatFunc(depart,pays);
-  
   }
   
     const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
@@ -216,17 +216,31 @@ exports.livraisonDepart = async (req,res) => {
     result = await  utiilsFnc.getDistance(point1,point2);
   
     console.log(result);
-  
+
   
   
     if (nuit =="1") {
+      
       result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
+      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 3.5))));
+
       result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+      result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
+
       result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
+      result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 10))));
+
     }else {
+      
       result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 2.5))));
+
       result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
+      result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 5.5))));
+
       result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+      result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
+      
     }
   
   
