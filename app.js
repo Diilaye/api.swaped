@@ -124,7 +124,9 @@ app.use('/v1/api/pannier' ,pannierRoute);
 
 app.use('/v1/api/pannier-commande' ,pannierCommandeRoute);
 
-app.use('/v1/api/courses' ,deplacementRoute);
+app.use('/v1/api/deplacements' ,deplacementRoute);
+
+app.use('/v1/api/courses' ,coursesRouter);
 
 
 
