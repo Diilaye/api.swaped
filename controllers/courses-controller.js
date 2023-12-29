@@ -4,7 +4,6 @@ exports.storeDeplacemnt = async (req,res ) => {
 
     try {
         let {
-            mobilite,
         
             prix_total,
         
@@ -31,7 +30,6 @@ exports.storeDeplacemnt = async (req,res ) => {
         const course = courseModel();
     
         course.client = req.user.id_user;
-        course.mobilite = mobilite;
         course.prix_total = prix_total;
         course.prix_offre = prix_offre;
         course.pointDepart = pointDepart;
