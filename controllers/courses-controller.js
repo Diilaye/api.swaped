@@ -22,7 +22,9 @@ exports.storeDeplacemnt = async (req,res ) => {
         
             statusDate ,
         
-            dateCourses 
+            dateCourses ,
+
+            statusLivraisonVehicule
     
         } = req.body;
     
@@ -39,6 +41,7 @@ exports.storeDeplacemnt = async (req,res ) => {
         course.statusLivraison = statusLivraison;
         course.statusDate = statusDate;
         course.dateCourses = dateCourses;
+        course.statusLivraisonVehicule = statusLivraisonVehicule;
     
         const courseS =await course.save();
     
@@ -95,6 +98,7 @@ exports.storeLivraison = async (req,res ) => {
         course.addresseDepart = addresseDepart;
         course.addresseArrive = addresseArrive;
         course.statusLivraison = "livraison";
+        course.statusLivraisonVehicule = "moto";
     
         const courseS =await course.save();
     
@@ -140,4 +144,4 @@ exports.all = async (req,res) => {
             statusCode: 404
         });
     }
-}
+}   

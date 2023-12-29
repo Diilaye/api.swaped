@@ -55,6 +55,12 @@ const CoursesModel = new Schema({
         default: 'livraison'
     },
 
+    statusLivraisonVehicule: {
+        type: String,
+        enum: ['moto', 'confort' ,'standard'],
+        default: 'moto'
+    },
+
     statusDate : {
         type: String,
         enum: ['now', 'after'],
