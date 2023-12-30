@@ -14,6 +14,14 @@ const VehiculeModel = new Schema({
         default: 'moto'
     },
 
+    localisation : {
+        type : Map,
+        default : {
+            lat: 0,
+            lng:0
+        }
+    },
+
 
     typeLuxe: {
         type : String,
@@ -26,6 +34,12 @@ const VehiculeModel = new Schema({
         type : String,
         enum: ['gn','ci','sn'],
         default: 'gn'
+    },
+
+    online: {
+        type : String,
+        enum: ['on','off','suspend'],
+        default: 'off'
     },
 
     idParent : {
