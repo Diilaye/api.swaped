@@ -1,5 +1,9 @@
 const vehiculeModel = require('../models/vehicule');
 
+const objectPopulate = [{
+    path : 'walletDriver'
+}];
+
 exports.all = async (req,res )=> {
     try {
         const vehicules = await vehiculeModel.find();
@@ -24,7 +28,7 @@ exports.me = async (req,res )=> {
     try {
         const vehicules = await vehiculeModel.findOne({
             idParent : req.user.id_user
-        });
+        }).populate(objectPopulate).exec();
 
         return res.json({
             message : "listes des vehicules",
