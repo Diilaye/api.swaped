@@ -20,6 +20,29 @@ exports.all = async (req,res )=> {
     }
 }
 
+exports.me = async (req,res )=> {
+    try {
+        const vehicules = await vehiculeModel.findOne({
+            idParent : req.user.id_user
+        });
+
+        return res.json({
+            message : "listes des vehicules",
+            status : 200,
+            data : vehicules,
+            statusCode : 'OK'
+        });
+    } catch (error) {
+        return res.status(404).json({
+            message : "error data",
+            status : 404,
+            data : error,
+            statusCode : 'NOT OK'
+        });
+    }
+}
+
+
 exports.position = async (req, res ) => {
 
     
