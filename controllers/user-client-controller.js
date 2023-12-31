@@ -71,25 +71,59 @@ exports.store = async (req , res , next) => {
 
 exports.auth = async (req, res) =>{
 
+    
+
     try {
 
         let{password , telephone } = req.body;
       
-        const findUserAdmin = await userClientModel.findOne({
+    const findUserAdmin = await userClientModel.findOne({
+        telephone : telephone
+    }).exec();
+   
+
+    if (findUserAdmin != undefined) {
+        if (bcrytjs.compareSync(password, findUserAdmin.password)) {
+
+            const token = jwt.sign({
+                id_user: findUserAdmin.id,
+            }, process.env.JWT_SECRET, { expiresIn: '8784h' });
+
+            findUserAdmin.token = token ;
+
+            const saveUserAdmin = await findUserAdmin.save();
+
+            return res.status(200).json({
+                message: 'Connection réussi',
+                status: 'OK',
+                data:saveUserAdmin,
+                statusCode: 200
+            });
+        }else {
+            return res.status(404).json({
+                message: 'Identifiant incorrect',
+                status: 'NOT OK',
+                data: null,
+                statusCode: 404
+            });
+        }
+    }else {
+
+        const admin = await adminUser.findOne({
             telephone : telephone
         }).exec();
-       
 
-        if (findUserAdmin != undefined) {
-            if (bcrytjs.compareSync(password, findUserAdmin.password)) {
+        if (admin != undefined) {
+            if (bcrytjs.compareSync(password, admin.password)) {
 
                 const token = jwt.sign({
-                    id_user: findUserAdmin.id,
+                    id_user: admin.id,
+                    service_user : admin.service , 
                 }, process.env.JWT_SECRET, { expiresIn: '8784h' });
 
-                findUserAdmin.token = token ;
+                admin.token = token ;
 
-                const saveUserAdmin = await findUserAdmin.save();
+                const saveUserAdmin = await admin.save();
 
                 return res.status(200).json({
                     message: 'Connection réussi',
@@ -106,47 +140,16 @@ exports.auth = async (req, res) =>{
                 });
             }
         }else {
-
-            const admin = await adminUser.findOne({
-                telephone : telephone
-            }).exec();
-
-            if (admin != undefined) {
-                if (bcrytjs.compareSync(password, admin.password)) {
-
-                    const token = jwt.sign({
-                        id_user: admin.id,
-                    }, process.env.JWT_SECRET, { expiresIn: '8784h' });
-    
-                    admin.token = token ;
-    
-                    const saveUserAdmin = await admin.save();
-    
-                    return res.status(200).json({
-                        message: 'Connection réussi',
-                        status: 'OK',
-                        data:saveUserAdmin,
-                        statusCode: 200
-                    });
-                }else {
-                    return res.status(404).json({
-                        message: 'Identifiant incorrect',
-                        status: 'NOT OK',
-                        data: null,
-                        statusCode: 404
-                    });
-                }
-            }else {
-                return res.status(404).json({
-                    message: 'Identifiant incorrect',
-                    status: 'NOT OK',
-                    data: null,
-                    statusCode: 404
-                });
-            }
-
-            
+            return res.status(404).json({
+                message: 'Identifiant incorrect',
+                status: 'NOT OK',
+                data: null,
+                statusCode: 404
+            });
         }
+
+        
+    }
 
     } catch (error) {
         return res.status(404).json({

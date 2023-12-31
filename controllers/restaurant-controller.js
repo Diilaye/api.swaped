@@ -66,72 +66,7 @@ exports.one = async (req,res) => {
 
 exports.all = async (req ,res )=> {
 
-    let {
-        pays,
-        lng,
-        lat
-    } = req.query;
-
-    if (pays == undefined) {
-        pays = 'gn';
-      }
-    
-    const restaurants = await restaurantModel.find({
-        pays : pays,
-        adresse : {
-            $ne:""
-        }
-    }).populate(populateObjectRestaurantsPlats).exec();
-    
-    const restauranFind = [];
-    
-    
-    for (const iterator of restaurants) {
-        const object = Object.assign(iterator);
-        const result = {};
-        // Trouver le plus petit tarif
-    
-        let plusPetitTarif =0;
-        let plusGrandTarif = 0;
-    
-        if(object.plats.length !=0) {
-            plusPetitTarif = object.plats.map((plat) => plat["tarif"]).reduce((a, b) => a < b ? a : b);
-    
-            // Trouver le plus grand tarif
-            plusGrandTarif = object.plats.map((plat) => plat["tarif"]).reduce((a, b) => a > b ? a : b);
-        }
-    
-        result["restaurant"] = iterator;
-        result["minTarif"] = plusPetitTarif;
-        result["maxTarif"] = plusGrandTarif;
-        if (lat != undefined && lng != undefined) {
-    
-            const point1 = await utiilsFnc.getLgLatFunc(iterator.adresse , pays);
-    
-            const point2 = {lat : parseFloat(lat) , lng : parseFloat(lng) }
-            
-           
-            result["info"] = await  utiilsFnc.getDistance(point2, point1 );
-    
-        }else {
-            result["info"] = {
-                distance: { text: '0 km', value: 100000000000 },
-                duration: { text: '0 mins', value: 0 },
-                status: 'NOT OK'
-            };    
-        }
-        restauranFind.push(result);
-    }
-    
-    // Sort the restaurants by distance (ascending order)
-    restauranFind.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-    
-    return  res.status(200).json({
-        message: 'listage réussi',
-        status: 'OK',
-        data: restauranFind,
-        statusCode: 200
-    });
+  
    
 
     try {
@@ -142,6 +77,10 @@ exports.all = async (req ,res )=> {
             lng,
             lat
         } = req.query;
+    
+        if (pays == undefined) {
+            pays = 'gn';
+          }
         
         const restaurants = await restaurantModel.find({
             pays : pays,
@@ -173,7 +112,7 @@ exports.all = async (req ,res )=> {
             result["maxTarif"] = plusGrandTarif;
             if (lat != undefined && lng != undefined) {
         
-                const point1 = await utiilsFnc.getLgLat(iterator.adresse);
+                const point1 = await utiilsFnc.getLgLatFunc(iterator.adresse , pays);
         
                 const point2 = {lat : parseFloat(lat) , lng : parseFloat(lng) }
                 
@@ -199,7 +138,6 @@ exports.all = async (req ,res )=> {
             data: restauranFind,
             statusCode: 200
         });
-
        
 
     } catch (error) {

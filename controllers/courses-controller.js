@@ -42,7 +42,8 @@ exports.storeDeplacemnt = async (req,res ) => {
         course.statusLivraisonVehicule = statusLivraisonVehicule;
     
         const courseS =await course.save();
-    
+
+      
         return  res.status(201).json({
             message: 'Creation de courses',
             status: 'OK',
