@@ -159,6 +159,12 @@ const VehiculeModel = new Schema({
         default :[]
     }],
 
+    courseSelected : {
+        type: Schema.Types.ObjectId,
+        ref :'courses-model',
+        default :null
+    },
+
     transactions : [{
         type: Schema.Types.ObjectId,
         ref :'wallet-transactions',
