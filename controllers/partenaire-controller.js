@@ -106,194 +106,190 @@ try {
 exports.addPartenaire = async (req,res ,next) => {
 
 
-    let {
-
-        id,
-
-        service,
-
-        nom ,
-    
-        prenom,
-
-        nomEntreprise,
-    
-    } = req.body;
-
-    
-
    
-        if(service =="admin") {
-             return res.status(404).json({
-                message: 'erreur serveur ',
-                statusCode: 404,
-                data: "Vous pouvez pas enregister un admin",
-                status: 'NOT OK'
-            });
-        }
-    
-        const partenaireFind = await partenaireModel.findById(id).populate(populateObject).exec(); 
-
-        partenaireFind.status = "active";
-
-        const partenaireSave = await partenaireFind.save();
-    
-        const passwordCrypt = bcrytjs.hashSync("swaped123", salt);
-    
-        const user = adminModel();
-    
-        user.service = service;
-    
-        user.nom = nom;
-
-        user.idPartenaire = partenaireFind.id;
-    
-        user.prenom = prenom;
-
-        user.telephone = partenaireFind.telephoneInterlocuteur;
-    
-        user.password = passwordCrypt;
-    
-        user.identifiant = nom.toLowerCase().trim() + "." + nomEntreprise.split(' ')[0].toLowerCase();
-    
-        const token = jwt.sign({
-            id_user: user.id,
-            service_user : user.service , 
-            identifiant_user : user.identifiant
-        }, process.env.JWT_SECRET, { expiresIn: '8784h' });
-    
-        user.token = token;
-        
-        
-        const userSave = await user.save();
-
-       
-        if (service == "logement") {
-
-            const logement = logementModel();
-
-            logement.service = "logement";
-            logement.pays = partenaireFind.pays;
-
-            logement.idParent = userSave.id;
-            logement.nomEntreprise = partenaireFind.nomEntreprise ;
-            logement.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
-            logement.photoCover = partenaireFind.photoExterieur[0] ;
-            logement.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne]  ;
-
-            const saveLogement = await logement.save();
-            
-
-        }else if(service =="restaurant"){
-            const restaurant = restaurantModel();
-
-            restaurant.service = "restaurant";
-
-            restaurant.pays = partenaireFind.pays;
-
-            restaurant.idParent = userSave.id ;
-
-            restaurant.nomEntreprise = partenaireFind.nomEntreprise ;
-
-            restaurant.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
-
-            restaurant.telephone = partenaireFind.telephoneInterlocuteur ;
-
-            restaurant.photoCover = partenaireFind.photoExterieur[0] ;
-            
-            restaurant.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne] ;
-        
-            const saveRestaurant = await restaurant.save();
-            
-        }
-        else {
-
-
-            const wallet = walletModel();
-
-            wallet.userId = userSave.id ;
-            
-            wallet.phoneWallet = user.telephone ;
-
-            wallet.idWallet = DateTime.now().ts;
-
-            wallet.typeWallet = "admin" ;
-
-            const walletSave = await wallet.save();
-            
-            const vehicule = vehiculeModel();
-
-            vehicule.service ="mobilite";
-        
-            vehicule.pays = partenaireFind.pays;
-        
-            vehicule.idParent = userSave.id ;
-        
-            vehicule.telephone  = partenaireFind.telephoneInterlocuteur ; 
-        
-            vehicule.photoProfile = partenaireFind.photoExterieur[0] ;
-        
-            vehicule.pieceIdentite = partenaireFind.photoExterieur[1]  ;
-        
-            vehicule.permisConduire = partenaireFind.photoInterne[0] ;
-        
-            vehicule.photoVehicule  = partenaireFind.photoInterne[3] ;
-        
-            vehicule.assurance  = partenaireFind.photoInterne[1] ;
-        
-            vehicule.carteGrise  = partenaireFind.photoInterne[2] ;
-        
-            vehicule.walletDriver = walletSave.id; 
-
-            vehicule.status = "active";
-
-            vehicule.nom =partenaireFind.nomInterlocuteur;
-
-            vehicule.prenom =partenaireFind.prenomInterlocuteur;
-
-            vehicule.immatriculation  = partenaireFind.descriptionEntreprise.split(" |0")[0];
-
-            vehicule.marque  = partenaireFind.descriptionEntreprise.split(" |0")[1];
-
-            vehicule.modelVehicule  = partenaireFind.descriptionEntreprise.split(" |0")[2];
-
-            vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
-
-            console.log("nomEntreprise.split(++).length" );
-            console.log(nomEntreprise.split("++").length );
-
-            if(nomEntreprise.split("++").length != 3) {
-
-                vehicule.typeVehicule= "moto";
-
-                vehicule.typeLuxe= "standard";
-
-            }else {
-                vehicule.typeVehicule= nomEntreprise.split("++")[1];
-
-                vehicule.typeLuxe= nomEntreprise.split("++")[2];
-            }
-
-            
-        
-
-            const saveVehicule = await vehicule.save();
-
-            console.log(saveVehicule);
-        }
-    
-        return  res.status(201).json({
-            message: 'creation réussi',
-            status: 'OK',
-            data: userSave,
-            statusCode: 201
-        });
     
    
 
         try {
 
+            let {
+
+                id,
+        
+                service,
+        
+                nom ,
+            
+                prenom,
+        
+                nomEntreprise,
+            
+            } = req.body;
+        
+            
+        
            
+                if(service =="admin") {
+                     return res.status(404).json({
+                        message: 'erreur serveur ',
+                        statusCode: 404,
+                        data: "Vous pouvez pas enregister un admin",
+                        status: 'NOT OK'
+                    });
+                }
+            
+                const partenaireFind = await partenaireModel.findById(id).populate(populateObject).exec(); 
+        
+                partenaireFind.status = "active";
+        
+                const partenaireSave = await partenaireFind.save();
+            
+                const passwordCrypt = bcrytjs.hashSync("swaped123", salt);
+            
+                const user = adminModel();
+            
+                user.service = service;
+            
+                user.nom = nom;
+        
+                user.idPartenaire = partenaireFind.id;
+            
+                user.prenom = prenom;
+        
+                user.telephone = partenaireFind.telephoneInterlocuteur;
+            
+                user.password = passwordCrypt;
+            
+                user.identifiant = nom.toLowerCase().trim() + "." + nomEntreprise.split(' ')[0].toLowerCase();
+            
+                const token = jwt.sign({
+                    id_user: user.id,
+                    service_user : user.service , 
+                    identifiant_user : user.identifiant
+                }, process.env.JWT_SECRET, { expiresIn: '8784h' });
+            
+                user.token = token;
+                
+                
+                const userSave = await user.save();
+        
+               
+                if (service == "logement") {
+        
+                    const logement = logementModel();
+        
+                    logement.service = "logement";
+                    logement.pays = partenaireFind.pays;
+        
+                    logement.idParent = userSave.id;
+                    logement.nomEntreprise = partenaireFind.nomEntreprise ;
+                    logement.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
+                    logement.photoCover = partenaireFind.photoExterieur[0] ;
+                    logement.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne]  ;
+        
+                    const saveLogement = await logement.save();
+                    
+        
+                }else if(service =="restaurant"){
+                    const restaurant = restaurantModel();
+        
+                    restaurant.service = "restaurant";
+        
+                    restaurant.pays = partenaireFind.pays;
+        
+                    restaurant.idParent = userSave.id ;
+        
+                    restaurant.nomEntreprise = partenaireFind.nomEntreprise ;
+        
+                    restaurant.descriptionEntreprise = partenaireFind.descriptionEntreprise ;
+        
+                    restaurant.telephone = partenaireFind.telephoneInterlocuteur ;
+        
+                    restaurant.photoCover = partenaireFind.photoExterieur[0] ;
+                    
+                    restaurant.gallerie = [...partenaireFind.photoExterieur, ...partenaireFind.photoInterne] ;
+                
+                    const saveRestaurant = await restaurant.save();
+                    
+                }
+                else {
+        
+        
+                    const wallet = walletModel();
+        
+                    wallet.userId = userSave.id ;
+                    
+                    wallet.phoneWallet = user.telephone ;
+        
+                    wallet.idWallet = DateTime.now().ts;
+        
+                    wallet.typeWallet = "admin" ;
+        
+                    const walletSave = await wallet.save();
+                    
+                    const vehicule = vehiculeModel();
+        
+                    vehicule.service ="mobilite";
+                
+                    vehicule.pays = partenaireFind.pays;
+                
+                    vehicule.idParent = userSave.id ;
+                
+                    vehicule.telephone  = partenaireFind.telephoneInterlocuteur ; 
+                
+                    vehicule.photoProfile = partenaireFind.photoExterieur[0] ;
+                
+                    vehicule.pieceIdentite = partenaireFind.photoExterieur[1]  ;
+                
+                    vehicule.permisConduire = partenaireFind.photoInterne[0] ;
+                
+                    vehicule.photoVehicule  = partenaireFind.photoInterne[3] ;
+                
+                    vehicule.assurance  = partenaireFind.photoInterne[1] ;
+                
+                    vehicule.carteGrise  = partenaireFind.photoInterne[2] ;
+                
+                    vehicule.walletDriver = walletSave.id; 
+        
+                    vehicule.status = "active";
+        
+                    vehicule.nom =partenaireFind.nomInterlocuteur;
+        
+                    vehicule.prenom =partenaireFind.prenomInterlocuteur;
+        
+                    vehicule.immatriculation  = partenaireFind.descriptionEntreprise.split(" |0")[0];
+        
+                    vehicule.marque  = partenaireFind.descriptionEntreprise.split(" |0")[1];
+        
+                    vehicule.modelVehicule  = partenaireFind.descriptionEntreprise.split(" |0")[2];
+        
+                    vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
+        
+                    console.log("nomEntreprise.split(++).length" );
+                    console.log(nomEntreprise.split("++").length );
+        
+                    if(nomEntreprise.split("++").length != 3) {
+        
+                        vehicule.typeVehicule= "moto";
+        
+                        vehicule.typeLuxe= "standard";
+        
+                    }else {
+                        vehicule.typeVehicule= nomEntreprise.split("++")[1];
+        
+                        vehicule.typeLuxe= nomEntreprise.split("++")[2];
+                    }
+        
+        
+                    const saveVehicule = await vehicule.save();
+                }
+            
+                return  res.status(201).json({
+                    message: 'creation réussi',
+                    status: 'OK',
+                    data: userSave,
+                    statusCode: 201
+                });
             
         
         } catch (error) {

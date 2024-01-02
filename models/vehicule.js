@@ -17,8 +17,8 @@ const VehiculeModel = new Schema({
     localisation : {
         type : Map,
         default : {
-            lat: 0.0,
-            lng:0.0
+            lat:9.5931494,
+            lng:-13.64572
         }
     },
 
