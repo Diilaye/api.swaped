@@ -278,6 +278,8 @@ exports.addPartenaire = async (req,res ,next) => {
         
 
             const saveVehicule = await vehicule.save();
+
+            console.log(saveVehicule);
         }
     
         return  res.status(201).json({
