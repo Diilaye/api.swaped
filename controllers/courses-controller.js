@@ -16,10 +16,11 @@ const objectPopulate = [{
 
 exports.storeDeplacemnt = async (req,res ) => {
 
-   
+    
 
 
     try {
+        
         let {
         
             prix_total,
@@ -44,7 +45,7 @@ exports.storeDeplacemnt = async (req,res ) => {
     
         } = req.body;
     
-        const course = await courseModel.find().exec();
+        const course = await courseModel();
     
         course.client = req.user.id_user;
         course.prix_total = prix_total;
@@ -65,6 +66,8 @@ exports.storeDeplacemnt = async (req,res ) => {
         let vehiculeTab = [];
     
         let vehiculeResult = [];
+    
+        let vehiculeResultAffiche = [];
     
     
         for (const iterator of vehicules) {
@@ -89,7 +92,11 @@ exports.storeDeplacemnt = async (req,res ) => {
     
                     vhFind.coursesActif.push(courseS.id);
     
-                    await vhFind.save();
+                   
+    
+                    const VHS = await vhFind.save();
+    
+                    vehiculeResultAffiche.push(VHS);
                 }
     
             }
@@ -120,10 +127,12 @@ exports.storeDeplacemnt = async (req,res ) => {
         return  res.status(201).json({
             message: 'Creation de courses',
             status: 'OK',
-            data:courseS,
+            data:{
+                "course" :courseS,
+                "liste-vehicule" :vehiculeResultAffiche 
+            },
             statusCode: 201
         });
-    
     
     } catch (error) {
         return res.status(404).json({

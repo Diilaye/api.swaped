@@ -263,9 +263,11 @@ exports.addPartenaire = async (req,res ,next) => {
         
                     vehicule.couleur  = partenaireFind.descriptionEntreprise.split(" |0")[3];
 
+                    console.log("nomEntreprise.split(++).length" );
                     console.log(nomEntreprise.split("++").length );
         
                     if(nomEntreprise.split("++").length != 3) {
+
                         vehicule.typeVehicule= "moto";
         
                         vehicule.typeLuxe= "standard";
@@ -276,9 +278,7 @@ exports.addPartenaire = async (req,res ,next) => {
                         vehicule.typeLuxe= nomEntreprise.split("++")[2];
                     }
 
-                    vehicule.typeVehicule= nomEntreprise.split("++")[1];
-        
-                    vehicule.typeLuxe= nomEntreprise.split("++")[2];
+                    
                 
         
                     const saveVehicule = await vehicule.save();
