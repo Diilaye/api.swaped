@@ -1,6 +1,23 @@
 const courseModel = require('../models/courses-model');
 
+const vehiculeModel = require('../models/vehicule');
+
+const utiilsFnc = require('../utils/getLgLat');
+
+
+const objectPopulate = [{
+    path : 'client',
+    select : 'telephone nom prenom'
+},{
+    path : 'mobilite'
+}];
+
+
+
 exports.storeDeplacemnt = async (req,res ) => {
+
+   
+
 
     try {
         let {
@@ -22,12 +39,12 @@ exports.storeDeplacemnt = async (req,res ) => {
             statusDate ,
         
             dateCourses ,
-
+    
             statusLivraisonVehicule
     
         } = req.body;
     
-        const course = courseModel();
+        const course = await courseModel.find().exec();
     
         course.client = req.user.id_user;
         course.prix_total = prix_total;
@@ -42,7 +59,63 @@ exports.storeDeplacemnt = async (req,res ) => {
         course.statusLivraisonVehicule = statusLivraisonVehicule;
     
         const courseS =await course.save();
-
+    
+        const vehicules = await vehiculeModel.find().exec();
+    
+        let vehiculeTab = [];
+    
+        let vehiculeResult = [];
+    
+    
+        for (const iterator of vehicules) {
+    
+            const result = {};
+    
+            if(iterator.online == "on" && iterator.typeVehicule == courseS.statusLivraisonVehicule ){
+    
+                result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
+    
+                result["vehicule"] = iterator ;
+        
+                vehiculeTab.push(result);
+               
+                vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+    
+                vehiculeResult = vehiculeTab.slice(0 , 5);
+    
+                for (const it of vehiculeResult) {
+    
+                    const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
+    
+                    vhFind.coursesActif.push(courseS.id);
+    
+                    await vhFind.save();
+                }
+    
+            }
+            
+    
+        }
+    
+    
+        let task ;
+    
+        let a = 0;
+    
+        task =  setInterval(()=> {
+    
+            a++;
+    
+    
+            if(a==4) {
+    
+                clearInterval(task);
+            
+            }
+    
+    
+        } , 60 * 1000);
+    
       
         return  res.status(201).json({
             message: 'Creation de courses',
@@ -125,7 +198,7 @@ exports.storeLivraison = async (req,res ) => {
 exports.all = async (req,res) => {
     try {
 
-        const courses = await courseModel.find(req.query).exec();
+        const courses = await courseModel.find(req.query).populate(objectPopulate).exec();
 
         return  res.status(200).json({
             message: 'liste des courses',

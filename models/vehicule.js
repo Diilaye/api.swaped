@@ -149,7 +149,13 @@ const VehiculeModel = new Schema({
 
     courses : [{
         type: Schema.Types.ObjectId,
-        ref :'courses',
+        ref :'courses-model',
+        default :[]
+    }],
+
+    coursesActif : [{
+        type: Schema.Types.ObjectId,
+        ref :'courses-model',
         default :[]
     }],
 

@@ -2,6 +2,15 @@ const vehiculeModel = require('../models/vehicule');
 
 const objectPopulate = [{
     path : 'walletDriver'
+},{
+    path :'coursesActif',
+    populate : [{
+        path : 'client',
+        select : 'telephone nom prenom'
+    },{
+        path : 'mobilite'
+    }]
+    
 }];
 
 exports.all = async (req,res )=> {
