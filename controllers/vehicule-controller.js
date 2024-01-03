@@ -168,7 +168,7 @@ exports.acceptCourses = async (req,res)=> {
         
             for (const iterator of vehicules) {
                 
-                if(iterator.coursesActif.contains(courseSave.id)) {
+                if(iterator.coursesActif.includes(courseSave.id)) {
                     const vh =await vehiculeModel.findById(iterator.id).exec();
 
                     vh.coursesActif.remove(courseSave.id);
