@@ -14,6 +14,8 @@ router.put('/position' , checkRole('mobilite') ,vehiculeCtrl.position);
 
 router.get('/start' , checkRole('mobilite') ,vehiculeCtrl.onOrOff);
 
+router.get('/accept-course' , checkRole('mobilite') ,vehiculeCtrl.acceptCourses);
+
 router.get('/testTache' ,vehiculeCtrl.testTaches);
 
 module.exports = router ;
