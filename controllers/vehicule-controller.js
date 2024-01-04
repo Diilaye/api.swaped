@@ -162,9 +162,9 @@ exports.acceptCourses = async (req,res)=> {
         
             vehicule.courseSelected = courseSave.id;
 
+            vehicule.coursesActif = [];
+
             const vehiculeS = await vehicule.save();
-        
-        
         
             for (const iterator of vehicules) {
                 
