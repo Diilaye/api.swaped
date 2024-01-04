@@ -40,6 +40,10 @@ exports.storeDeplacemnt = async (req,res ) => {
             statusDate ,
         
             dateCourses ,
+
+            distance ,
+        
+            duree ,
     
             statusLivraisonVehicule
     
@@ -55,6 +59,8 @@ exports.storeDeplacemnt = async (req,res ) => {
         course.addresseDepart = addresseDepart;
         course.addresseArrive = addresseArrive;
         course.statusLivraison = statusLivraison;
+        course.distance = distance;
+        course.duree = duree;
         course.statusDate = statusDate;
         course.dateCourses = dateCourses;
         course.statusLivraisonVehicule = statusLivraisonVehicule;

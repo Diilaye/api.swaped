@@ -39,6 +39,22 @@ const CoursesModel = new Schema({
         }
     },
 
+    distance : {
+        type : Map,
+        default : {
+            text: "", 
+            value: 0
+        }
+    },
+
+    duree : {
+        type : Map,
+        default : {
+            text: "", 
+            value: 0
+        }
+    },
+
     addresseDepart : {
         type : String,
         default : ''
