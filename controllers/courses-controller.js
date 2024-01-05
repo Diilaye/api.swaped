@@ -1,3 +1,4 @@
+
 const courseModel = require('../models/courses-model');
 
 const vehiculeModel = require('../models/vehicule');
@@ -209,6 +210,48 @@ exports.storeLivraison = async (req,res ) => {
 
 }
 
+exports.anulerClient = async (req,res) => {
+   try {
+        let {
+            courseCancelRaison
+        } = req.body ;
+
+        const course = await courseModel.findById(req.params.id).exec();
+
+        course.courseCancelRaison = courseCancelRaison ;
+        
+
+        const courseSave = await course.save();
+
+
+        const vehicules = await vehiculeModel.find().exec();
+
+        for (const iterator of vehicules) {
+
+            if(iterator.coursesActif.includes(courseSave.id)) {
+                const vh =await vehiculeModel.findById(iterator.id).exec();
+
+                vh.coursesActif.remove(courseSave.id);
+
+                const v =await vh.save();
+            }
+        }
+
+        return res.json({
+            message : "annulation courses par client ",
+            status : 200,
+            data : courseSave,
+            statusCode : 'OK'
+        })
+   } catch (error) {
+        return res.status(404).json({
+            message: 'erreur creation',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+   }
+}
 
 exports.all = async (req,res) => {
     try {
