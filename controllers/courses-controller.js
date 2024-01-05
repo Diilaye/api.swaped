@@ -278,3 +278,28 @@ exports.all = async (req,res) => {
         });
     }
 }   
+
+
+exports.one = async (req,res) => {
+
+    try {
+        const course = await courseModel.findById(req.params.id).populate(objectPopulate).exec();
+
+        return res.json({
+            message: 'liste des courses',
+            status: 'OK',
+            data:course,
+            statusCode: 200
+        })
+
+    } catch (error) {
+         return res.status(404).json({
+            message: 'erreur listage courses',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+
+}

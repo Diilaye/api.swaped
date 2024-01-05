@@ -11,6 +11,8 @@ router.post('/livraison', checkRole('restaurant')  ,courseCtrl.storeLivraison );
 
 router.put('/cancel-client' , checkRoleClient() , courseCtrl.anulerClient);
 
+router.get('/:id' , checkRoleClient() , courseCtrl.one);
+
 router.get('/' ,courseCtrl.all );
 
 
