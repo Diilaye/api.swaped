@@ -77,6 +77,18 @@ const CoursesModel = new Schema({
         default: 'moto'
     },
 
+    statusCourses: {
+        type: String,
+        enum: ['pending', 'pending-chauffeur' ,'cancel-chauffeur','cancel-client' ,'success'],
+        default: 'pending'
+    },
+
+    courseCancelRaison : [{
+        type: String,
+        default: []
+
+    }],
+
     statusDate : {
         type: String,
         enum: ['now', 'after'],
