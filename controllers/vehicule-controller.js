@@ -162,6 +162,8 @@ exports.acceptCourses = async (req,res)=> {
         
             vehicule.courseSelected = courseSave.id;
 
+            vehicule.online = "off";
+
             vehicule.courses.push(courseSave.id);
 
             vehicule.coursesActif = [];
