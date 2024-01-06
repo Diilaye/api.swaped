@@ -162,6 +162,8 @@ exports.acceptCourses = async (req,res)=> {
         
             vehicule.courseSelected = courseSave.id;
 
+            vehicule.courses.push(courseSave.id);
+
             vehicule.coursesActif = [];
 
             const vehiculeS = await vehicule.save();
