@@ -9,6 +9,12 @@ const CoursesModel = new Schema({
         ref: "user-client",
     },
 
+    transaction : {
+        type: Schema.Types.ObjectId,
+        ref: "wallet-transactions",
+        default : null
+    },
+
     mobilite : {
         type: Schema.Types.ObjectId,
         ref: "mobilite",

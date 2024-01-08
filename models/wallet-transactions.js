@@ -37,7 +37,7 @@ const walletTransactionModel = new Schema({
 
     means: {
         type: String,
-        enum: ['OM', 'PAYPAL','MOMO'],
+        enum: ['OM', 'SWAPED','MOMO','WAVE','MOOV'],
         default: 'OM'
     },
 

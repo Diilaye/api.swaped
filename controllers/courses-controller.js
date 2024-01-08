@@ -5,6 +5,9 @@ const vehiculeModel = require('../models/vehicule');
 
 const utiilsFnc = require('../utils/getLgLat');
 
+const walletModel = require('../models/wallet');
+
+const walletTransactionModel = require('../models/wallet-transactions');
 
 const objectPopulate = [{
     path : 'client',
@@ -98,8 +101,6 @@ exports.storeDeplacemnt = async (req,res ) => {
                     const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
     
                     vhFind.coursesActif.push(courseS.id);
-    
-                   
     
                     const VHS = await vhFind.save();
     
@@ -301,5 +302,136 @@ exports.one = async (req,res) => {
         });
     }
 
+
+}
+
+
+exports.addtransaction = async (req,res) => {
+
+    let  {
+       
+        amount,
+
+        
+        typeService,
+    
+        means,
+
+        phone,
+
+        otp,
+
+        idCourses
+
+
+    } =req.body;
+
+    const course = await courseModel.findById(idCourses).exec();
+
+    if(course != undefined) {
+
+        const walletTransaction = walletTransactionModel();
+    
+    const find = await walletModel.findOne({
+        userId : req.user.id_user
+    });
+
+    walletTransaction.amount = amount ;
+
+    walletTransaction.userWallet = find.id ;
+
+    walletTransaction.reference = idCourses ;
+
+    walletTransaction.typeService = typeService ;
+
+    walletTransaction.means = means ;
+
+    const saveWalletTransaction = await  walletTransaction.save();
+
+    course.transaction = saveWalletTransaction.id ;
+
+    const  courseS =  await course.save();
+
+    const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
+      let data = {};
+      if(means == "OM") {
+    
+         data = JSON.stringify({
+          "idFromClient": process.env.idFromClientGN,
+          "amount": amount,
+          "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+          "additionnalInfos": {
+            "destinataire": phone,
+            "otp": otp,
+          },
+          "recipientNumber": phone,
+          "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
+        });
+    
+        
+      }else {
+
+         data = JSON.stringify({
+          "idFromClient": process.env.idFromClientGN,
+          "additionnalInfos": {
+            "destinataire": "+224660238758",
+          },
+          "amount": amount,
+          "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
+          "recipientNumber": phone,
+          "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+        });
+        
+      }
+
+      options = {
+        method: 'PUT',
+        rejectUnauthorized: false,
+        digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
+        data :  data
+    }
+    
+      request(url, options).then(async (value) => {
+        console.log(value.data.toString());
+       const obj = Object.assign(JSON.parse(value.data.toString()));
+       
+       if(obj.status === "SUCCESSFUL") {
+
+        const transactionFind = await walletTransactionModel.findOne({
+            reference : saveWalletTransaction.reference
+          }).exec();
+
+          transactionFind.status = "SUCCESS";
+
+          transactionFind.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+           const tf = await transactionFind.save();
+       }
+        return res.status(201).json({
+          message: 'paiement initie',
+          status: 'OK',
+          data: JSON.parse(value.data.toString()),
+          statusCode: 201
+        });
+        }).catch((error) => {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    });
+
+    }else {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: "course not found",
+            statusCode: 404
+        });
+    }
+
+    
+     
 
 }
