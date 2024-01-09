@@ -9,6 +9,9 @@ const walletModel = require('../models/wallet');
 
 const walletTransactionModel = require('../models/wallet-transactions');
 
+const { DateTime } = require('luxon');
+
+
 const objectPopulate = [{
     path : 'client',
     select : 'telephone nom prenom'
@@ -308,12 +311,9 @@ exports.one = async (req,res) => {
 
 exports.addtransaction = async (req,res) => {
 
+   try {
+    
     let  {
-       
-        amount,
-
-        
-        typeService,
     
         means,
 
@@ -330,20 +330,17 @@ exports.addtransaction = async (req,res) => {
 
     if(course != undefined) {
 
-        if(course.prix_total <= parseInt(amount)) {
             const walletTransaction = walletTransactionModel();
     
             const find = await walletModel.findOne({
                 userId : req.user.id_user
             });
     
-            walletTransaction.amount = amount ;
+            walletTransaction.amount = courseS.prix_total ;
     
             walletTransaction.userWallet = find.id ;
     
-            walletTransaction.reference = idCourses ;
-    
-            walletTransaction.typeService = typeService ;
+            walletTransaction.reference = DateTime.now().ts ;
     
             walletTransaction.means = means ;
     
@@ -359,7 +356,7 @@ exports.addtransaction = async (req,res) => {
             
                 data = JSON.stringify({
                 "idFromClient": process.env.idFromClientGN,
-                "amount": amount,
+                "amount": courseS.prix_total,
                 "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
                 "additionnalInfos": {
                     "destinataire": phone,
@@ -377,7 +374,7 @@ exports.addtransaction = async (req,res) => {
                 "additionnalInfos": {
                     "destinataire": "+224660238758",
                 },
-                "amount": amount,
+                "amount": courseS.prix_total,
                 "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
                 "recipientNumber": phone,
                 "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
@@ -422,15 +419,6 @@ exports.addtransaction = async (req,res) => {
                     statusCode: 404
                 });
             });
-
-        }else {
-            return res.status(403).json({
-                message: 'erreur serveur',
-                status: 'NOT OK',
-                data: "montant insufisant pour cette course",
-                statusCode: 403
-            });
-        }
     } else {
         return res.status(404).json({
             message: 'erreur serveur',
@@ -440,7 +428,92 @@ exports.addtransaction = async (req,res) => {
         });
     }
 
+
+   } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+        
+   }
     
      
+
+}
+
+exports.addTransactionWallet = async (req,res)=> {
+
+   try {
+        let {idCourse} = req.body ;
+
+        const course = await courseModel.findById(idCourse).exec();
+
+        if(course != undefined) {
+
+        
+        
+            const find = await walletModel.findOne({
+                userId : req.user.id_user
+            });
+
+
+            if(find.balance >= course.prix_total ) {
+
+                const walletTransaction = walletTransactionModel();
+
+                walletTransaction.amount = courseS.prix_total ;
+
+                walletTransaction.userWallet = find.id ;
+        
+                walletTransaction.reference = DateTime.now().ts ;
+        
+                walletTransaction.means = means ;
+        
+                walletTransaction.status = "SUCCESS";
+        
+                walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+        
+                const saveWalletTransaction = await  walletTransaction.save();
+        
+                course.transaction = saveWalletTransaction.id ;
+        
+                const  courseS =  await course.save();
+
+                find.balance = find.balance - course.prix_total ;
+
+                const findS = await find.save();
+
+            }else {
+                return res.status(404).json({
+                    message: 'erreur serveur',
+                    status: 'NOT OK',
+                    data: "solde insufisant",
+                    statusCode: 404
+                });
+            }
+        }else {
+
+            return res.status(404).json({
+                message: 'erreur serveur',
+                status: 'NOT OK',
+                data: "course not found",
+                statusCode: 404
+            });
+
+        }
+   } catch (error) {
+    
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+
+   }
+
+
 
 }

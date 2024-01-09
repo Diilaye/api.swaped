@@ -9,6 +9,8 @@ router.post('/', checkRoleClient()  ,courseCtrl.storeDeplacemnt );
 
 router.post('/paiement', checkRoleClient()  ,courseCtrl.addtransaction );
 
+router.post('/paiement-wallet', checkRoleClient()  ,courseCtrl.addTransactionWallet );
+
 router.post('/livraison', checkRole('restaurant')  ,courseCtrl.storeLivraison );
 
 router.put('/cancel-client' , checkRoleClient() , courseCtrl.anulerClient);
