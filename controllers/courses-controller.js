@@ -495,7 +495,7 @@ exports.addTransactionWallet = async (req,res)=> {
             return res.status(201).json({
                 message: 'creation paiement',
                 status: 'OK',
-                data: courseFindS,
+                data: saveWalletTransaction,
                 statusCode: 404
             });
 
