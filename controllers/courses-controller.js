@@ -220,6 +220,7 @@ exports.anulerClient = async (req,res) => {
 
     
    try {
+
     let {
         courseCancelRaison
     } = req.body ;
@@ -238,7 +239,13 @@ exports.anulerClient = async (req,res) => {
     for (const iterator of vehicules) {
 
         if(iterator.coursesActif.includes(courseSave.id)) {
+
             const vh =await vehiculeModel.findById(iterator.id).exec();
+
+            if(vh.courseSelected == course.id ) {
+                vh.courseSelected = null ;
+                vh.online ="on";
+            }
 
             vh.coursesActif.remove(courseSave.id);
 
