@@ -17,6 +17,8 @@ const objectPopulate = [{
     select : 'telephone nom prenom'
 },{
     path : 'mobilite'
+} , {
+    path : 'transaction'
 }];
 
 
@@ -445,54 +447,66 @@ exports.addtransaction = async (req,res) => {
 
 exports.addTransactionWallet = async (req,res)=> {
 
+   
+
    try {
-        let {idCourse} = req.body ;
 
-        const course = await courseModel.findById(idCourse).exec();
+    let {idCourse} = req.body ;
 
-        if(course != undefined) {
+    const course = await courseModel.findById(idCourse).populate(objectPopulate).exec();
 
-        
-        
-            const find = await walletModel.findOne({
-                userId : req.user.id_user
+    if(course != undefined) {
+
+    
+    
+        const find = await walletModel.findOne({
+            userId : req.user.id_user
+        });
+
+
+        if(find.balance >= course.prix_total ) {
+
+            const walletTransaction = walletTransactionModel();
+
+            walletTransaction.amount = course.prix_total ;
+
+            walletTransaction.userWallet = find.id ;
+    
+            walletTransaction.reference = DateTime.now().ts ;
+    
+            walletTransaction.means = "SWAPED" ;
+    
+            walletTransaction.status = "SUCCESS";
+    
+            walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+    
+            const saveWalletTransaction = await  walletTransaction.save();
+    
+            course.transaction = saveWalletTransaction.id ;
+    
+            const  courseS =  await course.save();
+
+            const courseFindS = await courseModel.findById(courseS.id).populate(objectPopulate).exec()
+
+            find.balance = find.balance - courseS.prix_total ;
+
+            const findS = await find.save();
+
+            return res.status(201).json({
+                message: 'creation paiement',
+                status: 'OK',
+                data: courseFindS,
+                statusCode: 404
             });
 
-
-            if(find.balance >= course.prix_total ) {
-
-                const walletTransaction = walletTransactionModel();
-
-                walletTransaction.amount = courseS.prix_total ;
-
-                walletTransaction.userWallet = find.id ;
-        
-                walletTransaction.reference = DateTime.now().ts ;
-        
-                walletTransaction.means = means ;
-        
-                walletTransaction.status = "SUCCESS";
-        
-                walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-        
-                const saveWalletTransaction = await  walletTransaction.save();
-        
-                course.transaction = saveWalletTransaction.id ;
-        
-                const  courseS =  await course.save();
-
-                find.balance = find.balance - course.prix_total ;
-
-                const findS = await find.save();
-
-            }else {
-                return res.status(404).json({
-                    message: 'erreur serveur',
-                    status: 'NOT OK',
-                    data: "solde insufisant",
-                    statusCode: 404
-                });
-            }
+        }else {
+            return res.status(404).json({
+                message: 'erreur serveur',
+                status: 'NOT OK',
+                data: "solde insufisant",
+                statusCode: 404
+            });
+        }
         }else {
 
             return res.status(404).json({
@@ -503,6 +517,7 @@ exports.addTransactionWallet = async (req,res)=> {
             });
 
         }
+        
    } catch (error) {
     
         return res.status(404).json({
