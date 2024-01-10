@@ -20,6 +20,14 @@ const objectPopulate = [{
     },{
         path : 'mobilite'
     }] 
+},,{
+    path :'courses',
+    populate : [{
+        path : 'client',
+        select : 'telephone nom prenom'
+    },{
+        path : 'mobilite'
+    }] 
 }];
 
 exports.all = async (req,res )=> {
