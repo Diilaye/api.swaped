@@ -16,7 +16,10 @@ const objectPopulate = [{
     path : 'client',
     select : 'telephone nom prenom'
 },{
-    path : 'mobilite'
+    path : 'mobilite',
+    populate : {
+        path :'photoVehicule photoProfile'
+    }
 } , {
     path : 'transaction'
 }];
