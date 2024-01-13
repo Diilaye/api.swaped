@@ -11,6 +11,7 @@ const walletTransactionModel = require('../models/wallet-transactions');
 
 const { DateTime } = require('luxon');
 
+const { request } = require('urllib');
 
 const objectPopulate = [{
     path : 'client',
@@ -323,6 +324,9 @@ exports.one = async (req,res) => {
 
 exports.addtransaction = async (req,res) => {
 
+
+    
+
    try {
     
     let  {
@@ -348,7 +352,7 @@ exports.addtransaction = async (req,res) => {
                 userId : req.user.id_user
             });
     
-            walletTransaction.amount = courseS.prix_total ;
+            walletTransaction.amount = course.prix_total ;
     
             walletTransaction.userWallet = find.id ;
     
@@ -439,8 +443,7 @@ exports.addtransaction = async (req,res) => {
             statusCode: 404
         });
     }
-
-
+   
    } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
