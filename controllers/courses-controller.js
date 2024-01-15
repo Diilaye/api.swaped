@@ -545,3 +545,53 @@ exports.addTransactionWallet = async (req,res)=> {
 
 
 }
+
+
+exports.fincourse = async (req,res) => {
+
+    try {
+
+        let { idCourses } = req.body;
+        
+        
+        const course = await  courseModel.findById(idCourses).exec();
+
+        course.statusCourses = "success";
+
+        const courseS = await s-course.save();
+
+        const vehicule =   await vehiculeModel.findById(courseS.mobilite).exec();
+
+        vehicule.online = "on";
+
+        vehicule.courseSelected = null ;
+
+        vehicule.coursesActif = [];
+
+        const vehiculeS = await vehicule.save();
+
+        const updateWallet = await walletModel.findById(vehiculeS.walletDriver).exec();
+
+        updateWallet.balance = updateWallet.balance + courseS.prix_offre;
+
+        const updateWalletSave = await updateWallet.save();
+
+        return res.json({
+            message: 'fin courses des courses',
+            status: 'OK',
+            data:courseS,
+            statusCode: 200
+        });
+
+
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+} 

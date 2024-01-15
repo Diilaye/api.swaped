@@ -95,6 +95,12 @@ const CoursesModel = new Schema({
 
     }],
 
+    notes : [{
+        type: Number,
+        default: []
+
+    }],
+
     statusDate : {
         type: String,
         enum: ['now', 'after'],
