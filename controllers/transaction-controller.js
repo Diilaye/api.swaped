@@ -356,6 +356,7 @@ exports.cashinSn = async (req,res) => {
       };
       
       axios.request(options).then(function (response) {
+        
         console.log(response.data);
         res.json({
             data : response.data

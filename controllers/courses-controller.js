@@ -551,7 +551,7 @@ exports.fincourse = async (req,res) => {
 
     try {
 
-        let { idCourses } = req.body;
+        let { idCourses , note } = req.body;
         
         
         const course = await  courseModel.findById(idCourses).exec();
@@ -567,6 +567,8 @@ exports.fincourse = async (req,res) => {
         vehicule.courseSelected = null ;
 
         vehicule.coursesActif = [];
+
+        vehicule.notes.push(note);
 
         const vehiculeS = await vehicule.save();
 
