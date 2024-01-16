@@ -558,7 +558,7 @@ exports.fincourse = async (req,res) => {
 
         course.statusCourses = "success";
 
-        const courseS = await s-course.save();
+        const courseS = await course.save();
 
         const vehicule =   await vehiculeModel.findById(courseS.mobilite).exec();
 
