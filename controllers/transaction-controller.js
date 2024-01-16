@@ -437,7 +437,7 @@ exports.cashinGN = async (req,res) => {
     });
 
        
-   }else if(means == "WAVE") {
+   }else if(means == "MOMO") {
     const options = {
         method: 'POST',
         url: 'https://apidist.gutouch.net/apidist/sec/DGNSN0001/cashin',
@@ -446,13 +446,13 @@ exports.cashinGN = async (req,res) => {
           Authorization: 'Basic MWJiZDEyMzQzYjg0MzhmOTMyMTRkN2I2YjUwNGY2ZWUyMzczY2NmMzRlZGZmMDMxMDE0YTcwNWRmNmFkNWI5NDpiM2E1MDY1MTg5N2ZiMjc0MzdlNTA3N2JmNTVhM2NhMWUxYmRmOTZjZThiMWMwMzc1MzU0ZTE1ZDJhNWU5OTdm'
         },
         data: {
-          service_id: 'SN_CASHIN_WAVE',
+          service_id: 'GN_CASHIN_MTN_PART',
           recipient_phone_number: '772488807',
           amount: 100,
           partner_id: 'PG05888203',
-          partner_transaction_id: '1699633098166',
-          login_api: '0772488807',
-          password_api: 'YFnWWTg6TH',
+          partner_transaction_id: 'KJ7868',
+          login_api: '772488807',
+          password_api: 'vSmpY3EChE',
           call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
         }
       };
@@ -476,8 +476,8 @@ exports.cashinGN = async (req,res) => {
         },
         data: {
           service_id: 'CASHINTIGOPART',
-          recipient_phone_number: '765116859',
-          amount: 200,
+          recipient_phone_number: '660238758',
+          amount: 5000,
           partner_id: 'PG05888203',
           partner_transaction_id: 'flashTest-011111',
           login_api: '0772488807',
