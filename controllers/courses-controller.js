@@ -498,6 +498,8 @@ exports.addTransactionWallet = async (req,res)=> {
             const saveWalletTransaction = await  walletTransaction.save();
     
             course.transaction = saveWalletTransaction.id ;
+
+            course.statusCourses ='paiement-client';
     
             const  courseS =  await course.save();
 
