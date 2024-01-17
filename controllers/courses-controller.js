@@ -233,6 +233,8 @@ exports.anulerClient = async (req,res) => {
 
 
     course.courseCancelRaison = courseCancelRaison ;
+
+    course.statusCourses = 'cancel-client';
     
 
     const courseSave = await course.save();

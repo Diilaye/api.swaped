@@ -159,7 +159,11 @@ exports.acceptCourses = async (req,res)=> {
 
         const course = await courseModel.findById(idCourse).exec();
 
-        if(course.mobilite == null ) {
+        course.statusCourses = 'accept-chauffeur' ;
+
+        const courseS = await course.save();
+
+        if(courseS.mobilite == null ) {
 
             const vehicule = await vehiculeModel.findOne({
                 idParent : req.user.id_user
