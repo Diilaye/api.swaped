@@ -101,30 +101,29 @@ exports.storeDeplacemnt = async (req,res ) => {
         
                 vehiculeTab.push(result);
                
-                vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-    
-                vehiculeResult = vehiculeTab.slice(0 , 5);
-
-               console.log( vehiculeResult.length);
-    
-                for (const it of vehiculeResult) {
-    
-                    const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
-
-                    if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
-                        vhFind.coursesActif.push(courseS.id);
-                    }
-    
-                    const VHS = await vhFind.save();
-    
-                    vehiculeResultAffiche.push(VHS);
-                }
-    
             }
             
     
         }
     
+        vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+    
+        vehiculeResult = vehiculeTab.slice(0 , 5);
+
+        console.log( vehiculeResult.length);
+    
+        for (const it of vehiculeResult) {
+
+            const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
+
+            if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
+                vhFind.coursesActif.push(courseS.id);
+            }
+
+            const VHS = await vhFind.save();
+
+            vehiculeResultAffiche.push(VHS);
+        }
     
         let task ;
     
