@@ -85,7 +85,7 @@ const CoursesModel = new Schema({
 
     statusCourses: {
         type: String,
-        enum: ['pending', 'pending-chauffeur','accept-chauffeur','cancel-chauffeur','cancel-client' ,'success','start-course'],
+        enum: ['pending', 'pending-chauffeur','accept-chauffeur','cancel-chauffeur','cancel-client' ,'success','start-course','paiement-client'],
         default: 'pending'
     },
 
