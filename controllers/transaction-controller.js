@@ -522,7 +522,7 @@ exports.getBalance = async (req,res) => {
 exports.getBalanceGN = async (req,res) => {
     const options = {
         method: 'POST',
-        url: 'https://apidist.gutouch.net/apidist/sec/DGNSN0001/get_balance',
+        url: 'https://apidist.gutouch.net/apidist/sec/DEALL4657/get_balance',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Basic OThmNDRlZTNlZTY1ZDM2YmZhODg2YTIyYzAwYjk2YjU5ZTk4MDIzM2NlNWZhZjA4ODJiZGYxMjg2Y2IzMjZlNDoxYzk5NzUwY2M2Yjg5MGE3OGE2NDcyYTA0ZTdjZmY3ZDg0MTBlNjEyZTlmMzhhMmQzYzg3Mjc5MDY2OWU4ZWNk'
