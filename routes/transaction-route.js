@@ -20,6 +20,7 @@ routes.post('/success-intouch',transactionCtrl.successIntouch);
 routes.get('/cashin' , transactionCtrl.cashinSn);
 routes.get('/cashinGN' , transactionCtrl.cashinGN);
 routes.get('/getBalance' , transactionCtrl.getBalance);
+routes.get('/getBalanceGN' , transactionCtrl.getBalance);
 
 routes.get('/failled',transactionCtrl.failed);
 

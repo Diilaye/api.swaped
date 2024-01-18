@@ -518,3 +518,24 @@ exports.getBalance = async (req,res) => {
         console.error(error);
       });
 }
+
+exports.getBalanceGN = async (req,res) => {
+    const options = {
+        method: 'POST',
+        url: 'https://apidist.gutouch.net/apidist/sec/DGNSN0001/get_balance',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic OThmNDRlZTNlZTY1ZDM2YmZhODg2YTIyYzAwYjk2YjU5ZTk4MDIzM2NlNWZhZjA4ODJiZGYxMjg2Y2IzMjZlNDoxYzk5NzUwY2M2Yjg5MGE3OGE2NDcyYTA0ZTdjZmY3ZDg0MTBlNjEyZTlmMzhhMmQzYzg3Mjc5MDY2OWU4ZWNk'
+        },
+        data: {partner_id: 'KJ7868', login_api: '772488807', password_api: 'vSmpY3EChE'}
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+        res.json({
+            data : response.data
+        })
+      }).catch(function (error) {
+        console.error(error);
+      });
+}
