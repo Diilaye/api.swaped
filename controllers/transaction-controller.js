@@ -527,7 +527,7 @@ exports.getBalanceGN = async (req,res) => {
           'Content-Type': 'application/json',
           Authorization: 'Basic OThmNDRlZTNlZTY1ZDM2YmZhODg2YTIyYzAwYjk2YjU5ZTk4MDIzM2NlNWZhZjA4ODJiZGYxMjg2Y2IzMjZlNDoxYzk5NzUwY2M2Yjg5MGE3OGE2NDcyYTA0ZTdjZmY3ZDg0MTBlNjEyZTlmMzhhMmQzYzg3Mjc5MDY2OWU4ZWNk'
         },
-        data: {partner_id: 'KJ7868', login_api: '772488807', password_api: 'vSmpY3EChE'}
+        data: {partner_id: 'GN9375', login_api: '772488807', password_api: 'vSmpY3EChE'}
       };
       
       axios.request(options).then(function (response) {
