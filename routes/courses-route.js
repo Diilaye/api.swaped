@@ -19,7 +19,9 @@ router.put('/fin-course' , checkRoleClient() , courseCtrl.fincourse);
 
 router.get('/:id' , checkRoleClient() , courseCtrl.one);
 
-router.get('/' ,courseCtrl.all );
+router.put('/:id' , checkRole("mobilite") , courseCtrl.updateStatus);
+
+// router.get('/' ,courseCtrl.all );
 
 
 module.exports = router ;

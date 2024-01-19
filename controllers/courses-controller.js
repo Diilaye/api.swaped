@@ -326,6 +326,36 @@ exports.one = async (req,res) => {
 
 }
 
+exports.updateStatus = async (req,res) => {
+
+    try {
+
+        let {status} = req.query;
+        const course = await courseModel.findById(req.params.id).populate(objectPopulate).exec();
+
+        course.statusCourses = status;
+
+        const courseS = await course.save();
+
+        return res.json({
+            message: 'update  status course',
+            status: 'OK',
+            data:courseS,
+            statusCode: 200
+        })
+
+    } catch (error) {
+         return res.status(404).json({
+            message: 'erreur listage courses',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+
+}
+
 
 exports.addtransaction = async (req,res) => {
 
