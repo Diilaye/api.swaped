@@ -470,7 +470,7 @@ exports.cashinGN = async (req,res) => {
           recipient_phone_number: '660238758',
           amount: 5000,
           partner_id: 'GN9375',
-          partner_transaction_id: 'KJ7868',
+          partner_transaction_id: 'KOI868',
           login_api: '772488807',
           password_api: 'vSmpY3EChE',
           call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
