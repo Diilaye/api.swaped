@@ -97,7 +97,7 @@ const CoursesModel = new Schema({
 
     notes : [{
         type: Number,
-        default: []
+        default: [5]
 
     }],
 
