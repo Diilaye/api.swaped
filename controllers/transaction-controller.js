@@ -412,13 +412,14 @@ exports.cashinChauffeurGN = async (req,res) => {
         means,
         phone,
         amount
-    } = req.query;
+    } = req.body;
 
     let options = {};
 
     const wallet = await  walletModel.findOne({
       userId : req.user.id_user
     }).exec();
+
 
     if(wallet.balance >=parseInt(amount)) {
 
@@ -488,7 +489,7 @@ exports.cashinChauffeurGN = async (req,res) => {
       return res.status(404).json({
         message: 'solde insufisant  ',
         statusCode: 404,
-        data: error,
+        data: "pas de solde",
         status: 'NOT OK'
     });
     }
