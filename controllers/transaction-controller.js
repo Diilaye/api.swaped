@@ -466,10 +466,13 @@ exports.cashinChauffeurGN = async (req,res) => {
          };
          
       }
+
+      wallet.balance = wallet.balance - parseInt(amount);
+
+      const waS = await wallet.save();
    
-      axios.request(options).then(function (response) {
+      axios.request(options).then(function (response)  {
        
-   
        return res.status(201).json({
            message: 'retrait argent ',
            statusCode: 201,
