@@ -14,3 +14,4 @@ exports.getFee = price => {
 
     return  Math.floor((Math.floor(priceResult / 500)) + 1) * 500 ;
 }
+

@@ -4,6 +4,12 @@ const  paypal = require('paypal-rest-sdk');
 const path = require('path');
 const walletModel = require('../models/wallet');
 
+const { makeid } = require('../utils/random-by-issa');
+
+require('dotenv').config({
+  path: './.env'
+});
+
 const axios = require('axios');
 
 const { request } = require('urllib');
@@ -400,96 +406,97 @@ exports.cashinSn = async (req,res) => {
 }
 
 
-exports.cashinGN = async (req,res) => {
+exports.cashinChauffeurGN = async (req,res) => {
 
     let {
-        means
+        means,
+        phone,
+        amount
     } = req.query;
 
-   if (means == "OM") {
+    let options = {};
+
+    const wallet = await  walletModel.findOne({
+      userId : req.user.id_user
+    }).exec();
+
+    if(wallet.balance >=parseInt(amount)) {
+
+      if (means == "OM") {
 
 
-    const options = {
-        method: 'POST',
-        url: 'https://apidist.gutouch.net/apidist/sec/DEALL4657/cashin',
-        headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic OThmNDRlZTNlZTY1ZDM2YmZhODg2YTIyYzAwYjk2YjU5ZTk4MDIzM2NlNWZhZjA4ODJiZGYxMjg2Y2IzMjZlNDoxYzk5NzUwY2M2Yjg5MGE3OGE2NDcyYTA0ZTdjZmY3ZDg0MTBlNjEyZTlmMzhhMmQzYzg3Mjc5MDY2OWU4ZWNk'
-        },
-        data: {
-        service_id: 'GN_CASHIN_OM_PART',
-        recipient_phone_number: '626501651',
-        amount: 5000,
-        partner_id: 'GN9375',
-        partner_transaction_id: 'KA7368',
-        login_api: '772488807',
-        password_api: 'vSmpY3EChE',
-        call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
-        }
-    };
-    
-    axios.request(options).then(function (response) {
-        console.log(response.data);
-        res.json({
-            data : response.data
-        })
-    }).catch(function (error) {
-        if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error('Server responded with status:', error.response.status);
-            console.error('Response data:', error.response.data);
-            console.error('Response headers:', error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            console.error('No response received from the server');
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            console.error('Error setting up the request:', error.message);
-          }
-        res.json({
-            data : {
-                "status" :  error.response.status,
-                "data" : error.response.data,
-                "headers" :error.response.headers
-            }
-        })
-    });
-
-       
-   }else  {
-    const options = {
-        method: 'POST',
-        url: 'https://apidist.gutouch.net/apidist/sec/DEALL4657/cashin',
-        headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic OThmNDRlZTNlZTY1ZDM2YmZhODg2YTIyYzAwYjk2YjU5ZTk4MDIzM2NlNWZhZjA4ODJiZGYxMjg2Y2IzMjZlNDoxYzk5NzUwY2M2Yjg5MGE3OGE2NDcyYTA0ZTdjZmY3ZDg0MTBlNjEyZTlmMzhhMmQzYzg3Mjc5MDY2OWU4ZWNk'
-        },
-        data: {
-          service_id: 'GN_CASHIN_MTN_PART',
-          recipient_phone_number: '660238758',
-          amount: 5000,
-          partner_id: 'GN9375',
-          partner_transaction_id: 'KOI868',
-          login_api: '772488807',
-          password_api: 'vSmpY3EChE',
-          call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
-          }
-      };
-      
+        options = {
+           method: 'POST',
+           url: 'https://apidist.gutouch.net/apidist/sec/DEALL4657/cashin',
+           headers: {
+           'Content-Type': 'application/json',
+           Authorization: 'Basic '+process.env.TokenGNMONEY
+           },
+           data: {
+           service_id: 'GN_CASHIN_OM_PART',
+           recipient_phone_number: phone,
+           amount: parseInt(amount),
+           partner_id: process.env.partnerIDGN,
+           partner_transaction_id: makeid(5),
+           login_api: process.env.loginAgentGN,
+           password_api: process.env.passwordAgentGN,
+           call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
+           }
+       };
+   
+      }else  {
+        options = {
+           method: 'POST',
+           url: 'https://apidist.gutouch.net/apidist/sec/DEALL4657/cashin',
+           headers: {
+           'Content-Type': 'application/json',
+           Authorization: 'Basic '+process.env.TokenGNMONEY
+           },
+           data: {
+             service_id: 'GN_CASHIN_MTN_PART',
+             recipient_phone_number: phone,
+             amount: parseInt(amount),
+             partner_id: process.env.partnerIDGN,
+             partner_transaction_id: makeid(5),
+             login_api: process.env.loginAgentGN,
+             password_api: process.env.passwordAgentGN,
+             call_back_url: 'https://api-swaped.deally.fr/v1/api/transactions/success-intouch'
+             }
+         };
+         
+      }
+   
       axios.request(options).then(function (response) {
-        console.log(response.data);
-        res.json({
-            data : response.data
-        })
-      }).catch(function (error) {
-        console.error(error);
-      });
+       
+   
+       return res.status(201).json({
+           message: 'retrait argent ',
+           statusCode: 201,
+           data : response.data,
+           status: 'OK'
+       });
+       
+     }).catch(function (error) {
+       return res.status(404).json({
+           message: 'erreur server ',
+           statusCode: 404,
+           data: error,
+           status: 'NOT OK'
+       });
+     });
+    }else {
+      return res.status(404).json({
+        message: 'solde insufisant  ',
+        statusCode: 404,
+        data: error,
+        status: 'NOT OK'
+    });
+    }
 
-   }
-
-    
+     
 }
+
+
 
 
 exports.successIntouch = async (req,res) => {
