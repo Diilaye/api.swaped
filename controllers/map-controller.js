@@ -143,7 +143,7 @@ exports.livraison = async (req,res) => {
     },point2);
   
   
-    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.2)));
   
     result["depart"] = {
       lat : parseFloat(lat),
