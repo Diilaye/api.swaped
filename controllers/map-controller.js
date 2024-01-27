@@ -144,6 +144,9 @@ exports.livraison = async (req,res) => {
   
   
     result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.2)));
+
+    console.log("result[livraison]");
+    console.log(result["livraison"]);
   
     result["depart"] = {
       lat : parseFloat(lat),
