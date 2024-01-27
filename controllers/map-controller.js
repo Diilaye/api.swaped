@@ -143,11 +143,9 @@ exports.livraison = async (req,res) => {
     },point2);
   
   
-    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.2)));
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
 
-    console.log("result[livraison]");
-    console.log(result["livraison"]);
-  
+   
     result["depart"] = {
       lat : parseFloat(lat),
       lng : parseFloat(lng)
@@ -235,8 +233,8 @@ exports.livraisonDepart = async (req,res) => {
 
     }else {
       
-      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 2.5))));
+      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.2)));
+      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 2.2))));
 
       result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
       result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 5.5))));
