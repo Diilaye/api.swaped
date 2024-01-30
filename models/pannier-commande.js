@@ -9,7 +9,6 @@ const PannierCommande = new Schema({
     reference: {
         type: String ,
         unique : true,
-
     },
 
    panniers : [{
@@ -99,6 +98,11 @@ const PannierCommande = new Schema({
     contriePaiement : {
         type : String,
         default : 'GN'
+    },
+
+    table : {
+        type : String,
+        default : '0'
     },
 
     means: {
