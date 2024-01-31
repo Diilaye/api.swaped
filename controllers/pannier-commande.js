@@ -335,6 +335,133 @@ exports.add = async (req,res) => {
 
 }
 
+exports.addWallet = async (req,res) => {
+
+    
+
+    try {
+
+        let {
+        
+            panniers ,
+        
+            prix_total ,
+        
+            prix_offre ,
+        
+            prix_livraison ,
+        
+            pointDepart ,
+        
+            pointArrive ,
+              
+            statusLivraison,
+    
+            contriePaiement,
+    
+            phonePaiement,
+            
+            means,
+    
+            otp,
+    
+            creneaux,
+    
+            restaurant,
+            
+            addresseLivraion,
+
+            addresseRestaurant
+        
+        } = req.body ;
+
+    
+        const pannierCommande = pannierCommandeModel();
+    
+        pannierCommande.reference = DateTime.now().ts;
+    
+        pannierCommande.panniers = panniers;
+    
+        pannierCommande.restaurant = restaurant;
+    
+        pannierCommande.client = req.user.id_user;
+    
+        pannierCommande.prix_total = prix_total;
+    
+        pannierCommande.prix_offre = prix_offre;
+    
+        pannierCommande.prix_livraison = prix_livraison ;
+    
+        pannierCommande.statusLivraison = statusLivraison;
+    
+        pannierCommande.pointDepart = pointDepart;
+    
+        pannierCommande.pointArrive = pointArrive;
+    
+        pannierCommande.contriePaiement = contriePaiement;
+    
+        pannierCommande.phonePaiement = phonePaiement;
+    
+        pannierCommande.means = means;
+    
+        pannierCommande.creneaux = creneaux;
+
+        pannierCommande.addresseLivraion = addresseLivraion;
+
+        pannierCommande.addresseRestaurant = addresseRestaurant;
+    
+        const pannierCommandeSave = await pannierCommande.save();
+        
+        const find = await walletModel.findOne({
+            userId : req.user.id_user
+        });
+
+        if( find.balance >=  pannierCommandeSave.prix_total ) {
+
+            pannierCommandeSave.status =  "SUCCESS";
+
+            for await (element of pannierCommandeSave.panniers) {
+                // console.log(element);
+                const p = await pannierModel.findById(element).exec();
+    
+                p.status = "accept";
+    
+                await p.save();
+            }
+
+            find.balance = find.balance - courseS.prix_total ;
+
+            const findS = await find.save();
+
+            return res.status(201).json({
+                message: 'paiement réuissi',
+                status: 'OK',
+                data: pannierCommandeSave,
+                statusCode: 201
+            });
+
+
+        }else {
+            return res.status(404).json({
+                message: 'erreur serveur',
+                status: 'NOT OK',
+                data: "solde insufisant",
+                statusCode: 404
+            });
+        }
+        
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+}
+
 exports.addTable = async (req,res) => {
 
     
@@ -383,7 +510,111 @@ exports.addTable = async (req,res) => {
 
     const pannierCommandeSave = await pannierCommande.save();
 
-    if(means == "SWAPED") {
+    const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
+    let data = {};
+    if(means == "OM") { 
+    
+        data = JSON.stringify({
+        "idFromClient": process.env.idFromClientGN,
+        "amount": prix_total,
+        "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
+        "additionnalInfos": {
+            "destinataire": phonePaiement,
+            "otp": otp,
+        },
+        "recipientNumber": phonePaiement,
+        "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
+        });
+    
+        
+    }else {
+        data = JSON.stringify({
+        "idFromClient": process.env.idFromClientGN,
+        "additionnalInfos": {
+            "destinataire": "+224660238758",
+        },
+        "amount": prix_total,
+        "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
+        "recipientNumber": phonePaiement,
+        "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+        });
+    }
+
+    options = {
+        method: 'PUT',
+        rejectUnauthorized: false,
+        digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
+        data :  data
+    }
+
+    request(url,options).then(async (value) => {
+        const obj = Object.assign(JSON.parse(value.data.toString()));
+
+        return res.status(201).json({
+            message: 'paiement initie',
+            status: 'OK',
+            data: JSON.parse(value.data.toString()),
+            statusCode: 201
+        });
+
+    }).catch((error) => {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    });
+
+}
+
+exports.addTableWallet = async (req,res) => {
+    let {
+        
+        panniers ,
+
+        table,
+    
+        prix_total ,
+    
+        prix_offre ,
+
+        phonePaiement,
+        
+        means,
+
+        otp,
+
+        restaurant,
+
+    
+    } = req.body ;
+
+    const pannierCommande = pannierCommandeModel();
+    
+    pannierCommande.reference = DateTime.now().ts;
+
+    pannierCommande.panniers = panniers;
+
+    pannierCommande.restaurant = restaurant;
+
+    pannierCommande.client = req.user.id_user;
+
+    pannierCommande.prix_total = prix_total;
+
+    pannierCommande.prix_offre = prix_offre;
+
+    pannierCommande.table = table ;
+
+    pannierCommande.contriePaiement = contriePaiement;
+
+    pannierCommande.phonePaiement = phonePaiement;
+
+    pannierCommande.means = means;
+
+    const pannierCommandeSave = await pannierCommande.save();
+
+  
 
         const find = await walletModel.findOne({
             userId : req.user.id_user
@@ -422,66 +653,6 @@ exports.addTable = async (req,res) => {
                 statusCode: 404
             });
         }
-
-    }else {
-        const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
-            let data = {};
-            if(means == "OM") { 
-            
-                data = JSON.stringify({
-                "idFromClient": process.env.idFromClientGN,
-                "amount": prix_total,
-                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
-                "additionnalInfos": {
-                    "destinataire": phonePaiement,
-                    "otp": otp,
-                },
-                "recipientNumber": phonePaiement,
-                "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
-                });
-            
-                
-            }else {
-                data = JSON.stringify({
-                "idFromClient": process.env.idFromClientGN,
-                "additionnalInfos": {
-                    "destinataire": "+224660238758",
-                },
-                "amount": prix_total,
-                "callback": "https://api-swaped.deally.fr/v1/api/pannier-commande/success?reference="+pannierCommandeSave.reference,
-                "recipientNumber": phonePaiement,
-                "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
-                });
-            }
-    
-            options = {
-                method: 'PUT',
-                rejectUnauthorized: false,
-                digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
-                data :  data
-            }
-    
-            request(url,options).then(async (value) => {
-                const obj = Object.assign(JSON.parse(value.data.toString()));
-    
-                return res.status(201).json({
-                    message: 'paiement initie',
-                    status: 'OK',
-                    data: JSON.parse(value.data.toString()),
-                    statusCode: 201
-                });
-    
-            }).catch((error) => {
-                return res.status(404).json({
-                    message: 'erreur serveur',
-                    status: 'NOT OK',
-                    data: error,
-                    statusCode: 404
-                });
-            });
-
-    }
-
 }
 
 exports.all = async (req,res) => {
@@ -660,4 +831,4 @@ exports.success = async (req,res)=> {
             statusCode: 404
         });
     }
-  }
+    }

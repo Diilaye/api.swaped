@@ -10,6 +10,8 @@ router.get('/' , checkRole('admin') ,pannierCtrl.all );
 router.get('/restaurant' , checkRole('restaurant') ,pannierCtrl.allByRestaurant );
 router.post('/' ,  checkRoleClient() , pannierCtrl.add);
 router.post('/table' ,  checkRoleClient() , pannierCtrl.addTable);
+router.post('/table/wallet' ,  checkRoleClient() , pannierCtrl.addTableWallet);
+router.post('/wallet' ,  checkRoleClient() , pannierCtrl.addWallet);
 router.put('/:id' ,  checkRoleClient() , pannierCtrl.updateStatusLivraison);
 router.post('/success' , pannierCtrl.success);
 
