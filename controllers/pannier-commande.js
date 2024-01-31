@@ -502,7 +502,6 @@ exports.addTable = async (req,res) => {
 
     pannierCommande.table = table ;
 
-    pannierCommande.contriePaiement = contriePaiement;
 
     pannierCommande.phonePaiement = phonePaiement;
 
@@ -605,8 +604,6 @@ exports.addTableWallet = async (req,res) => {
     pannierCommande.prix_offre = prix_offre;
 
     pannierCommande.table = table ;
-
-    pannierCommande.contriePaiement = contriePaiement;
 
     pannierCommande.phonePaiement = phonePaiement;
 
