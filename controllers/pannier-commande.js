@@ -422,6 +422,8 @@ exports.addWallet = async (req,res) => {
         if( find.balance >=  pannierCommandeSave.prix_total ) {
     
             pannierCommandeSave.status =  "SUCCESS";
+
+            p = await pannierCommandeSave.save();
     
             for await (element of pannierCommandeSave.panniers) {
                 // console.log(element);
