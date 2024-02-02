@@ -423,6 +423,8 @@ exports.addWallet = async (req,res) => {
     
             pannierCommandeSave.status =  "SUCCESS";
 
+            offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
             p = await pannierCommandeSave.save();
     
             for await (element of pannierCommandeSave.panniers) {
@@ -633,6 +635,8 @@ exports.addTableWallet = async (req,res) => {
             if( find.balance >=  pannierCommandeSave.prix_total ) {
     
                 pannierCommandeSave.status =  "SUCCESS";
+
+                offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
     
                 const p = await pannierCommandeSave.save();
     
