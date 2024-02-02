@@ -87,7 +87,7 @@ const PannierCommande = new Schema({
 
     etatLivraison: {
         type: String,
-        enum: ['PENDING', 'PREPARATION','LIVRAISON','BLOCK-LIVRAISON','SUCCESS' , 'CANCEL'],
+        enum: ['PENDING', 'PREPARATION','LIVRAISON','BLOCK-LIVRAISON','SUCCESS-LIVRAISON','SUCCESS' , 'CANCEL'],
         default: 'PENDING'
     },
 
