@@ -215,35 +215,8 @@ exports.livraisonDepart = async (req,res) => {
     console.log(point2);
   
     result = await  utiilsFnc.getDistance(point1,point2);
-  
-    console.log(result);
-
-  
-  
-    if (nuit =="1") {
-      
-      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
-      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 3.5))));
-
-      result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
-      result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
-
-      result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
-      result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 10))));
-
-    }else {
-      
-      result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
-      result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 2.5))));
-
-      result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
-      result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 5.5))));
-
-      result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
-      result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
-      
-    }
-  
+    
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
   
     result["depart"] = point1;
   
