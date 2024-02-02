@@ -338,6 +338,9 @@ exports.add = async (req,res) => {
 exports.addWallet = async (req,res) => {
 
     
+    
+    
+    
 
     try {
 
@@ -370,11 +373,11 @@ exports.addWallet = async (req,res) => {
             restaurant,
             
             addresseLivraion,
-
+    
             addresseRestaurant
         
         } = req.body ;
-
+    
     
         const pannierCommande = pannierCommandeModel();
     
@@ -405,9 +408,9 @@ exports.addWallet = async (req,res) => {
         pannierCommande.means = means;
     
         pannierCommande.creneaux = creneaux;
-
+    
         pannierCommande.addresseLivraion = addresseLivraion;
-
+    
         pannierCommande.addresseRestaurant = addresseRestaurant;
     
         const pannierCommandeSave = await pannierCommande.save();
@@ -415,11 +418,11 @@ exports.addWallet = async (req,res) => {
         const find = await walletModel.findOne({
             userId : req.user.id_user
         });
-
+    
         if( find.balance >=  pannierCommandeSave.prix_total ) {
-
+    
             pannierCommandeSave.status =  "SUCCESS";
-
+    
             for await (element of pannierCommandeSave.panniers) {
                 // console.log(element);
                 const p = await pannierModel.findById(element).exec();
@@ -428,19 +431,19 @@ exports.addWallet = async (req,res) => {
     
                 await p.save();
             }
-
-            find.balance = find.balance - courseS.prix_total ;
-
+    
+            find.balance = find.balance - pannierCommandeSave.prix_total ;
+    
             const findS = await find.save();
-
+    
             return res.status(201).json({
                 message: 'paiement réuissi',
                 status: 'OK',
                 data: pannierCommandeSave,
                 statusCode: 201
             });
-
-
+    
+    
         }else {
             return res.status(404).json({
                 message: 'erreur serveur',
@@ -449,8 +452,6 @@ exports.addWallet = async (req,res) => {
                 statusCode: 404
             });
         }
-        
-        
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
