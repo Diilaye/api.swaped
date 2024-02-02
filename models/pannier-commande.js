@@ -107,7 +107,7 @@ const PannierCommande = new Schema({
 
     means: {
         type: String,
-        enum: ['OM', 'WAVE','MOMO' ,'FREE','MOOV'],
+        enum: ['OM', 'WAVE','MOMO' ,'FREE','MOOV','SWAPED'],
         default: 'OM'
     },
 
