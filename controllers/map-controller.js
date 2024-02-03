@@ -169,8 +169,6 @@ exports.livraison = async (req,res) => {
 
 }
 
-
-
 exports.livraisonDepart = async (req,res) => {
 
   
@@ -241,10 +239,101 @@ exports.livraisonDepart = async (req,res) => {
 
 }
 
-function areCoordinatesEqual(coord1, coord2, tolerance = 0.0001) {
-  const latDiff = Math.abs(coord1.latitude - coord2.latitude);
-  const lngDiff = Math.abs(coord1.longitude - coord2.longitude);
+exports.livraisonDepartCourse = async (req,res) => {
 
-  return latDiff < tolerance && lngDiff < tolerance;
+  
+  
+  try {
+    let {
+      lat ,
+      lng,
+      depart,
+      arrive,
+      pays,
+      nuit
+    } = req.query;
+  
+    console.log(req.query);
+  
+  
+  if (pays == undefined) {
+    pays = 'gn';
+  }
+  
+  if (nuit == undefined) {
+    nuit = '0';
+  }
+  
+  let  point1 = {};
+  
+  if(lat != undefined && lng != undefined) {
+  
+    point1 = { 
+      lat : parseFloat(lat), 
+      lng: parseFloat(lng)
+    };
+  
+  }else {
+     point1 = await utiilsFnc.getLgLatFunc(depart,pays);
+  }
+  
+    const point2 = await utiilsFnc.getLgLatFunc(arrive,pays);
+  
+    console.log(point1);
+    console.log(point2);
+  
+    result = await  utiilsFnc.getDistance(point1,point2);
+
+
+    console.log(result);
+
+
+
+if (nuit =="1") {
+
+  result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 3.5)));
+  result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 3.5))));
+
+  result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+  result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
+
+  result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 10)));
+  result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 10))));
+
+}else {
+
+  result["livraison-moto"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+  result["livraison-moto-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 2.5))));
+
+  result["livraison-standard"] = getPriceLivriason(Math.floor((result['distance']['value'] * 5.5)));
+  result["livraison-standard-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 5.5))));
+
+  result["livraison-confort"] = getPriceLivriason(Math.floor((result['distance']['value'] * 7.5)));
+  result["livraison-confort-fee"] = getFee(getPriceLivriason(Math.floor((result['distance']['value'] * 7.5))));
+
 }
+  
+    result["depart"] = point1;
+  
+    result["arrive"] = point2;
+  
+  
+   return res.status(200).json({
+        message: 'distance évaluer ',
+        status: 'OK',
+        data: result,
+        statusCode: 200
+    })
+  
+  } catch (error) {
+    return res.status(404).json({
+      message: 'erreur serveur ',
+      statusCode: 404,
+      data: error,
+      status: 'NOT OK'
+    });
+  }
+
+}
+
 
