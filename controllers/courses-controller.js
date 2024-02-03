@@ -93,7 +93,7 @@ exports.storeDeplacemnt = async (req,res ) => {
     
             const result = {};
     
-            if(iterator.online == "on" && iterator.typeVehicule == courseS.statusLivraisonVehicule ){
+            if(iterator.typeVehicule == courseS.statusLivraisonVehicule ){
     
                 result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
     
