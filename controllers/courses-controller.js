@@ -108,7 +108,7 @@ exports.storeDeplacemnt = async (req,res ) => {
     
         vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
     
-        vehiculeResult = vehiculeTab.slice(0 , 50);
+        vehiculeResult = vehiculeTab.slice(0 , 5);
 
         console.log( vehiculeResult.length);
     
