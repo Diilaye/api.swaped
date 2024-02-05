@@ -146,13 +146,13 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             console.log(a);
 
-            if(a==2) {
+            if(a==1) {
     
                 console.log("envoie sms a nos motards avant if");
 
-                console.log(courseF.mobilite);
+                console.log(courseF.mobilite== null );
  
-                if(courseF.mobilite != null) {
+                if(courseF.mobilite == null) {
 
                     // envoie sms a nos motards
 
@@ -169,12 +169,12 @@ exports.storeDeplacemnt = async (req,res ) => {
             }
     
     
-            if(a==4) {
+            if(a==2) {
 
                 // send course to all  motard sms
 
 
-                if(courseF.mobilite != null) {
+                if(courseF.mobilite == null) {
 
                     for (const iterator of vehicules) {
     
@@ -223,9 +223,9 @@ exports.storeDeplacemnt = async (req,res ) => {
             
             }
 
-            if(a==6) {
+            if(a==3) {
 
-                if(courseF.mobilite != null) {
+                if(courseF.mobilite == null) {
 
                     // envoyer une reclamations
 
@@ -240,9 +240,7 @@ exports.storeDeplacemnt = async (req,res ) => {
 
                     await clearIntervalAsync(timer);
 
-                }else {
-                    await clearIntervalAsync(timer);
-                } 
+                }
                             
             }
 
