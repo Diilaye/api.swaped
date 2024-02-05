@@ -247,7 +247,7 @@ exports.storeDeplacemnt = async (req,res ) => {
             }
 
             
-          }, 6 * 1000);
+          }, 60 * 1000);
     
       
         return  res.status(201).json({
