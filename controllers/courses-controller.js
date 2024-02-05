@@ -232,7 +232,7 @@ exports.storeDeplacemnt = async (req,res ) => {
                     const reclamation = reclamationModel();
 
                     reclamation.ticketReclamation = DateTime.now().ts;
-                    reclamation.obect = courseF;
+                    reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
                     reclamation.typeService =  "mobilite";
 
