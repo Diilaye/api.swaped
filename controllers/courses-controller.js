@@ -144,9 +144,14 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             a++;
 
+            console.log(a);
+
             if(a==2) {
     
+                console.log("envoie sms a nos motards avant if");
 
+                console.log(courseF.mobilite);
+ 
                 if(courseF.mobilite != null) {
 
                     // envoie sms a nos motards
@@ -242,7 +247,7 @@ exports.storeDeplacemnt = async (req,res ) => {
             }
 
             
-          }, 60 * 1000);
+          }, 6 * 1000);
     
       
         return  res.status(201).json({
