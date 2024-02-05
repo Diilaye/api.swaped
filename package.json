@@ -30,6 +30,7 @@
     "mongoose": "^7.4.4",
     "multer": "^1.4.5-lts.1",
     "paypal-rest-sdk": "^1.8.1",
+    "set-interval-async": "^3.0.3",
     "sharp": "^0.32.5",
     "uid": "^2.0.2",
     "urllib": "^3.19.3"

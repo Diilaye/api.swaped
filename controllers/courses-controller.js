@@ -3,6 +3,8 @@ const courseModel = require('../models/courses-model');
 
 const vehiculeModel = require('../models/vehicule');
 
+const reclamationModel = require('../models/reclamations');
+
 const utiilsFnc = require('../utils/getLgLat');
 
 const walletModel = require('../models/wallet');
@@ -12,6 +14,8 @@ const walletTransactionModel = require('../models/wallet-transactions');
 const { DateTime } = require('luxon');
 
 const { request } = require('urllib');
+
+const { setIntervalAsync, clearIntervalAsync } = require('set-interval-async');
 
 const objectPopulate = [{
     path : 'client',
@@ -87,13 +91,18 @@ exports.storeDeplacemnt = async (req,res ) => {
         let vehiculeResult = [];
     
         let vehiculeResultAffiche = [];
+
+        let listeTelNosVehicules = [
+            '+224626501652',
+            '+224660238759'
+        ];
     
     
         for (const iterator of vehicules) {
     
             const result = {};
     
-            if(iterator.typeVehicule == courseS.statusLivraisonVehicule ){
+            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  && listeTelNosVehicules.includes(iterator.telephone) ){
     
                 result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
     
@@ -125,23 +134,115 @@ exports.storeDeplacemnt = async (req,res ) => {
             vehiculeResultAffiche.push(VHS);
         }
     
-        let task ;
     
         let a = 0;
-    
-        task =  setInterval(()=> {
-    
+
+        const timer = setIntervalAsync(async () => {
+
+            const courseF = await courseModel.findById(courseS.id).exec();
+
+
             a++;
+
+            if(a==2) {
     
-    
-            if(a==4) {
-    
-                clearInterval(task);
+
+                if(courseF.mobilite != null) {
+
+                    // envoie sms a nos motards
+
+                    console.log("envoie sms a nos motards");
+
+                }else {
+
+                    await clearIntervalAsync(timer);
+
+                }
+
+                
             
             }
     
     
-        } , 60 * 1000);
+            if(a==4) {
+
+                // send course to all  motard sms
+
+
+                if(courseF.mobilite != null) {
+
+                    for (const iterator of vehicules) {
+    
+                        const result = {};
+                
+                        if(iterator.typeVehicule == courseS.statusLivraisonVehicule   ){
+                
+                            result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
+                
+                            result["vehicule"] = iterator ;
+                    
+                            vehiculeTab.push(result);
+                           
+                        }
+                        
+                
+                    }
+                
+                    vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+                
+                    vehiculeResult = vehiculeTab;
+            
+                
+                    for (const it of vehiculeResult) {
+            
+                        const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
+            
+                        if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
+                            vhFind.coursesActif.push(courseS.id);
+                        }
+            
+                        const VHS = await vhFind.save();
+            
+                        vehiculeResultAffiche.push(VHS);
+                    }
+
+
+
+                }else {
+                    await clearIntervalAsync(timer);
+                }
+
+    
+                
+                
+            
+            }
+
+            if(a==6) {
+
+                if(courseF.mobilite != null) {
+
+                    // envoyer une reclamations
+
+                    const reclamation = reclamationModel();
+
+                    reclamation.ticketReclamation = DateTime.now().ts;
+                    reclamation.obect = courseF;
+                    reclamation.type = "server";
+                    reclamation.typeService =  "mobilite";
+
+                    const rSave =await reclamation.save();
+
+                    await clearIntervalAsync(timer);
+
+                }else {
+                    await clearIntervalAsync(timer);
+                } 
+                            
+            }
+
+            
+          }, 60 * 1000);
     
       
         return  res.status(201).json({
@@ -172,7 +273,7 @@ exports.storeLivraison = async (req,res ) => {
 
             client,
 
-            mobilite,
+            commande,
         
             prix_total,
         
@@ -191,7 +292,7 @@ exports.storeLivraison = async (req,res ) => {
         const course = courseModel();
     
         course.client = client;
-        course.mobilite = mobilite;
+        course.commande = commande;
         course.prix_total = prix_total;
         course.prix_offre = prix_offre;
         course.pointDepart = pointDepart;
@@ -202,6 +303,168 @@ exports.storeLivraison = async (req,res ) => {
         course.statusLivraisonVehicule = "moto";
     
         const courseS =await course.save();
+
+        const vehicules = await vehiculeModel.find().exec();
+    
+        let vehiculeTab = [];
+    
+        let vehiculeResult = [];
+    
+        let vehiculeResultAffiche = [];
+
+        let listeTelNosVehicules = [
+            '+224626501652',
+            '+224660238759'
+        ];
+    
+    
+        for (const iterator of vehicules) {
+    
+            const result = {};
+    
+            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  && listeTelNosVehicules.includes(iterator.telephone) ){
+    
+                result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
+    
+                result["vehicule"] = iterator ;
+        
+                vehiculeTab.push(result);
+               
+            }
+            
+    
+        }
+    
+        vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+    
+        vehiculeResult = vehiculeTab.slice(0 , 5);
+
+        console.log( vehiculeResult.length);
+    
+        for (const it of vehiculeResult) {
+
+            const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
+
+            if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
+                vhFind.coursesActif.push(courseS.id);
+            }
+
+            const VHS = await vhFind.save();
+
+            vehiculeResultAffiche.push(VHS);
+        }
+    
+    
+        let a = 0;
+
+        const timer = setIntervalAsync(async () => {
+
+            const courseF = await courseModel.findById(courseS.id).exec();
+
+
+            a++;
+
+            if(a==2) {
+    
+
+                if(courseF.mobilite != null) {
+
+                    // envoie sms a nos motards
+
+                    console.log("envoie sms a nos motards");
+
+                }else {
+
+                    await clearIntervalAsync(timer);
+
+                }
+
+                
+            
+            }
+    
+    
+            if(a==4) {
+
+                // send course to all  motard sms
+
+
+                if(courseF.mobilite != null) {
+
+                    for (const iterator of vehicules) {
+    
+                        const result = {};
+                
+                        if(iterator.typeVehicule == courseS.statusLivraisonVehicule   ){
+                
+                            result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
+                
+                            result["vehicule"] = iterator ;
+                    
+                            vehiculeTab.push(result);
+                           
+                        }
+                        
+                
+                    }
+                
+                    vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
+                
+                    vehiculeResult = vehiculeTab;
+            
+                
+                    for (const it of vehiculeResult) {
+            
+                        const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
+            
+                        if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
+                            vhFind.coursesActif.push(courseS.id);
+                        }
+            
+                        const VHS = await vhFind.save();
+            
+                        vehiculeResultAffiche.push(VHS);
+                    }
+
+
+
+                }else {
+                    await clearIntervalAsync(timer);
+                }
+
+    
+                
+                
+            
+            }
+
+            if(a==6) {
+
+                if(courseF.mobilite != null) {
+
+                    // envoyer une reclamations
+
+                    const reclamation = reclamationModel();
+
+                    reclamation.ticketReclamation = DateTime.now().ts;
+                    reclamation.obect = courseF;
+                    reclamation.type = "server";
+                    reclamation.typeService =  "mobilite";
+
+                    const rSave =await reclamation.save();
+
+                    await clearIntervalAsync(timer);
+
+                }else {
+                    await clearIntervalAsync(timer);
+                } 
+                            
+            }
+
+            
+          }, 60 * 1000);
+    
+      
     
         return  res.status(201).json({
             message: 'Creation de courses',

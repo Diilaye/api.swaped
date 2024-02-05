@@ -21,6 +21,12 @@ const CoursesModel = new Schema({
         default : null
     },
 
+    commande : {
+        type: Schema.Types.ObjectId,
+        ref: "pannier-commande",
+        default : null
+    },
+
     prix_total : {
         type : Number
     },
