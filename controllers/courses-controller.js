@@ -240,12 +240,6 @@ exports.storeDeplacemnt = async (req,res ) => {
                         axios.request(config)
                         .then((response) => {
                         console.log(JSON.stringify(response.data));
-                        return res.status(202).json({
-                            message: 'Pas existant',
-                            status: 'OK',
-                            data:"Code envoyé  ",
-                            statusCode: 202
-                        });
                         })
                         .catch((error) => {
                         console.log(error);
