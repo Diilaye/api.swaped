@@ -91,18 +91,13 @@ exports.storeDeplacemnt = async (req,res ) => {
         let vehiculeResult = [];
     
         let vehiculeResultAffiche = [];
-
-        let listeTelNosVehicules = [
-            '+224626501652',
-            '+224660238759'
-        ];
     
     
         for (const iterator of vehicules) {
     
             const result = {};
     
-            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  && listeTelNosVehicules.includes(iterator.telephone) ){
+            if(iterator.typeVehicule == courseS.statusLivraisonVehicule ){
     
                 result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
     
@@ -146,84 +141,32 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             console.log(a);
 
-            if(a==1) {
+            // if(a==1) {
     
-                console.log("envoie sms a nos motards avant if");
+            //     console.log("envoie sms a nos motards avant if");
 
-                console.log(courseF.mobilite== null );
+            //     console.log(courseF.mobilite== null );
  
-                if(courseF.mobilite == null) {
+            //     if(courseF.mobilite == null) {
 
-                    // envoie sms a nos motards
+            //         // envoie sms a nos motards
 
-                    console.log("envoie sms a nos motards");
+            //         console.log("envoie sms a nos motards");
 
-                }else {
+            //     }else {
 
-                    await clearIntervalAsync(timer);
+            //         await clearIntervalAsync(timer);
 
-                }
+            //     }
 
                 
             
-            }
+            // }
     
     
-            if(a==2) {
-
-                // send course to all  motard sms
-
-
-                if(courseF.mobilite == null) {
-
-                    for (const iterator of vehicules) {
-    
-                        const result = {};
-                
-                        if(iterator.typeVehicule == courseS.statusLivraisonVehicule   ){
-                
-                            result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
-                
-                            result["vehicule"] = iterator ;
-                    
-                            vehiculeTab.push(result);
-                           
-                        }
-                        
-                
-                    }
-                
-                    vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-                
-                    vehiculeResult = vehiculeTab;
             
-                
-                    for (const it of vehiculeResult) {
-            
-                        const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
-            
-                        if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
-                            vhFind.coursesActif.push(courseS.id);
-                        }
-            
-                        const VHS = await vhFind.save();
-            
-                        vehiculeResultAffiche.push(VHS);
-                    }
 
-
-
-                }else {
-                    await clearIntervalAsync(timer);
-                }
-
-    
-                
-                
-            
-            }
-
-            if(a==3) {
+            if(a==1) {
 
                 if(courseF.mobilite == null) {
 
@@ -265,6 +208,44 @@ exports.storeDeplacemnt = async (req,res ) => {
                     reclamation.typeService =  "mobilite";
 
                     const rSave =await reclamation.save();
+
+                    //SEND MESSAGE TO THIERNO
+
+                    let data = JSON.stringify({
+                        "outboundSMSMessageRequest": {
+                            "address": "tel:+224626501651",
+                            "senderAddress": "tel:+224626501651",
+                            "senderName": "Deally",
+                            "outboundSMSTextMessage": {
+                            "message": "Une  reclamations a été envoyé ticket de réclation : "+rSave.ticketReclamation
+                            }
+                        }
+                        });
+                    
+                        let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': 'Bearer '+req.accessToken
+                        },
+                        data : data
+                        };
+                    
+                        axios.request(config)
+                        .then((response) => {
+                        console.log(JSON.stringify(response.data));
+                        return res.status(202).json({
+                            message: 'Pas existant',
+                            status: 'OK',
+                            data:"Code envoyé  ",
+                            statusCode: 202
+                        });
+                        })
+                        .catch((error) => {
+                        console.log(error);
+                        });
 
                     await clearIntervalAsync(timer);
 
