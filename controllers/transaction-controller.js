@@ -481,6 +481,7 @@ exports.cashinChauffeurGN = async (req,res) => {
        });
        
      }).catch(function (error) {
+      console.log(error);
        return res.status(404).json({
            message: 'erreur server ',
            statusCode: 404,
