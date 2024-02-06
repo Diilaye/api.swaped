@@ -227,6 +227,34 @@ exports.storeDeplacemnt = async (req,res ) => {
 
                 if(courseF.mobilite == null) {
 
+                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
+
+                    courseF.statusCourses = 'cancel-server';
+
+    
+
+                    const courseSave = await courseF.save();
+
+
+                    const vehicules = await vehiculeModel.find().exec();
+
+                    for (const iterator of vehicules) {
+
+                        if(iterator.coursesActif.includes(courseSave.id)) {
+
+                            const vh =await vehiculeModel.findById(iterator.id).exec();
+
+                            if(vh.courseSelected == courseSave.id ) {
+                                vh.courseSelected = null ;
+                                vh.online ="on";
+                            }
+
+                            vh.coursesActif.remove(courseSave.id);
+
+                            const v =await vh.save();
+                        }
+                    }
+
                     // envoyer une reclamations
 
                     const reclamation = reclamationModel();
