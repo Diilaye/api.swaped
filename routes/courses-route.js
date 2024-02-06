@@ -4,6 +4,8 @@ const router = express.Router();
 
 const courseCtrl = require("../controllers/courses-controller");
 const { checkRoleClient , checkRole } = require('../midleweares/auth');
+const smsOrangeToken = require('../midleweares/sms-orange'); 
+
 
 router.post('/', smsOrangeToken,checkRoleClient()  ,courseCtrl.storeDeplacemnt );
 
