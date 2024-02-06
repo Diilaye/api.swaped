@@ -145,29 +145,6 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             console.log(a);
 
-            // if(a==1) {
-    
-            //     console.log("envoie sms a nos motards avant if");
-
-            //     console.log(courseF.mobilite== null );
- 
-            //     if(courseF.mobilite == null) {
-
-            //         // envoie sms a nos motards
-
-            //         console.log("envoie sms a nos motards");
-
-            //     }else {
-
-            //         await clearIntervalAsync(timer);
-
-            //     }
-
-                
-            
-            // }
-    
-    
             
 
             if(a==1) {
@@ -221,7 +198,7 @@ exports.storeDeplacemnt = async (req,res ) => {
                             "senderAddress": "tel:+224626501651",
                             "senderName": "Deally",
                             "outboundSMSTextMessage": {
-                            "message": "Une  reclamations a été envoyé ticket de réclation : "+rSave.ticketReclamation
+                            "message": "Une  course  n'a pas été acceptée ticket de réclation : "+rSave.ticketReclamation
                             }
                         }
                         });
@@ -322,17 +299,12 @@ exports.storeLivraison = async (req,res ) => {
     
         let vehiculeResultAffiche = [];
 
-        let listeTelNosVehicules = [
-            '+224626501652',
-            '+224660238759'
-        ];
-    
     
         for (const iterator of vehicules) {
     
             const result = {};
     
-            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  && listeTelNosVehicules.includes(iterator.telephone) ){
+            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  ){
     
                 result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
     
@@ -374,100 +346,84 @@ exports.storeLivraison = async (req,res ) => {
 
             a++;
 
-            if(a==2) {
+            if(a==1) {
+
+                if(courseF.mobilite == null) {
+
+                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
+
+                    courseF.statusCourses = 'cancel-server';
+
     
 
-                if(courseF.mobilite != null) {
-
-                    // envoie sms a nos motards
-
-                    console.log("envoie sms a nos motards");
-
-                }else {
-
-                    await clearIntervalAsync(timer);
-
-                }
-
-                
-            
-            }
-    
-    
-            if(a==4) {
-
-                // send course to all  motard sms
+                    const courseSave = await courseF.save();
 
 
-                if(courseF.mobilite != null) {
+                    const vehicules = await vehiculeModel.find().exec();
 
                     for (const iterator of vehicules) {
-    
-                        const result = {};
-                
-                        if(iterator.typeVehicule == courseS.statusLivraisonVehicule   ){
-                
-                            result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
-                
-                            result["vehicule"] = iterator ;
-                    
-                            vehiculeTab.push(result);
-                           
+
+                        if(iterator.coursesActif.includes(courseSave.id)) {
+
+                            const vh =await vehiculeModel.findById(iterator.id).exec();
+
+                            if(vh.courseSelected == courseSave.id ) {
+                                vh.courseSelected = null ;
+                                vh.online ="on";
+                            }
+
+                            vh.coursesActif.remove(courseSave.id);
+
+                            const v =await vh.save();
                         }
-                        
-                
                     }
-                
-                    vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-                
-                    vehiculeResult = vehiculeTab;
-            
-                
-                    for (const it of vehiculeResult) {
-            
-                        const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
-            
-                        if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
-                            vhFind.coursesActif.push(courseS.id);
-                        }
-            
-                        const VHS = await vhFind.save();
-            
-                        vehiculeResultAffiche.push(VHS);
-                    }
-
-
-
-                }else {
-                    await clearIntervalAsync(timer);
-                }
-
-    
-                
-                
-            
-            }
-
-            if(a==6) {
-
-                if(courseF.mobilite != null) {
 
                     // envoyer une reclamations
 
                     const reclamation = reclamationModel();
 
                     reclamation.ticketReclamation = DateTime.now().ts;
-                    reclamation.obect = courseF;
+                    reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
                     reclamation.typeService =  "mobilite";
 
                     const rSave =await reclamation.save();
 
+                    //SEND MESSAGE TO THIERNO
+
+                    let data = JSON.stringify({
+                        "outboundSMSMessageRequest": {
+                            "address": "tel:+224626501651",
+                            "senderAddress": "tel:+224626501651",
+                            "senderName": "Deally",
+                            "outboundSMSTextMessage": {
+                            "message": "Une  livraison de repas n'a été envoyée ticket de réclation : "+rSave.ticketReclamation
+                            }
+                        }
+                        });
+                    
+                        let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': 'Bearer '+req.accessToken
+                        },
+                        data : data
+                        };
+                    
+                        axios.request(config)
+                        .then((response) => {
+                        console.log(JSON.stringify(response.data));
+                        })
+                        .catch((error) => {
+                        console.log(error);
+                        });
+
                     await clearIntervalAsync(timer);
 
-                }else {
-                    await clearIntervalAsync(timer);
-                } 
+                }
                             
             }
 
