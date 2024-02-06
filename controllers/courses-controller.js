@@ -116,7 +116,7 @@ exports.storeDeplacemnt = async (req,res ) => {
     
         vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
     
-        vehiculeResult = vehiculeTab.slice(0 , 5);
+        vehiculeResult = vehiculeTab;
 
         console.log( vehiculeResult.length);
     
@@ -255,11 +255,15 @@ exports.storeDeplacemnt = async (req,res ) => {
 
 exports.storeLivraison = async (req,res ) => {
 
+    
+
+
     try {
+       
         let {
 
             client,
-
+    
             commande,
         
             prix_total,
@@ -276,10 +280,33 @@ exports.storeLivraison = async (req,res ) => {
     
         } = req.body;
     
+        const walletTransaction = walletTransactionModel();
+    
+        const find = await walletModel.findOne({
+            userId : client
+        });
+    
+        walletTransaction.amount = prix_offre ;
+    
+        walletTransaction.userWallet = find.id ;
+    
+        walletTransaction.reference = DateTime.now().ts ;
+    
+        walletTransaction.typeService = "recharge" ;
+    
+        walletTransaction.status = "SUCCESS" ;
+    
+        walletTransaction.dateTransactionSuccess =  DateTime.now().toFormat('dd-MM-yyyy'); ;
+    
+        walletTransaction.means = "SWAPED" ;
+    
+        const saveWalletTransaction = await  walletTransaction.save();
+    
         const course = courseModel();
     
         course.client = client;
         course.commande = commande;
+        course.transaction = saveWalletTransaction.id;
         course.prix_total = prix_total;
         course.prix_offre = prix_offre;
         course.pointDepart = pointDepart;
@@ -290,7 +317,7 @@ exports.storeLivraison = async (req,res ) => {
         course.statusLivraisonVehicule = "moto";
     
         const courseS =await course.save();
-
+    
         const vehicules = await vehiculeModel.find().exec();
     
         let vehiculeTab = [];
@@ -298,7 +325,7 @@ exports.storeLivraison = async (req,res ) => {
         let vehiculeResult = [];
     
         let vehiculeResultAffiche = [];
-
+    
     
         for (const iterator of vehicules) {
     
@@ -319,78 +346,78 @@ exports.storeLivraison = async (req,res ) => {
     
         vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
     
-        vehiculeResult = vehiculeTab.slice(0 , 5);
-
+        vehiculeResult = vehiculeTab;
+    
         console.log( vehiculeResult.length);
     
         for (const it of vehiculeResult) {
-
+    
             const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
-
+    
             if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
                 vhFind.coursesActif.push(courseS.id);
             }
-
+    
             const VHS = await vhFind.save();
-
+    
             vehiculeResultAffiche.push(VHS);
         }
     
     
         let a = 0;
-
-        const timer = setIntervalAsync(async () => {
-
-            const courseF = await courseModel.findById(courseS.id).exec();
-
-
-            a++;
-
-            if(a==1) {
-
-                if(courseF.mobilite == null) {
-
-                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
-
-                    courseF.statusCourses = 'cancel-server';
-
     
-
+        const timer = setIntervalAsync(async () => {
+    
+            const courseF = await courseModel.findById(courseS.id).exec();
+    
+    
+            a++;
+    
+            if(a==1) {
+    
+                if(courseF.mobilite == null) {
+    
+                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
+    
+                    courseF.statusCourses = 'cancel-server';
+    
+    
+    
                     const courseSave = await courseF.save();
-
-
+    
+    
                     const vehicules = await vehiculeModel.find().exec();
-
+    
                     for (const iterator of vehicules) {
-
+    
                         if(iterator.coursesActif.includes(courseSave.id)) {
-
+    
                             const vh =await vehiculeModel.findById(iterator.id).exec();
-
+    
                             if(vh.courseSelected == courseSave.id ) {
                                 vh.courseSelected = null ;
                                 vh.online ="on";
                             }
-
+    
                             vh.coursesActif.remove(courseSave.id);
-
+    
                             const v =await vh.save();
                         }
                     }
-
+    
                     // envoyer une reclamations
-
+    
                     const reclamation = reclamationModel();
-
+    
                     reclamation.ticketReclamation = DateTime.now().ts;
                     reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
                     reclamation.typeService =  "mobilite";
-
+    
                     const rSave =await reclamation.save();
-
+    
                     //SEND MESSAGE TO THIERNO
-
+    
                     let data = JSON.stringify({
                         "outboundSMSMessageRequest": {
                             "address": "tel:+224626501651",
@@ -420,22 +447,26 @@ exports.storeLivraison = async (req,res ) => {
                         .catch((error) => {
                         console.log(error);
                         });
-
+    
                     await clearIntervalAsync(timer);
-
+    
                 }
                             
             }
-
+    
             
           }, 60 * 1000);
     
+          console.log(vehiculeResultAffiche);
       
     
         return  res.status(201).json({
             message: 'Creation de courses',
             status: 'OK',
-            data:courseS,
+            data:{
+                "course" :courseS,
+                "liste-vehicule" :vehiculeResultAffiche 
+            },
             statusCode: 201
         });
     
