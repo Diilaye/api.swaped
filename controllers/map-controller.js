@@ -71,7 +71,6 @@ exports.address = async (req,res,next) => {
 
   axios.get(geocodingUrl).then((response) => {
 
-  console.log(response);
 
     if (response.data.status === 'OK' && response.data.results.length > 0) {
           address = response.data.results[0].formatted_address;
