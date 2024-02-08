@@ -340,125 +340,129 @@ exports.addWallet = async (req,res) => {
     
     
     
+    let {
+        
+        panniers ,
     
+        prix_total ,
+    
+        prix_offre ,
+    
+        prix_livraison ,
+    
+        pointDepart ,
+    
+        pointArrive ,
+          
+        statusLivraison,
+
+        contriePaiement,
+
+        phonePaiement,
+        
+        means,
+
+        otp,
+
+        creneaux,
+
+        restaurant,
+        
+        addresseLivraion,
+
+        addresseRestaurant
+    
+    } = req.body ;
+
+
+    const pannierCommande = pannierCommandeModel();
+
+    pannierCommande.reference = DateTime.now().ts;
+
+    pannierCommande.panniers = panniers;
+
+    pannierCommande.restaurant = restaurant;
+
+    pannierCommande.client = req.user.id_user;
+
+    pannierCommande.prix_total = prix_total;
+
+    pannierCommande.prix_offre = prix_offre;
+
+    pannierCommande.prix_livraison = prix_livraison ;
+
+    pannierCommande.statusLivraison = statusLivraison;
+
+    pannierCommande.pointDepart = pointDepart;
+
+    pannierCommande.pointArrive = pointArrive;
+
+    pannierCommande.contriePaiement = contriePaiement;
+
+    pannierCommande.phonePaiement = phonePaiement;
+
+    pannierCommande.means = means;
+
+    pannierCommande.creneaux = creneaux;
+
+    pannierCommande.addresseLivraion = addresseLivraion;
+
+    pannierCommande.addresseRestaurant = addresseRestaurant;
+
+    const pannierCommandeSave = await pannierCommande.save();
+    
+    const find = await walletModel.findOne({
+        userId : req.user.id_user
+    });
+
+    console.log(find);
+    console.log( find.balance >=  pannierCommandeSave.prix_total);
+
+    if( find.balance >=  pannierCommandeSave.prix_total ) {
+
+        pannierCommandeSave.status =  "SUCCESS";
+
+        offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+        p = await pannierCommandeSave.save();
+
+        console.log(p);
+
+        for await (element of pannierCommandeSave.panniers) {
+            console.log("element");
+            const p = await pannierModel.findById(element).exec();
+
+            p.status = "accept";
+
+            await p.save();
+        }
+
+        find.balance = find.balance - pannierCommandeSave.prix_total ;
+
+        const findS = await find.save();
+
+  
+
+        return res.status(201).json({
+            message: 'paiement réuissi',
+            status: 'OK',
+            data: pannierCommandeSave,
+            statusCode: 201
+        });
+
+
+    }else {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: "solde insufisant",
+            statusCode: 404
+        });
+    }
 
     try {
 
-        let {
-        
-            panniers ,
-        
-            prix_total ,
-        
-            prix_offre ,
-        
-            prix_livraison ,
-        
-            pointDepart ,
-        
-            pointArrive ,
-              
-            statusLivraison,
-    
-            contriePaiement,
-    
-            phonePaiement,
-            
-            means,
-    
-            otp,
-    
-            creneaux,
-    
-            restaurant,
-            
-            addresseLivraion,
-    
-            addresseRestaurant
-        
-        } = req.body ;
-    
-    
-        const pannierCommande = pannierCommandeModel();
-    
-        pannierCommande.reference = DateTime.now().ts;
-    
-        pannierCommande.panniers = panniers;
-    
-        pannierCommande.restaurant = restaurant;
-    
-        pannierCommande.client = req.user.id_user;
-    
-        pannierCommande.prix_total = prix_total;
-    
-        pannierCommande.prix_offre = prix_offre;
-    
-        pannierCommande.prix_livraison = prix_livraison ;
-    
-        pannierCommande.statusLivraison = statusLivraison;
-    
-        pannierCommande.pointDepart = pointDepart;
-    
-        pannierCommande.pointArrive = pointArrive;
-    
-        pannierCommande.contriePaiement = contriePaiement;
-    
-        pannierCommande.phonePaiement = phonePaiement;
-    
-        pannierCommande.means = means;
-    
-        pannierCommande.creneaux = creneaux;
-    
-        pannierCommande.addresseLivraion = addresseLivraion;
-    
-        pannierCommande.addresseRestaurant = addresseRestaurant;
-    
-        const pannierCommandeSave = await pannierCommande.save();
-        
-        const find = await walletModel.findOne({
-            userId : req.user.id_user
-        });
-
-        console.log(find);
-        console.log( find.balance >=  pannierCommandeSave.prix_total);
-    
-        if( find.balance >=  pannierCommandeSave.prix_total ) {
-    
-            pannierCommandeSave.status =  "SUCCESS";
-
-            offreCommande.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-
-            p = await pannierCommandeSave.save();
-    
-            for await (element of pannierCommandeSave.panniers) {
-                // console.log(element);
-                const p = await pannierModel.findById(element).exec();
-    
-                p.status = "accept";
-    
-                await p.save();
-            }
-    
-            find.balance = find.balance - pannierCommandeSave.prix_total ;
-    
-            const findS = await find.save();
-    
-            return res.status(201).json({
-                message: 'paiement réuissi',
-                status: 'OK',
-                data: pannierCommandeSave,
-                statusCode: 201
-            });
-    
-    
-        }else {
-            return res.status(404).json({
-                message: 'erreur serveur',
-                status: 'NOT OK',
-                data: "solde insufisant",
-                statusCode: 404
-            });
-        }
+      
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
