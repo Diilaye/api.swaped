@@ -66,7 +66,12 @@ exports.address = async (req,res,next) => {
   
   const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.MAPKEY}`;
 
+  console.log("geocodingUrl");
+  console.log(geocodingUrl);
+
   axios.get(geocodingUrl).then((response) => {
+
+  
 
     if (response.data.status === 'OK' && response.data.results.length > 0) {
           address = response.data.results[0].formatted_address;
@@ -79,6 +84,8 @@ exports.address = async (req,res,next) => {
     }
     
     }).catch((error) => {
+      console.log("error");
+      console.log(error);
       return res.status(404).json({
         message: 'erreur supréssion ',
         statusCode: 404,

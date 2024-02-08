@@ -56,6 +56,8 @@ const coursesRouter = require('./routes/courses-route');
 
 const vehiculeRoute = require('./routes/vehicule-route');
 
+const reclamationRoute = require('./routes/reclamations-routes');
+
 
 const  paypal = require('paypal-rest-sdk');
 
@@ -131,6 +133,8 @@ app.use('/v1/api/deplacements' ,deplacementRoute);
 app.use('/v1/api/courses' ,coursesRouter);
 
 app.use('/v1/api/vehicules' ,vehiculeRoute);
+
+app.use('/v1/api/reclamations' ,reclamationRoute);
 
 
 
