@@ -420,6 +420,7 @@ exports.addWallet = async (req,res) => {
         });
 
         console.log(find);
+        console.log( find.balance >=  pannierCommandeSave.prix_total);
     
         if( find.balance >=  pannierCommandeSave.prix_total ) {
     
