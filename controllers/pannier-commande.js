@@ -418,6 +418,8 @@ exports.addWallet = async (req,res) => {
         const find = await walletModel.findOne({
             userId : req.user.id_user
         });
+
+        console.log(find);
     
         if( find.balance >=  pannierCommandeSave.prix_total ) {
     
