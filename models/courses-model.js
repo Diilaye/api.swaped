@@ -80,7 +80,7 @@ const CoursesModel = new Schema({
     statusLivraison: {
         type: String,
         enum: ['deplacement', 'livraison'],
-        default: 'livraison'
+        default: 'deplacement'
     },
 
     statusLivraisonVehicule: {

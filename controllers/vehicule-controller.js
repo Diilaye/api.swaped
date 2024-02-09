@@ -23,6 +23,26 @@ const objectPopulate = [{
         path : 'mobilite'
     },{
         path :'transaction'
+    },{
+        path : 'commande',
+        populate : [{
+            path : 'panniers',
+            populate : [{
+                path : 'plat',
+                populate : [{
+                    path : 'galery'
+                }]
+            }]
+        },{
+            path :'client'
+        },{
+            path : 'restaurant',
+            populate  : [{
+                path :'gallerie'
+            },{
+                path :'photoCover',
+            }]
+        }]
     }] 
 },{
     path :'courses',
@@ -33,6 +53,26 @@ const objectPopulate = [{
         path : 'mobilite'
     },{
         path :'transaction'
+    },{
+        path : 'commande',
+        populate : [{
+            path : 'panniers',
+            populate : [{
+                path : 'plat',
+                populate : [{
+                    path : 'galery'
+                }]
+            }]
+        },{
+            path :'client'
+        },{
+            path : 'restaurant',
+            populate  : [{
+                path :'gallerie'
+            },{
+                path :'photoCover',
+            }]
+        }]
     }] 
 }];
 
