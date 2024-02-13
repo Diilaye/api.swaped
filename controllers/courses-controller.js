@@ -33,6 +33,23 @@ const objectPopulate = [{
     path : 'transaction'
 }];
 
+const objectPopulateCommande = [{
+    path : 'client',
+    select : 'telephone nom prenom'
+},{
+    path : 'mobilite',
+    populate : {
+        path :'photoVehicule photoProfile'
+    }
+} , {
+    path : 'transaction'
+},{
+    path : 'commande' , 
+    populate : {
+        path :'restaurant panniers'
+    }
+}];
+
 
 
 exports.storeDeplacemnt = async (req,res ) => {
@@ -138,7 +155,7 @@ exports.storeDeplacemnt = async (req,res ) => {
 
         const timer = setIntervalAsync(async () => {
 
-            const courseF = await courseModel.findById(courseS.id).populate(objectPopulate).exec();
+            const courseF = await courseModel.findById(courseS.id).populate(objectPopulateCommande).exec();
 
 
             a++;
@@ -371,7 +388,7 @@ exports.storeLivraison = async (req,res ) => {
     
         const timer = setIntervalAsync(async () => {
     
-            const courseF = await courseModel.findById(courseS.id).populate(objectPopulate).exec();
+            const courseF = await courseModel.findById(courseS.id).populate(objectPopulateCommande).exec();
     
     
             a++;
