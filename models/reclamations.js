@@ -43,6 +43,11 @@ const reclamationModel = new Schema({
     type: String,
     enum: ['pending', 'call-client','finish'],
     default: 'pending'
+  },
+  niveauReclamations : {
+    type: String,
+    enum: ['Loup', 'Dragon','Demon','Dieu'],
+    default: 'Loup'      
   }
   
 

@@ -442,7 +442,7 @@ exports.storeLivraison = async (req,res ) => {
                     reclamation.ticketReclamation = DateTime.now().ts;
                     reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
-                    reclamation.typeService =  "mobilite";
+                    reclamation.typeService =  "restaurant";
     
                     const rSave =await reclamation.save();
     
