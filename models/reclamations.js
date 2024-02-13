@@ -29,7 +29,21 @@ const reclamationModel = new Schema({
     unique : true,
   },
 
+  probleme : {
+    type : String,
+    default : ''
+  },
 
+  solution : {
+    type : String,
+    default : ''
+  },
+
+  statusReclamation : {
+    type: String,
+    enum: ['pending', 'call-client','finish'],
+    default: 'pending'
+  }
   
 
 },{

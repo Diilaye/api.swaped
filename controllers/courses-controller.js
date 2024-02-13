@@ -368,7 +368,7 @@ exports.storeLivraison = async (req,res ) => {
     
         const timer = setIntervalAsync(async () => {
     
-            const courseF = await courseModel.findById(courseS.id).exec();
+            const courseF = await courseModel.findById(courseS.id).populate(objectPopulate).exec();
     
     
             a++;
