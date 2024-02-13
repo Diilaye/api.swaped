@@ -51,12 +51,12 @@ const objectPopulateCommande = [{
         
     },{
         path : 'panniers',
-        populate : [{
-            path : 'plats',
+        populate : {
+            path : 'plat',
             populate :{
                 path : 'galery'
             } 
-        }]
+        }
     }]
 }];
 
