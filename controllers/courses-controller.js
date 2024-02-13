@@ -45,9 +45,19 @@ const objectPopulateCommande = [{
     path : 'transaction'
 },{
     path : 'commande' , 
-    populate : {
-        path :'restaurant panniers'
-    }
+    populate : [{
+        path :'restaurant',
+        select :'adresse nomEntreprise telephone'
+        
+    },{
+        path : 'panniers',
+        populate : [{
+            path : 'plats',
+            populate :{
+                path : 'galery'
+            } 
+        }]
+    }]
 }];
 
 
