@@ -14,6 +14,7 @@ const routes = new express.Router();
 // Add routes
 
 routes.get('/', reclamationCtrl.all);
+routes.get('/vehicules', reclamationCtrl.getVehiculeProxy);
 
 module.exports = routes;
     
