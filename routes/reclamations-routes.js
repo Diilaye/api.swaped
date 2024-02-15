@@ -13,8 +13,10 @@ const routes = new express.Router();
 
 // Add routes
 
-routes.get('/', reclamationCtrl.all);
-routes.get('/vehicules', reclamationCtrl.getVehiculeProxy);
+routes.get('/', checkRole('admin'),reclamationCtrl.all);
+routes.get('/vehicules', checkRole('admin'), reclamationCtrl.getVehiculeProxy);
+
+routes.put('/:id', checkRole('admin'),reclamationCtrl.getVehiculeProxy);
 
 module.exports = routes;
     

@@ -32,6 +32,46 @@ exports.all = async (req, res) => {
 
 }
 
+exports.closeRecamation = async (req , res) => {
+
+    try {
+
+        let {
+            probleme ,
+            solution
+        }=req.body;
+    
+        const reclamation = await reclamationModel.findById(req.params.id).exec();
+    
+        reclamation.probleme=probleme ;
+    
+        reclamation.solution = solution;
+    
+       const  reclamationSave = await reclamation.save();
+
+       return  res.status(200).json({
+            message: 'update  reclamation',
+            status: 'OK',
+            data: reclamationSave,
+            statusCode: 200
+        });
+        
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur  ',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+   
+
+
+
+
+}
+
 exports.getVehiculeProxy = async (req,res) => {
 
     try {
