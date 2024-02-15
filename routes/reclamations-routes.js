@@ -16,7 +16,7 @@ const routes = new express.Router();
 routes.get('/', checkRole('admin'),reclamationCtrl.all);
 routes.get('/vehicules', checkRole('admin'), reclamationCtrl.getVehiculeProxy);
 
-routes.put('/:id', checkRole('admin'),reclamationCtrl.getVehiculeProxy);
+routes.put('/:id', checkRole('admin'),reclamationCtrl.closeRecamation);
 
 module.exports = routes;
     

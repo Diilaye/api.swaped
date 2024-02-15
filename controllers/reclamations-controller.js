@@ -46,6 +46,8 @@ exports.closeRecamation = async (req , res) => {
         reclamation.probleme=probleme ;
     
         reclamation.solution = solution;
+
+        reclamation.statusReclamation = "finish";
     
        const  reclamationSave = await reclamation.save();
 
