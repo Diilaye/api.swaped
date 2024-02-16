@@ -176,7 +176,12 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             if(a==1) {
 
-                if(courseF.mobilite == null) {
+                if(courseF.statusCourses =='cancel-client') {
+                    await clearIntervalAsync(timer);
+
+                }
+
+                if(courseF.mobilite == null ) {
 
                     courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
 
@@ -250,6 +255,249 @@ exports.storeDeplacemnt = async (req,res ) => {
                         });
 
                         await clearIntervalAsync(timer);
+
+                        let b = 0 ;
+
+                        const timerR = setIntervalAsync( async () => {
+
+                            b++;
+
+                            console.log('b =>',b);
+                            
+                            const rFind = await  reclamationModel.findById(rSave.id).exec();
+
+                            if(b== 5) {
+                                if(rFind.statusReclamation == 'pending') {
+
+                                    if(rFind.niveauReclamations == "Loup") {
+                                        rFind.niveauReclamations = "Dragon";
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dragon") {
+                                        rFind.niveauReclamations = "Demon";
+                                        
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Demon") {
+                                        rFind.niveauReclamations = "Dieu";   
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dieu") {
+                                         //SEND MESSAGE TO THIERNO
+    
+                                        let data = JSON.stringify({
+                                            "outboundSMSMessageRequest": {
+                                                "address": "tel:+224626501651",
+                                                "senderAddress": "tel:+224626501651",
+                                                "senderName": "Deally",
+                                                "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
+                                                }
+                                            }
+                                            });
+                                        
+                                            let config = {
+                                            method: 'post',
+                                            maxBodyLength: Infinity,
+                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                            headers: { 
+                                                'Content-Type': 'application/json', 
+                                                'Authorization': 'Bearer '+req.accessToken
+                                            },
+                                            data : data
+                                            };
+                                        
+                                            axios.request(config)
+                                            .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                            })
+                                            .catch((error) => {
+                                            console.log(error);
+                                            });
+                                    await clearIntervalAsync(timerR);
+    
+                                    } 
+    
+                                }  else {
+                                    await clearIntervalAsync(timerR);
+                                }
+                            }
+                            if(b==10) {
+                                if(rFind.statusReclamation == 'pending') {
+
+                                    if(rFind.niveauReclamations == "Loup") {
+                                        rFind.niveauReclamations = "Dragon";
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dragon") {
+                                        rFind.niveauReclamations = "Demon";
+                                        
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Demon") {
+                                        rFind.niveauReclamations = "Dieu";   
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dieu") {
+                                         //SEND MESSAGE TO THIERNO
+    
+                                        let data = JSON.stringify({
+                                            "outboundSMSMessageRequest": {
+                                                "address": "tel:+224626501651",
+                                                "senderAddress": "tel:+224626501651",
+                                                "senderName": "Deally",
+                                                "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
+                                                }
+                                            }
+                                            });
+                                        
+                                            let config = {
+                                            method: 'post',
+                                            maxBodyLength: Infinity,
+                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                            headers: { 
+                                                'Content-Type': 'application/json', 
+                                                'Authorization': 'Bearer '+req.accessToken
+                                            },
+                                            data : data
+                                            };
+                                        
+                                            axios.request(config)
+                                            .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                            })
+                                            .catch((error) => {
+                                            console.log(error);
+                                            });
+                                    await clearIntervalAsync(timerR);
+    
+                                    } 
+    
+                                }  else {
+                                    await clearIntervalAsync(timerR);
+                                }
+                            }
+
+                            if(b==15) {
+                                if(rFind.statusReclamation == 'pending') {
+
+                                    if(rFind.niveauReclamations == "Loup") {
+                                        rFind.niveauReclamations = "Dragon";
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dragon") {
+                                        rFind.niveauReclamations = "Demon";
+                                        
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Demon") {
+                                        rFind.niveauReclamations = "Dieu";   
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dieu") {
+                                         //SEND MESSAGE TO THIERNO
+    
+                                        let data = JSON.stringify({
+                                            "outboundSMSMessageRequest": {
+                                                "address": "tel:+224626501651",
+                                                "senderAddress": "tel:+224626501651",
+                                                "senderName": "Deally",
+                                                "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
+                                                }
+                                            }
+                                            });
+                                        
+                                            let config = {
+                                            method: 'post',
+                                            maxBodyLength: Infinity,
+                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                            headers: { 
+                                                'Content-Type': 'application/json', 
+                                                'Authorization': 'Bearer '+req.accessToken
+                                            },
+                                            data : data
+                                            };
+                                        
+                                            axios.request(config)
+                                            .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                            })
+                                            .catch((error) => {
+                                            console.log(error);
+                                            });
+                                    await clearIntervalAsync(timerR);
+    
+                                    } 
+    
+                                }  else {
+                                    await clearIntervalAsync(timerR);
+                                }
+                            }
+
+                            if(b==20) {
+                                if(rFind.statusReclamation == 'pending') {
+
+                                    if(rFind.niveauReclamations == "Loup") {
+                                        rFind.niveauReclamations = "Dragon";
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dragon") {
+                                        rFind.niveauReclamations = "Demon";
+                                        
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Demon") {
+                                        rFind.niveauReclamations = "Dieu";   
+                                    }
+        
+                                    if(rFind.niveauReclamations == "Dieu") {
+                                         //SEND MESSAGE TO THIERNO
+    
+                                        let data = JSON.stringify({
+                                            "outboundSMSMessageRequest": {
+                                                "address": "tel:+224626501651",
+                                                "senderAddress": "tel:+224626501651",
+                                                "senderName": "Deally",
+                                                "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
+                                                }
+                                            }
+                                            });
+                                        
+                                            let config = {
+                                            method: 'post',
+                                            maxBodyLength: Infinity,
+                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                            headers: { 
+                                                'Content-Type': 'application/json', 
+                                                'Authorization': 'Bearer '+req.accessToken
+                                            },
+                                            data : data
+                                            };
+                                        
+                                            axios.request(config)
+                                            .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                            })
+                                            .catch((error) => {
+                                            console.log(error);
+                                            });
+                                    await clearIntervalAsync(timerR);
+    
+                                    } 
+    
+                                }  else {
+                                    await clearIntervalAsync(timerR);
+                                }
+                            }
+
+                            
+
+                           
+
+                        }, 60 * 1000);
 
                 }else {
 
