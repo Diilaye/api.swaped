@@ -23,7 +23,7 @@ router.get('/:id' , checkRoleClient() , courseCtrl.one);
 
 router.put('/:id' , checkRole("mobilite") , courseCtrl.updateStatus);
 
-router.get('/' , checkRole('admin '),courseCtrl.all );
+router.get('/' , checkRole('admin'),courseCtrl.all );
 
 
 module.exports = router ;

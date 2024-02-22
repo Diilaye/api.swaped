@@ -30,9 +30,10 @@ exports.checkRole = (role) => {
         status: 'NOT OK' });
       }
 
-      console.log("decoded" ,decoded);
+      console.log("role" ,role.length);
+      console.log("admin role" ,decoded.service_user.length);
 
-      if (decoded.service_user !== role) {
+      if (decoded.service_user != role) {
         return res.status(403).json({ message: 'You do not have permission to access this resource.'  ,  statusCode: 403,
         data: null,
         status: 'NOT OK'});
