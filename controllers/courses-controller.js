@@ -533,8 +533,6 @@ exports.storeDeplacemnt = async (req,res ) => {
 
 exports.storeLivraison = async (req,res ) => {
 
-    console.log("exports.storeLivraison");
-
 
     try {
        
@@ -727,7 +725,6 @@ exports.storeLivraison = async (req,res ) => {
                         });
     
                     await clearIntervalAsync(timer);
-    
                 }
                             
             }else {
