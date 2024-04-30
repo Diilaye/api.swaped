@@ -38,3 +38,30 @@ exports.add = async (req, res, next) => {
     }
 
 }
+
+
+exports.all = async (req, res) => {
+
+    try {
+        const adresses = await assuranceModel.find({
+        }).exec();
+
+        return res.status(200).json({
+            message: 'liste de addresse avec success',
+            status: 'OK',
+            data: adresses,
+            statusCode: 200
+        });
+
+    } catch (error) {
+
+        return res.status(400).json({
+            message: 'erreur serveur',
+            status: 'OK',
+            data: error,
+            statusCode: 400
+        });
+
+    }
+
+}
