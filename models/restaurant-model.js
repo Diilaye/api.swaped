@@ -14,6 +14,12 @@ const RestaurantModel = new Schema({
         default: 'gn'
     },
 
+    typePartenaire: {
+        type : String,
+        enum: ['0','1'],
+        default: '0'
+    },
+
     specialite : {
         type : Array,
         default : []

@@ -10,15 +10,15 @@ const app = express();
 
 const path = require('path');
 
-const fileRoute  = require('./routes/file-route');
+const fileRoute = require('./routes/file-route');
 
-const mapRoute  = require('./routes/map-route');
+const mapRoute = require('./routes/map-route');
 
-const partenairesRoute  = require('./routes/partenaire-route');
+const partenairesRoute = require('./routes/partenaire-route');
 
-const adminUserRoute  = require('./routes/admin-user-route');
+const adminUserRoute = require('./routes/admin-user-route');
 
-const logementRoute  = require('./routes/logement-route');
+const logementRoute = require('./routes/logement-route');
 
 const biensRoute = require('./routes/biens-routes');
 
@@ -58,8 +58,10 @@ const vehiculeRoute = require('./routes/vehicule-route');
 
 const reclamationRoute = require('./routes/reclamations-routes');
 
+const assuranceRoute = require('./routes/assurance-route');
 
-const  paypal = require('paypal-rest-sdk');
+
+const paypal = require('paypal-rest-sdk');
 
 
 require('dotenv').config({
@@ -82,63 +84,67 @@ paypal.configure({
     'mode': 'live', //sandbox or live
     'client_id': process.env.PAYPAL_CLIENT_ID,
     'client_secret': process.env.PAYPAL_CLIENT_SECRET
-  });
+});
 
 app.use('/swaped-file', express.static('uploads'));
 
 
 
-app.use('/v1/api/files' ,fileRoute);
+app.use('/v1/api/files', fileRoute);
 
-app.use('/v1/api/maps' ,mapRoute);
+app.use('/v1/api/maps', mapRoute);
 
-app.use('/v1/api/partenaires' ,partenairesRoute);
+app.use('/v1/api/partenaires', partenairesRoute);
 
-app.use('/v1/api/admin-user' ,adminUserRoute);
+app.use('/v1/api/admin-user', adminUserRoute);
 
-app.use('/v1/api/logements' ,logementRoute);
+app.use('/v1/api/logements', logementRoute);
 
-app.use('/v1/api/biens' ,biensRoute);
+app.use('/v1/api/biens', biensRoute);
 
-app.use('/v1/api/adresses' ,adresseRoute);
+app.use('/v1/api/adresses', adresseRoute);
 
-app.use('/v1/api/clients' ,clientRoute);
+app.use('/v1/api/clients', clientRoute);
 
-app.use('/v1/api/reservations' ,reservationRoute);
+app.use('/v1/api/reservations', reservationRoute);
 
-app.use('/v1/api/messages' ,messageRoute);
+app.use('/v1/api/messages', messageRoute);
 
-app.use('/v1/api/transactions' ,transactionRoute);
+app.use('/v1/api/transactions', transactionRoute);
 
-app.use('/v1/api/wallets' ,walletRoute);
+app.use('/v1/api/wallets', walletRoute);
 
-app.use('/v1/api/wallet-transactions' ,walletTransactionRoute);
+app.use('/v1/api/wallet-transactions', walletTransactionRoute);
 
-app.use('/v1/api/restaurants' ,restaurantRoute);
+app.use('/v1/api/restaurants', restaurantRoute);
 
-app.use('/v1/api/plats' ,platsRoute);
+app.use('/v1/api/plats', platsRoute);
 
-app.use('/v1/api/special-offres' ,offreSpecialRoute);
+app.use('/v1/api/special-offres', offreSpecialRoute);
 
-app.use('/v1/api/special-offres-commandes' ,offreSpecialCommandeRoute);
+app.use('/v1/api/special-offres-commandes', offreSpecialCommandeRoute);
 
-app.use('/v1/api/reservations-restaurant' ,reservationRestaurant);
+app.use('/v1/api/reservations-restaurant', reservationRestaurant);
 
-app.use('/v1/api/pannier' ,pannierRoute);
+app.use('/v1/api/pannier', pannierRoute);
 
-app.use('/v1/api/pannier-commande' ,pannierCommandeRoute);
+app.use('/v1/api/pannier-commande', pannierCommandeRoute);
 
-app.use('/v1/api/deplacements' ,deplacementRoute);
+app.use('/v1/api/deplacements', deplacementRoute);
 
-app.use('/v1/api/courses' ,coursesRouter);
+app.use('/v1/api/courses', coursesRouter);
 
-app.use('/v1/api/vehicules' ,vehiculeRoute);
+app.use('/v1/api/vehicules', vehiculeRoute);
 
-app.use('/v1/api/reclamations' ,reclamationRoute);
+app.use('/v1/api/reclamations', reclamationRoute);
+
+app.use('/v1/api/assurance', assuranceRoute);
 
 
 
-app.get('/', (req,res) => {
+
+
+app.get('/', (req, res) => {
     res.send('ici la terre');
 })
 

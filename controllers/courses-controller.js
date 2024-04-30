@@ -22,83 +22,83 @@ const axios = require('axios');
 const { setIntervalAsync, clearIntervalAsync } = require('set-interval-async');
 
 const objectPopulate = [{
-    path : 'client',
-    select : 'telephone nom prenom'
-},{
-    path : 'mobilite',
-    populate : {
-        path :'photoVehicule photoProfile'
+    path: 'client',
+    select: 'telephone nom prenom'
+}, {
+    path: 'mobilite',
+    populate: {
+        path: 'photoVehicule photoProfile'
     }
-} , {
-    path : 'transaction'
+}, {
+    path: 'transaction'
 }];
 
 const objectPopulateCommande = [{
-    path : 'client',
-    select : 'telephone nom prenom'
-},{
-    path : 'mobilite',
-    populate : {
-        path :'photoVehicule photoProfile'
+    path: 'client',
+    select: 'telephone nom prenom'
+}, {
+    path: 'mobilite',
+    populate: {
+        path: 'photoVehicule photoProfile'
     }
-} , {
-    path : 'transaction'
-},{
-    path : 'commande' , 
-    populate : [{
-        path :'restaurant',
-        select :'adresse nomEntreprise telephone'
-        
-    },{
-        path : 'panniers',
-        populate : {
-            path : 'plat',
-            populate :{
-                path : 'galery'
-            } 
+}, {
+    path: 'transaction'
+}, {
+    path: 'commande',
+    populate: [{
+        path: 'restaurant',
+        select: 'adresse nomEntreprise telephone'
+
+    }, {
+        path: 'panniers',
+        populate: {
+            path: 'plat',
+            populate: {
+                path: 'galery'
+            }
         }
     }]
 }];
 
 
 
-exports.storeDeplacemnt = async (req,res ) => {
+exports.storeDeplacemnt = async (req, res) => {
 
-    
+
 
 
     try {
-        
-        let {
-        
-            prix_total,
-        
-            prix_offre,    
-        
-            pointDepart ,
-        
-            pointArrive ,
-        
-            addresseDepart,
-        
-            addresseArrive ,
-        
-            statusLivraison,
-        
-            statusDate ,
-        
-            dateCourses ,
 
-            distance ,
-        
-            duree ,
-    
+        let {
+
+            prix_total,
+
+            prix_offre,
+
+            pointDepart,
+
+            pointArrive,
+
+            addresseDepart,
+
+            addresseArrive,
+
+            statusLivraison,
+
+            statusDate,
+
+            dateCourses,
+
+            distance,
+
+            duree,
+
             statusLivraisonVehicule
-    
+
         } = req.body;
-    
+
         const course = await courseModel();
-    
+
         course.client = req.user.id_user;
         course.prix_total = prix_total;
         course.prix_offre = prix_offre;
@@ -112,41 +112,41 @@ exports.storeDeplacemnt = async (req,res ) => {
         course.statusDate = statusDate;
         course.dateCourses = dateCourses;
         course.statusLivraisonVehicule = statusLivraisonVehicule;
-    
-        const courseS =await course.save();
-    
+
+        const courseS = await course.save();
+
         const vehicules = await vehiculeModel.find().exec();
-    
+
         let vehiculeTab = [];
-    
+
         let vehiculeResult = [];
-    
+
         let vehiculeResultAffiche = [];
-    
-    
+
+
         for (const iterator of vehicules) {
-    
+
             const result = {};
-    
-            if(iterator.typeVehicule == courseS.statusLivraisonVehicule ){
-    
-                result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
-    
-                result["vehicule"] = iterator ;
-        
+
+            if (iterator.typeVehicule == courseS.statusLivraisonVehicule) {
+
+                result["info"] = await utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart), Object.fromEntries(iterator.localisation));
+
+                result["vehicule"] = iterator;
+
                 vehiculeTab.push(result);
-               
+
             }
-            
-    
+
+
         }
-    
+
         vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-    
+
         vehiculeResult = vehiculeTab;
 
-        console.log( vehiculeResult.length);
-    
+        console.log(vehiculeResult.length);
+
         for (const it of vehiculeResult) {
 
             const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
@@ -159,8 +159,8 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             vehiculeResultAffiche.push(VHS);
         }
-    
-    
+
+
         let a = 0;
 
         const timer = setIntervalAsync(async () => {
@@ -172,22 +172,22 @@ exports.storeDeplacemnt = async (req,res ) => {
 
             console.log(a);
 
-            
 
-            if(a==1) {
 
-                if(courseF.statusCourses =='cancel-client') {
+            if (a == 1) {
+
+                if (courseF.statusCourses == 'cancel-client') {
                     await clearIntervalAsync(timer);
 
                 }
 
-                if(courseF.mobilite == null ) {
+                if (courseF.mobilite == null) {
 
-                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
+                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"];
 
                     courseF.statusCourses = 'cancel-server';
 
-    
+
 
                     const courseSave = await courseF.save();
 
@@ -196,18 +196,18 @@ exports.storeDeplacemnt = async (req,res ) => {
 
                     for (const iterator of vehicules) {
 
-                        if(iterator.coursesActif.includes(courseSave.id)) {
+                        if (iterator.coursesActif.includes(courseSave.id)) {
 
-                            const vh =await vehiculeModel.findById(iterator.id).exec();
+                            const vh = await vehiculeModel.findById(iterator.id).exec();
 
-                            if(vh.courseSelected == courseSave.id ) {
-                                vh.courseSelected = null ;
-                                vh.online ="on";
+                            if (vh.courseSelected == courseSave.id) {
+                                vh.courseSelected = null;
+                                vh.online = "on";
                             }
 
                             vh.coursesActif.remove(courseSave.id);
 
-                            const v =await vh.save();
+                            const v = await vh.save();
                         }
                     }
 
@@ -218,9 +218,9 @@ exports.storeDeplacemnt = async (req,res ) => {
                     reclamation.ticketReclamation = DateTime.now().ts;
                     reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
-                    reclamation.typeService =  "mobilite";
+                    reclamation.typeService = "mobilite";
 
-                    const rSave =await reclamation.save();
+                    const rSave = await reclamation.save();
 
                     //SEND MESSAGE TO THIERNO
 
@@ -230,296 +230,296 @@ exports.storeDeplacemnt = async (req,res ) => {
                             "senderAddress": "tel:+224626501651",
                             "senderName": "Deally",
                             "outboundSMSTextMessage": {
-                            "message": "Une  course  n'a pas été acceptée ticket de réclation : "+rSave.ticketReclamation
+                                "message": "Une  course  n'a pas été acceptée ticket de réclation : " + rSave.ticketReclamation
                             }
                         }
-                        });
-                    
-                        let config = {
+                    });
+
+                    let config = {
                         method: 'post',
                         maxBodyLength: Infinity,
                         url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                        headers: { 
-                            'Content-Type': 'application/json', 
-                            'Authorization': 'Bearer '+req.accessToken
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + req.accessToken
                         },
-                        data : data
-                        };
-                    
-                        axios.request(config)
+                        data: data
+                    };
+
+                    axios.request(config)
                         .then((response) => {
-                        console.log(JSON.stringify(response.data));
+                            console.log(JSON.stringify(response.data));
                         })
                         .catch((error) => {
-                        console.log(error);
+                            console.log(error);
                         });
 
-                        await clearIntervalAsync(timer);
+                    await clearIntervalAsync(timer);
 
-                        let b = 0 ;
+                    let b = 0;
 
-                        const timerR = setIntervalAsync( async () => {
+                    const timerR = setIntervalAsync(async () => {
 
-                            b++;
+                        b++;
 
-                            console.log('b =>',b);
-                            
-                            const rFind = await  reclamationModel.findById(rSave.id).exec();
+                        console.log('b =>', b);
 
-                            if(b== 5) {
-                                if(rFind.statusReclamation == 'pending') {
+                        const rFind = await reclamationModel.findById(rSave.id).exec();
 
-                                    if(rFind.niveauReclamations == "Loup") {
-                                        rFind.niveauReclamations = "Dragon";
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dragon") {
-                                        rFind.niveauReclamations = "Demon";
-                                        
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Demon") {
-                                        rFind.niveauReclamations = "Dieu";   
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dieu") {
-                                         //SEND MESSAGE TO THIERNO
-    
-                                        let data = JSON.stringify({
-                                            "outboundSMSMessageRequest": {
-                                                "address": "tel:+224626501651",
-                                                "senderAddress": "tel:+224626501651",
-                                                "senderName": "Deally",
-                                                "outboundSMSTextMessage": {
-                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
-                                                }
-                                            }
-                                            });
-                                        
-                                            let config = {
-                                            method: 'post',
-                                            maxBodyLength: Infinity,
-                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                                            headers: { 
-                                                'Content-Type': 'application/json', 
-                                                'Authorization': 'Bearer '+req.accessToken
-                                            },
-                                            data : data
-                                            };
-                                        
-                                            axios.request(config)
-                                            .then((response) => {
-                                            console.log(JSON.stringify(response.data));
-                                            })
-                                            .catch((error) => {
-                                            console.log(error);
-                                            });
-                                    await clearIntervalAsync(timerR);
-    
-                                    } 
-    
-                                }  else {
-                                    await clearIntervalAsync(timerR);
+                        if (b == 5) {
+                            if (rFind.statusReclamation == 'pending') {
+
+                                if (rFind.niveauReclamations == "Loup") {
+                                    rFind.niveauReclamations = "Dragon";
                                 }
-                            }
-                            if(b==10) {
-                                if(rFind.statusReclamation == 'pending') {
 
-                                    if(rFind.niveauReclamations == "Loup") {
-                                        rFind.niveauReclamations = "Dragon";
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dragon") {
-                                        rFind.niveauReclamations = "Demon";
-                                        
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Demon") {
-                                        rFind.niveauReclamations = "Dieu";   
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dieu") {
-                                         //SEND MESSAGE TO THIERNO
-    
-                                        let data = JSON.stringify({
-                                            "outboundSMSMessageRequest": {
-                                                "address": "tel:+224626501651",
-                                                "senderAddress": "tel:+224626501651",
-                                                "senderName": "Deally",
-                                                "outboundSMSTextMessage": {
-                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
-                                                }
-                                            }
-                                            });
-                                        
-                                            let config = {
-                                            method: 'post',
-                                            maxBodyLength: Infinity,
-                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                                            headers: { 
-                                                'Content-Type': 'application/json', 
-                                                'Authorization': 'Bearer '+req.accessToken
-                                            },
-                                            data : data
-                                            };
-                                        
-                                            axios.request(config)
-                                            .then((response) => {
-                                            console.log(JSON.stringify(response.data));
-                                            })
-                                            .catch((error) => {
-                                            console.log(error);
-                                            });
-                                    await clearIntervalAsync(timerR);
-    
-                                    } 
-    
-                                }  else {
-                                    await clearIntervalAsync(timerR);
+                                if (rFind.niveauReclamations == "Dragon") {
+                                    rFind.niveauReclamations = "Demon";
+
                                 }
-                            }
 
-                            if(b==15) {
-                                if(rFind.statusReclamation == 'pending') {
-
-                                    if(rFind.niveauReclamations == "Loup") {
-                                        rFind.niveauReclamations = "Dragon";
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dragon") {
-                                        rFind.niveauReclamations = "Demon";
-                                        
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Demon") {
-                                        rFind.niveauReclamations = "Dieu";   
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dieu") {
-                                         //SEND MESSAGE TO THIERNO
-    
-                                        let data = JSON.stringify({
-                                            "outboundSMSMessageRequest": {
-                                                "address": "tel:+224626501651",
-                                                "senderAddress": "tel:+224626501651",
-                                                "senderName": "Deally",
-                                                "outboundSMSTextMessage": {
-                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
-                                                }
-                                            }
-                                            });
-                                        
-                                            let config = {
-                                            method: 'post',
-                                            maxBodyLength: Infinity,
-                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                                            headers: { 
-                                                'Content-Type': 'application/json', 
-                                                'Authorization': 'Bearer '+req.accessToken
-                                            },
-                                            data : data
-                                            };
-                                        
-                                            axios.request(config)
-                                            .then((response) => {
-                                            console.log(JSON.stringify(response.data));
-                                            })
-                                            .catch((error) => {
-                                            console.log(error);
-                                            });
-                                    await clearIntervalAsync(timerR);
-    
-                                    } 
-    
-                                }  else {
-                                    await clearIntervalAsync(timerR);
+                                if (rFind.niveauReclamations == "Demon") {
+                                    rFind.niveauReclamations = "Dieu";
                                 }
-                            }
 
-                            if(b==20) {
-                                if(rFind.statusReclamation == 'pending') {
+                                if (rFind.niveauReclamations == "Dieu") {
+                                    //SEND MESSAGE TO THIERNO
 
-                                    if(rFind.niveauReclamations == "Loup") {
-                                        rFind.niveauReclamations = "Dragon";
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dragon") {
-                                        rFind.niveauReclamations = "Demon";
-                                        
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Demon") {
-                                        rFind.niveauReclamations = "Dieu";   
-                                    }
-        
-                                    if(rFind.niveauReclamations == "Dieu") {
-                                         //SEND MESSAGE TO THIERNO
-    
-                                        let data = JSON.stringify({
-                                            "outboundSMSMessageRequest": {
-                                                "address": "tel:+224626501651",
-                                                "senderAddress": "tel:+224626501651",
-                                                "senderName": "Deally",
-                                                "outboundSMSTextMessage": {
-                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : "+rFind.ticketReclamation
-                                                }
+                                    let data = JSON.stringify({
+                                        "outboundSMSMessageRequest": {
+                                            "address": "tel:+224626501651",
+                                            "senderAddress": "tel:+224626501651",
+                                            "senderName": "Deally",
+                                            "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : " + rFind.ticketReclamation
                                             }
-                                            });
-                                        
-                                            let config = {
-                                            method: 'post',
-                                            maxBodyLength: Infinity,
-                                            url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                                            headers: { 
-                                                'Content-Type': 'application/json', 
-                                                'Authorization': 'Bearer '+req.accessToken
-                                            },
-                                            data : data
-                                            };
-                                        
-                                            axios.request(config)
-                                            .then((response) => {
+                                        }
+                                    });
+
+                                    let config = {
+                                        method: 'post',
+                                        maxBodyLength: Infinity,
+                                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'Bearer ' + req.accessToken
+                                        },
+                                        data: data
+                                    };
+
+                                    axios.request(config)
+                                        .then((response) => {
                                             console.log(JSON.stringify(response.data));
-                                            })
-                                            .catch((error) => {
+                                        })
+                                        .catch((error) => {
                                             console.log(error);
-                                            });
+                                        });
                                     await clearIntervalAsync(timerR);
-    
-                                    } 
-    
-                                }  else {
-                                    await clearIntervalAsync(timerR);
+
                                 }
+
+                            } else {
+                                await clearIntervalAsync(timerR);
                             }
+                        }
+                        if (b == 10) {
+                            if (rFind.statusReclamation == 'pending') {
 
-                            
+                                if (rFind.niveauReclamations == "Loup") {
+                                    rFind.niveauReclamations = "Dragon";
+                                }
 
-                           
+                                if (rFind.niveauReclamations == "Dragon") {
+                                    rFind.niveauReclamations = "Demon";
 
-                        }, 60 * 1000);
+                                }
 
-                }else {
+                                if (rFind.niveauReclamations == "Demon") {
+                                    rFind.niveauReclamations = "Dieu";
+                                }
+
+                                if (rFind.niveauReclamations == "Dieu") {
+                                    //SEND MESSAGE TO THIERNO
+
+                                    let data = JSON.stringify({
+                                        "outboundSMSMessageRequest": {
+                                            "address": "tel:+224626501651",
+                                            "senderAddress": "tel:+224626501651",
+                                            "senderName": "Deally",
+                                            "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : " + rFind.ticketReclamation
+                                            }
+                                        }
+                                    });
+
+                                    let config = {
+                                        method: 'post',
+                                        maxBodyLength: Infinity,
+                                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'Bearer ' + req.accessToken
+                                        },
+                                        data: data
+                                    };
+
+                                    axios.request(config)
+                                        .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                    await clearIntervalAsync(timerR);
+
+                                }
+
+                            } else {
+                                await clearIntervalAsync(timerR);
+                            }
+                        }
+
+                        if (b == 15) {
+                            if (rFind.statusReclamation == 'pending') {
+
+                                if (rFind.niveauReclamations == "Loup") {
+                                    rFind.niveauReclamations = "Dragon";
+                                }
+
+                                if (rFind.niveauReclamations == "Dragon") {
+                                    rFind.niveauReclamations = "Demon";
+
+                                }
+
+                                if (rFind.niveauReclamations == "Demon") {
+                                    rFind.niveauReclamations = "Dieu";
+                                }
+
+                                if (rFind.niveauReclamations == "Dieu") {
+                                    //SEND MESSAGE TO THIERNO
+
+                                    let data = JSON.stringify({
+                                        "outboundSMSMessageRequest": {
+                                            "address": "tel:+224626501651",
+                                            "senderAddress": "tel:+224626501651",
+                                            "senderName": "Deally",
+                                            "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : " + rFind.ticketReclamation
+                                            }
+                                        }
+                                    });
+
+                                    let config = {
+                                        method: 'post',
+                                        maxBodyLength: Infinity,
+                                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'Bearer ' + req.accessToken
+                                        },
+                                        data: data
+                                    };
+
+                                    axios.request(config)
+                                        .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                    await clearIntervalAsync(timerR);
+
+                                }
+
+                            } else {
+                                await clearIntervalAsync(timerR);
+                            }
+                        }
+
+                        if (b == 20) {
+                            if (rFind.statusReclamation == 'pending') {
+
+                                if (rFind.niveauReclamations == "Loup") {
+                                    rFind.niveauReclamations = "Dragon";
+                                }
+
+                                if (rFind.niveauReclamations == "Dragon") {
+                                    rFind.niveauReclamations = "Demon";
+
+                                }
+
+                                if (rFind.niveauReclamations == "Demon") {
+                                    rFind.niveauReclamations = "Dieu";
+                                }
+
+                                if (rFind.niveauReclamations == "Dieu") {
+                                    //SEND MESSAGE TO THIERNO
+
+                                    let data = JSON.stringify({
+                                        "outboundSMSMessageRequest": {
+                                            "address": "tel:+224626501651",
+                                            "senderAddress": "tel:+224626501651",
+                                            "senderName": "Deally",
+                                            "outboundSMSTextMessage": {
+                                                "message": "Cette réclamation n'a pas été traité son niveau est 4 : " + rFind.ticketReclamation
+                                            }
+                                        }
+                                    });
+
+                                    let config = {
+                                        method: 'post',
+                                        maxBodyLength: Infinity,
+                                        url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': 'Bearer ' + req.accessToken
+                                        },
+                                        data: data
+                                    };
+
+                                    axios.request(config)
+                                        .then((response) => {
+                                            console.log(JSON.stringify(response.data));
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                    await clearIntervalAsync(timerR);
+
+                                }
+
+                            } else {
+                                await clearIntervalAsync(timerR);
+                            }
+                        }
+
+
+
+
+
+                    }, 60 * 1000);
+
+                } else {
 
                     await clearIntervalAsync(timer);
                 }
-                            
+
             }
 
-            
-          }, 60 * 1000);
-    
-      
-        return  res.status(201).json({
+
+        }, 60 * 1000);
+
+
+        return res.status(201).json({
             message: 'Creation de courses',
             status: 'OK',
-            data:{
-                "course" :courseS,
-                "liste-vehicule" :vehiculeResultAffiche 
+            data: {
+                "course": courseS,
+                "liste-vehicule": vehiculeResultAffiche
             },
             statusCode: 201
         });
-    
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur creation',
@@ -531,55 +531,55 @@ exports.storeDeplacemnt = async (req,res ) => {
 
 }
 
-exports.storeLivraison = async (req,res ) => {
+exports.storeLivraison = async (req, res) => {
 
 
     try {
-       
+
         let {
 
             client,
-    
+
             commande,
-        
+
             prix_total,
-        
-            prix_offre,    
-        
-            pointDepart ,
-        
-            pointArrive ,
-        
+
+            prix_offre,
+
+            pointDepart,
+
+            pointArrive,
+
             addresseDepart,
-        
-            addresseArrive ,
-    
+
+            addresseArrive,
+
         } = req.body;
-    
+
         const walletTransaction = walletTransactionModel();
-    
+
         const find = await walletModel.findOne({
-            userId : client
+            userId: client
         });
-    
-        walletTransaction.amount = prix_offre ;
-    
-        walletTransaction.userWallet = find.id ;
-    
-        walletTransaction.reference = DateTime.now().ts ;
-    
-        walletTransaction.typeService = "recharge" ;
-    
-        walletTransaction.status = "SUCCESS" ;
-    
-        walletTransaction.dateTransactionSuccess =  DateTime.now().toFormat('dd-MM-yyyy'); ;
-    
-        walletTransaction.means = "SWAPED" ;
-    
-        const saveWalletTransaction = await  walletTransaction.save();
-    
+
+        walletTransaction.amount = prix_offre;
+
+        walletTransaction.userWallet = find.id;
+
+        walletTransaction.reference = DateTime.now().ts;
+
+        walletTransaction.typeService = "recharge";
+
+        walletTransaction.status = "SUCCESS";
+
+        walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');;
+
+        walletTransaction.means = "SWAPED";
+
+        const saveWalletTransaction = await walletTransaction.save();
+
         const course = courseModel();
-    
+
         course.client = client;
         course.commande = commande;
         course.transaction = saveWalletTransaction.id;
@@ -591,164 +591,164 @@ exports.storeLivraison = async (req,res ) => {
         course.addresseArrive = addresseArrive;
         course.statusLivraison = "livraison";
         course.statusLivraisonVehicule = "moto";
-    
-        const courseS =await course.save();
-    
+
+        const courseS = await course.save();
+
         const vehicules = await vehiculeModel.find().exec();
-    
+
         let vehiculeTab = [];
-    
+
         let vehiculeResult = [];
-    
+
         let vehiculeResultAffiche = [];
-    
-    
+
+
         for (const iterator of vehicules) {
-    
+
             const result = {};
-    
-            if(iterator.typeVehicule == courseS.statusLivraisonVehicule  ){
-    
-                result["info"] = await  utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart),Object.fromEntries(iterator.localisation) );
-    
-                result["vehicule"] = iterator ;
-        
+
+            if (iterator.typeVehicule == courseS.statusLivraisonVehicule) {
+
+                result["info"] = await utiilsFnc.getDistance(Object.fromEntries(courseS.pointDepart), Object.fromEntries(iterator.localisation));
+
+                result["vehicule"] = iterator;
+
                 vehiculeTab.push(result);
-               
+
             }
-            
-    
+
+
         }
-    
+
         vehiculeTab.sort((a, b) => a.info['distance']['value'] - b.info['distance']['value']);
-    
+
         vehiculeResult = vehiculeTab;
-    
-        console.log( vehiculeResult.length);
-    
+
+        console.log(vehiculeResult.length);
+
         for (const it of vehiculeResult) {
-    
+
             const vhFind = await vehiculeModel.findById(it.vehicule.id).exec();
-    
+
             if (vhFind.coursesActif.indexOf(courseS.id) == -1) {
                 vhFind.coursesActif.push(courseS.id);
             }
-    
+
             const VHS = await vhFind.save();
-    
+
             vehiculeResultAffiche.push(VHS);
         }
-    
-    
+
+
         let a = 0;
-    
+
         const timer = setIntervalAsync(async () => {
-    
+
             const courseF = await courseModel.findById(courseS.id).populate(objectPopulateCommande).exec();
-    
-    
+
+
             a++;
-    
-            if(a==1) {
-    
-                if(courseF.mobilite == null) {
-    
-                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"] ;
-    
+
+            if (a == 1) {
+
+                if (courseF.mobilite == null) {
+
+                    courseF.courseCancelRaison = ["Le relais est pris par nos agents"];
+
                     courseF.statusCourses = 'cancel-server';
-    
-    
-    
+
+
+
                     const courseSave = await courseF.save();
-    
-    
+
+
                     const vehicules = await vehiculeModel.find().exec();
-    
+
                     for (const iterator of vehicules) {
-    
-                        if(iterator.coursesActif.includes(courseSave.id)) {
-    
-                            const vh =await vehiculeModel.findById(iterator.id).exec();
-    
-                            if(vh.courseSelected == courseSave.id ) {
-                                vh.courseSelected = null ;
-                                vh.online ="on";
+
+                        if (iterator.coursesActif.includes(courseSave.id)) {
+
+                            const vh = await vehiculeModel.findById(iterator.id).exec();
+
+                            if (vh.courseSelected == courseSave.id) {
+                                vh.courseSelected = null;
+                                vh.online = "on";
                             }
-    
+
                             vh.coursesActif.remove(courseSave.id);
-    
-                            const v =await vh.save();
+
+                            const v = await vh.save();
                         }
                     }
-    
+
                     // envoyer une reclamations
-    
+
                     const reclamation = reclamationModel();
-    
+
                     reclamation.ticketReclamation = DateTime.now().ts;
                     reclamation.obect = courseF.toJSON();
                     reclamation.type = "server";
-                    reclamation.typeService =  "restaurant";
-    
-                    const rSave =await reclamation.save();
-    
+                    reclamation.typeService = "restaurant";
+
+                    const rSave = await reclamation.save();
+
                     //SEND MESSAGE TO THIERNO
-    
+
                     let data = JSON.stringify({
                         "outboundSMSMessageRequest": {
                             "address": "tel:+224626501651",
                             "senderAddress": "tel:+224626501651",
                             "senderName": "Deally",
                             "outboundSMSTextMessage": {
-                            "message": "Une  livraison de repas n'a été envoyée ticket de réclation : "+rSave.ticketReclamation
+                                "message": "Une  livraison de repas n'a été envoyée ticket de réclation : " + rSave.ticketReclamation
                             }
                         }
-                        });
-                    
-                        let config = {
+                    });
+
+                    let config = {
                         method: 'post',
                         maxBodyLength: Infinity,
                         url: 'https://api.orange.com/smsmessaging/v1/outbound/tel:+224626501651/requests',
-                        headers: { 
-                            'Content-Type': 'application/json', 
-                            'Authorization': 'Bearer '+req.accessToken
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + req.accessToken
                         },
-                        data : data
-                        };
-                    
-                        axios.request(config)
+                        data: data
+                    };
+
+                    axios.request(config)
                         .then((response) => {
-                        console.log(JSON.stringify(response.data));
+                            console.log(JSON.stringify(response.data));
                         })
                         .catch((error) => {
-                        console.log(error);
+                            console.log(error);
                         });
-    
+
                     await clearIntervalAsync(timer);
                 }
-                            
-            }else {
+
+            } else {
 
                 await clearIntervalAsync(timer);
             }
-    
-            
-          }, 60 * 1000);
-    
-          console.log(vehiculeResultAffiche);
-      
-    
-        return  res.status(201).json({
+
+
+        }, 60 * 1000);
+
+        console.log(vehiculeResultAffiche);
+
+
+        return res.status(201).json({
             message: 'Creation de courses',
             status: 'OK',
-            data:{
-                "course" :courseS,
-                "liste-vehicule" :vehiculeResultAffiche 
+            data: {
+                "course": courseS,
+                "liste-vehicule": vehiculeResultAffiche
             },
             statusCode: 201
         });
-    
-    
+
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur creation',
@@ -757,78 +757,78 @@ exports.storeLivraison = async (req,res ) => {
             statusCode: 404
         });
     }
-    
+
 
 }
 
-exports.anulerClient = async (req,res) => {
-
-    
-   try {
-
-    let {
-        courseCancelRaison
-    } = req.body ;
-    const course = await courseModel.findById(req.query.id).exec();
+exports.anulerClient = async (req, res) => {
 
 
+    try {
 
-    course.courseCancelRaison = courseCancelRaison ;
-
-    course.statusCourses = 'cancel-client';
-    
-
-    const courseSave = await course.save();
+        let {
+            courseCancelRaison
+        } = req.body;
+        const course = await courseModel.findById(req.query.id).exec();
 
 
-    const vehicules = await vehiculeModel.find().exec();
 
-    for (const iterator of vehicules) {
+        course.courseCancelRaison = courseCancelRaison;
 
-        if(iterator.coursesActif.includes(courseSave.id)) {
+        course.statusCourses = 'cancel-client';
 
-            const vh =await vehiculeModel.findById(iterator.id).exec();
 
-            if(vh.courseSelected == course.id ) {
-                vh.courseSelected = null ;
-                vh.online ="on";
+        const courseSave = await course.save();
+
+
+        const vehicules = await vehiculeModel.find().exec();
+
+        for (const iterator of vehicules) {
+
+            if (iterator.coursesActif.includes(courseSave.id)) {
+
+                const vh = await vehiculeModel.findById(iterator.id).exec();
+
+                if (vh.courseSelected == course.id) {
+                    vh.courseSelected = null;
+                    vh.online = "on";
+                }
+
+                vh.coursesActif.remove(courseSave.id);
+
+                const v = await vh.save();
             }
-
-            vh.coursesActif.remove(courseSave.id);
-
-            const v =await vh.save();
         }
-    }
 
-    return res.json({
-        message : "annulation courses par client ",
-        status : 200,
-        data : courseSave,
-        statusCode : 'OK'
-    })
-   } catch (error) {
+        return res.json({
+            message: "annulation courses par client ",
+            status: 200,
+            data: courseSave,
+            statusCode: 'OK'
+        })
+    } catch (error) {
         return res.status(404).json({
             message: 'erreur creation',
             status: 'NOT OK',
             data: error,
             statusCode: 404
         });
-   }
+    }
 }
 
-exports.all = async (req,res) => {
+exports.all = async (req, res) => {
     try {
 
         const courses = await courseModel.find(req.query).populate(objectPopulate).exec();
 
-        return  res.status(200).json({
+        return res.status(200).json({
             message: 'liste des courses',
             status: 'OK',
-            data:courses,
+            data: courses,
             statusCode: 200
         });
 
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur listage courses',
@@ -837,10 +837,10 @@ exports.all = async (req,res) => {
             statusCode: 404
         });
     }
-}   
+}
 
 
-exports.one = async (req,res) => {
+exports.one = async (req, res) => {
 
     try {
         const course = await courseModel.findById(req.params.id).populate(objectPopulate).exec();
@@ -848,12 +848,12 @@ exports.one = async (req,res) => {
         return res.json({
             message: 'liste des courses',
             status: 'OK',
-            data:course,
+            data: course,
             statusCode: 200
         })
 
     } catch (error) {
-         return res.status(404).json({
+        return res.status(404).json({
             message: 'erreur listage courses',
             status: 'NOT OK',
             data: error,
@@ -864,11 +864,11 @@ exports.one = async (req,res) => {
 
 }
 
-exports.updateStatus = async (req,res) => {
+exports.updateStatus = async (req, res) => {
 
     try {
 
-        let {status} = req.query;
+        let { status } = req.query;
         const course = await courseModel.findById(req.params.id).populate(objectPopulate).exec();
 
         course.statusCourses = status;
@@ -878,12 +878,12 @@ exports.updateStatus = async (req,res) => {
         return res.json({
             message: 'update  status course',
             status: 'OK',
-            data:courseS,
+            data: courseS,
             statusCode: 200
         })
 
     } catch (error) {
-         return res.status(404).json({
+        return res.status(404).json({
             message: 'erreur listage courses',
             status: 'NOT OK',
             data: error,
@@ -895,112 +895,112 @@ exports.updateStatus = async (req,res) => {
 }
 
 
-exports.addtransaction = async (req,res) => {
+exports.addtransaction = async (req, res) => {
 
 
-    
-
-   try {
-    
-    let  {
-    
-        means,
-
-        phone,
-
-        otp,
-
-        idCourses
 
 
-    } =req.body;
+    try {
 
-    const course = await courseModel.findById(idCourses).exec();
+        let {
 
-    if(course != undefined) {
+            means,
+
+            phone,
+
+            otp,
+
+            idCourses
+
+
+        } = req.body;
+
+        const course = await courseModel.findById(idCourses).exec();
+
+        if (course != undefined) {
 
             const walletTransaction = walletTransactionModel();
-    
+
             const find = await walletModel.findOne({
-                userId : req.user.id_user
+                userId: req.user.id_user
             });
-    
-            walletTransaction.amount = course.prix_total ;
-    
-            walletTransaction.userWallet = find.id ;
-    
-            walletTransaction.reference = DateTime.now().ts ;
-    
-            walletTransaction.means = means ;
-    
-            const saveWalletTransaction = await  walletTransaction.save();
-    
-            course.transaction = saveWalletTransaction.id ;
-    
-            const  courseS =  await course.save();
-    
-            const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/'+process.env.agenceGN+'/transaction?loginAgent='+process.env.loginAgentGN+'&passwordAgent='+process.env.passwordAgentGN;
+
+            walletTransaction.amount = course.prix_total;
+
+            walletTransaction.userWallet = find.id;
+
+            walletTransaction.reference = DateTime.now().ts;
+
+            walletTransaction.means = means;
+
+            const saveWalletTransaction = await walletTransaction.save();
+
+            course.transaction = saveWalletTransaction.id;
+
+            const courseS = await course.save();
+
+            const url = 'https://api.gutouch.com/dist/api/touchpayapi/v1/' + process.env.agenceGN + '/transaction?loginAgent=' + process.env.loginAgentGN + '&passwordAgent=' + process.env.passwordAgentGN;
             let data = {};
-            if(means == "OM") {
-            
+            if (means == "OM") {
+
                 data = JSON.stringify({
-                "idFromClient": process.env.idFromClientGN,
-                "amount": courseS.prix_total,
-                "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                "additionnalInfos": {
-                    "destinataire": phone,
-                    "otp": otp,
-                },
-                "recipientNumber": phone,
-                "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
+                    "idFromClient": process.env.idFromClientGN,
+                    "amount": courseS.prix_total,
+                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference=" + saveWalletTransaction.reference,
+                    "additionnalInfos": {
+                        "destinataire": phone,
+                        "otp": otp,
+                    },
+                    "recipientNumber": phone,
+                    "serviceCode": "PAIEMENTMARCHANDOMPAYGNDIRECT"
                 });
-            
-                
-            }else {
-    
+
+
+            } else {
+
                 data = JSON.stringify({
-                "idFromClient": process.env.idFromClientGN,
-                "additionnalInfos": {
-                    "destinataire": "+224660238758",
-                },
-                "amount": courseS.prix_total,
-                "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference="+saveWalletTransaction.reference,
-                "recipientNumber": phone,
-                "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
+                    "idFromClient": process.env.idFromClientGN,
+                    "additionnalInfos": {
+                        "destinataire": "+224660238758",
+                    },
+                    "amount": courseS.prix_total,
+                    "callback": "https://api-swaped.deally.fr/v1/api/wallet-transactions/success?reference=" + saveWalletTransaction.reference,
+                    "recipientNumber": phone,
+                    "serviceCode": "PAIEMENTMARCHAND_MTN_GN"
                 });
-    
+
             }
-    
+
             options = {
                 method: 'PUT',
                 rejectUnauthorized: false,
                 digestAuth: `${process.env.UsernameDisgestGN}:${process.env.PasswordDisgestGN}`,
-                data :  data
+                data: data
             }
-        
+
             request(url, options).then(async (value) => {
                 console.log(value.data.toString());
                 const obj = Object.assign(JSON.parse(value.data.toString()));
-                
-                if(obj.status === "SUCCESSFUL") {
-        
+
+                if (obj.status === "SUCCESSFUL") {
+
                     const transactionFind = await walletTransactionModel.findOne({
-                        reference : saveWalletTransaction.reference
+                        reference: saveWalletTransaction.reference
                     }).exec();
-        
+
                     transactionFind.status = "SUCCESS";
-        
+
                     transactionFind.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-        
+
                     const tf = await transactionFind.save();
                 }
                 return res.status(201).json({
-                message: 'paiement initie',
-                status: 'OK',
-                data: JSON.parse(value.data.toString()),
-                statusCode: 201
+                    message: 'paiement initie',
+                    status: 'OK',
+                    data: JSON.parse(value.data.toString()),
+                    statusCode: 201
                 });
-                }).catch((error) => {
+            }).catch((error) => {
                 return res.status(404).json({
                     message: 'erreur serveur',
                     status: 'NOT OK',
@@ -1008,94 +1008,94 @@ exports.addtransaction = async (req,res) => {
                     statusCode: 404
                 });
             });
-    } else {
-        return res.status(404).json({
-            message: 'erreur serveur',
-            status: 'NOT OK',
-            data: "course not found",
-            statusCode: 404
-        });
-    }
-   
-   } catch (error) {
+        } else {
+            return res.status(404).json({
+                message: 'erreur serveur',
+                status: 'NOT OK',
+                data: "course not found",
+                statusCode: 404
+            });
+        }
+
+    } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
             status: 'NOT OK',
             data: error,
             statusCode: 404
         });
-        
-   }
-    
-     
+
+    }
+
+
 
 }
 
-exports.addTransactionWallet = async (req,res)=> {
-
-   
-
-   try {
-
-    let {idCourse} = req.body ;
-
-    const course = await courseModel.findById(idCourse).populate(objectPopulate).exec();
-
-    if(course != undefined) {
-
-    
-    
-        const find = await walletModel.findOne({
-            userId : req.user.id_user
-        });
+exports.addTransactionWallet = async (req, res) => {
 
 
-        if(find.balance >= course.prix_total ) {
 
-            const walletTransaction = walletTransactionModel();
+    try {
 
-            walletTransaction.amount = course.prix_total ;
+        let { idCourse } = req.body;
 
-            walletTransaction.userWallet = find.id ;
-    
-            walletTransaction.reference = DateTime.now().ts ;
-    
-            walletTransaction.means = "SWAPED" ;
-    
-            walletTransaction.status = "SUCCESS";
-    
-            walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
-    
-            const saveWalletTransaction = await  walletTransaction.save();
-    
-            course.transaction = saveWalletTransaction.id ;
+        const course = await courseModel.findById(idCourse).populate(objectPopulate).exec();
 
-            course.statusCourses ='paiement-client';
-    
-            const  courseS =  await course.save();
+        if (course != undefined) {
 
-            const courseFindS = await courseModel.findById(courseS.id).populate(objectPopulate).exec()
 
-            find.balance = find.balance - courseS.prix_total ;
 
-            const findS = await find.save();
-
-            return res.status(201).json({
-                message: 'creation paiement',
-                status: 'OK',
-                data: saveWalletTransaction,
-                statusCode: 404
+            const find = await walletModel.findOne({
+                userId: req.user.id_user
             });
 
-        }else {
-            return res.status(404).json({
-                message: 'erreur serveur',
-                status: 'NOT OK',
-                data: "solde insufisant",
-                statusCode: 404
-            });
-        }
-        }else {
+
+            if (find.balance >= course.prix_total) {
+
+                const walletTransaction = walletTransactionModel();
+
+                walletTransaction.amount = course.prix_total;
+
+                walletTransaction.userWallet = find.id;
+
+                walletTransaction.reference = DateTime.now().ts;
+
+                walletTransaction.means = "SWAPED";
+
+                walletTransaction.status = "SUCCESS";
+
+                walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
+
+                const saveWalletTransaction = await walletTransaction.save();
+
+                course.transaction = saveWalletTransaction.id;
+
+                course.statusCourses = 'paiement-client';
+
+                const courseS = await course.save();
+
+                const courseFindS = await courseModel.findById(courseS.id).populate(objectPopulate).exec()
+
+                find.balance = find.balance - courseS.prix_total;
+
+                const findS = await find.save();
+
+                return res.status(201).json({
+                    message: 'creation paiement',
+                    status: 'OK',
+                    data: saveWalletTransaction,
+                    statusCode: 404
+                });
+
+            } else {
+                return res.status(404).json({
+                    message: 'erreur serveur',
+                    status: 'NOT OK',
+                    data: "solde insufisant",
+                    statusCode: 404
+                });
+            }
+        } else {
 
             return res.status(404).json({
                 message: 'erreur serveur',
@@ -1105,9 +1105,9 @@ exports.addTransactionWallet = async (req,res)=> {
             });
 
         }
-        
-   } catch (error) {
-    
+
+    } catch (error) {
+
         return res.status(404).json({
             message: 'erreur serveur',
             status: 'NOT OK',
@@ -1115,31 +1115,31 @@ exports.addTransactionWallet = async (req,res)=> {
             statusCode: 404
         });
 
-   }
+    }
 
 
 
 }
 
 
-exports.fincourse = async (req,res) => {
+exports.fincourse = async (req, res) => {
 
     try {
 
-        let { idCourses , note } = req.body;
-        
-        
-        const course = await  courseModel.findById(idCourses).exec();
+        let { idCourses, note } = req.body;
+
+
+        const course = await courseModel.findById(idCourses).exec();
 
         course.statusCourses = "success";
 
         const courseS = await course.save();
 
-        const vehicule =   await vehiculeModel.findById(courseS.mobilite).exec();
+        const vehicule = await vehiculeModel.findById(courseS.mobilite).exec();
 
         vehicule.online = "on";
 
-        vehicule.courseSelected = null ;
+        vehicule.courseSelected = null;
 
         vehicule.coursesActif = [];
 
@@ -1156,12 +1156,12 @@ exports.fincourse = async (req,res) => {
         return res.json({
             message: 'fin courses des courses',
             status: 'OK',
-            data:courseS,
+            data: courseS,
             statusCode: 200
         });
 
 
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
