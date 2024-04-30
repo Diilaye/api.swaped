@@ -11,7 +11,7 @@ exports.add = async (req, res, next) => {
         let {
             code,
             phone
-        } = req.body;
+        } = req.query;
 
         const assurance = assuranceModel();
 
