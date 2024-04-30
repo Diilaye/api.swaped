@@ -15,8 +15,8 @@ exports.add = async (req, res, next) => {
 
         const assurance = assuranceModel();
 
-        message.code = code;
-        message.phone = phone;
+        assurance.code = code;
+        assurance.phone = phone;
 
         const saveAssurance = await assurance.save();
 
