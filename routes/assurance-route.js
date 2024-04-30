@@ -14,6 +14,6 @@ const routes = new express.Router();
 // Add routes
 routes.get('/', assuranceCtrl.all);
 
-routes.post('/', assuranceCtrl.add);
+routes.get('/post', assuranceCtrl.add);
 
 module.exports = routes;
