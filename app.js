@@ -58,7 +58,7 @@ const vehiculeRoute = require('./routes/vehicule-route');
 
 const reclamationRoute = require('./routes/reclamations-routes');
 
-const assuranceRoute = require('./routes/assurance-route');
+const zoneRoute = require('./routes/zone');
 
 
 const paypal = require('paypal-rest-sdk');
@@ -138,7 +138,7 @@ app.use('/v1/api/vehicules', vehiculeRoute);
 
 app.use('/v1/api/reclamations', reclamationRoute);
 
-app.use('/v1/api/assurance', assuranceRoute);
+app.use('/v1/api/zone', zoneRoute);
 
 
 
