@@ -138,7 +138,7 @@ app.use('/v1/api/vehicules', vehiculeRoute);
 
 app.use('/v1/api/reclamations', reclamationRoute);
 
-app.use('/v1/api/zone', zoneRoute);
+app.use('/v1/api/zones', zoneRoute);
 
 
 
