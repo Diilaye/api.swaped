@@ -5,187 +5,193 @@ const Schema = mongoose.Schema;
 const VehiculeModel = new Schema({
 
     service: {
-        type : String,
+        type: String,
     },
 
     typeVehicule: {
-        type : String,
-        enum: ['moto','voiture'],
+        type: String,
+        enum: ['moto', 'voiture'],
         default: 'moto'
     },
 
-    localisation : {
-        type : Map,
-        default : {
-            lat:9.5931494,
-            lng:-13.64572
+    localisation: {
+        type: Map,
+        default: {
+            lat: 9.5931494,
+            lng: -13.64572
         }
     },
 
 
     typeLuxe: {
-        type : String,
-        enum: ['standard','classic' ,'confort'],
+        type: String,
+        enum: ['standard', 'classic', 'confort'],
         default: 'standard'
     },
 
 
     pays: {
-        type : String,
-        enum: ['gn','ci','sn'],
+        type: String,
+        enum: ['gn', 'ci', 'sn'],
         default: 'gn'
     },
 
     online: {
-        type : String,
-        enum: ['on','off','suspend'],
+        type: String,
+        enum: ['on', 'off', 'suspend'],
         default: 'off'
     },
 
-    idParent : {
+    idParent: {
         type: Schema.Types.ObjectId,
         ref: "user-admin"
     },
 
-    nomEntreprise : {
+    nomEntreprise: {
         type: String,
-        default :""
+        default: ""
     },
 
-    nom : {
+    nom: {
         type: String,
-        default :""
+        default: ""
     },
 
-    prenom : {
+    prenom: {
         type: String,
-        default :""
+        default: ""
     },
 
-    marque : {
+    marque: {
         type: String,
-        default :""
+        default: ""
     },
 
-    modelVehicule : {
+    modelVehicule: {
         type: String,
-        default :""
+        default: ""
     },
 
-    couleur : {
+    couleur: {
         type: String,
-        default :""
+        default: ""
     },
 
-    immatriculation : {
+    immatriculation: {
         type: String,
-        default :""
+        default: ""
     },
 
-    descriptionEntreprise : {
+    descriptionEntreprise: {
         type: String,
-        default :""
+        default: ""
     },
 
-    telephone : {
+    telephone: {
         type: String,
-        default :""
+        default: ""
     },
 
-    email : {
+    email: {
         type: String,
-        default :""
+        default: ""
     },
 
-    photoProfile : {
+    photoProfile: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    pieceIdentite : {
+    pieceIdentite: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    permisConduire : {
+    permisConduire: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    permisConduire : {
+    permisConduire: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    photoVehicule : {
+    photoVehicule: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    assurance : {
+    assurance: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    carteGrise : {
+    carteGrise: {
         type: Schema.Types.ObjectId,
         ref: "media",
     },
 
-    walletDriver : {
+    walletDriver: {
         type: Schema.Types.ObjectId,
         ref: "wallet",
     },
 
-    notes : [{
+    notes: [{
         type: String,
-        default :[]
+        default: []
     }],
 
-    commentaires : [{
+    commentaires: [{
         type: String,
-        default :[]
+        default: []
     }],
 
-    courses : [{
+    courses: [{
         type: Schema.Types.ObjectId,
-        ref :'courses-model',
-        default :[]
+        ref: 'courses-model',
+        default: []
     }],
 
-    coursesActif : [{
+    coursesActif: [{
         type: Schema.Types.ObjectId,
-        ref :'courses-model',
-        default :[]
+        ref: 'courses-model',
+        default: []
     }],
 
-    courseSelected : {
+    courseSelected: {
         type: Schema.Types.ObjectId,
-        ref :'courses-model',
-        default :null
+        ref: 'courses-model',
+        default: null
     },
 
-    transactions : [{
+    transactions: [{
         type: Schema.Types.ObjectId,
-        ref :'wallet-transactions',
-        default :[]
+        ref: 'wallet-transactions',
+        default: []
     }],
 
-   status : {
+    status: {
         type: String,
-        default :"inactive"
-   },
+        default: "inactive"
+    },
 
-},{
+    notre: {
+        type: String,
+        enum: ['oui', 'non'],
+        default: 'non'
+    }
+
+}, {
     toJSON: {
-      transform: function (doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
-      },
+        transform: function (doc, ret) {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.__v;
+        },
     },
-},{
-    timestamps: true 
+}, {
+    timestamps: true
 });
 
-module.exports = mongoose.model('mobilite', VehiculeModel) ;
+module.exports = mongoose.model('mobilite', VehiculeModel);

@@ -60,6 +60,9 @@ const reclamationRoute = require('./routes/reclamations-routes');
 
 const zoneRoute = require('./routes/zone');
 
+const decaissementRoute = require('./routes/decaissement');
+
+
 
 const paypal = require('paypal-rest-sdk');
 
@@ -140,7 +143,7 @@ app.use('/v1/api/reclamations', reclamationRoute);
 
 app.use('/v1/api/zones', zoneRoute);
 
-
+app.use('/v1/api/decaissements', decaissementRoute);
 
 
 
