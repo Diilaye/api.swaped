@@ -1,24 +1,18 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+
 const zoneModel = new Schema({
 
 
-    zonetitle: {
+    title: {
         type: String,
         default: ''
     },
 
-    depart: {
-        type: String,
-    },
-
-    arrive: {
-        type: String,
-    },
-
-    prix: { type: Number, default: 0 },
-
+    subZone: [{
+        type: Map,
+    }]
 
 
 }, {
@@ -33,4 +27,4 @@ const zoneModel = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('zone', zoneModel);
+module.exports = mongoose.model('zones', zoneModel);

@@ -1,27 +1,35 @@
+
 const zoneModel = require('../models/zone.js');
 
 exports.add = async (req, res) => {
 
+
+
+
     try {
 
         let {
-
-            depart,
-
-            arrive,
-
-            prix
+            title
         } = req.body;
+
+        const zoneF = await zoneModel.find().exec();
+
+        if (zoneF.length > 0) {
+            for (const object of zoneF) {
+                const zoneFS = await zoneModel.findById(object.id).exec();
+
+                zoneFS.subZone.push({
+                    arrrive: title,
+                    prix: 0
+                })
+
+                const zoneFSS = await zoneFS.save();
+            }
+        }
 
         const zone = zoneModel();
 
-        zone.depart = depart;
-
-        zone.arrive = arrive;
-
-        zone.prix = prix;
-
-        zone.zonetitle = depart + '-' + arrive;
+        zone.title = title;
 
         const zoneSave = await zone.save();
 
@@ -104,40 +112,40 @@ exports.update = async (req, res) => {
 
     try {
 
-        let { depart, arrive, prix } = req.body;
+        // let { depart, arrive, prix } = req.body;
 
-        const zone = await zoneModel.findById(req.params.id).exec();
+        // const zone = await zoneModel.findById(req.params.id).exec();
 
-        if (depart != undefined && arrive != undefined) {
-            zone.zonetitle = depart + '-' + arrive;
-            zone.arrive = arrive;
-            zone.depart = depart;
-        }
+        // if (depart != undefined && arrive != undefined) {
+        //     zone.zonetitle = depart + '-' + arrive;
+        //     zone.arrive = arrive;
+        //     zone.depart = depart;
+        // }
 
-        if (depart != undefined && arrive == undefined) {
-            zone.zonetitle = depart + '-' + zone.arrive;
-            zone.depart = depart;
+        // if (depart != undefined && arrive == undefined) {
+        //     zone.zonetitle = depart + '-' + zone.arrive;
+        //     zone.depart = depart;
 
-        }
+        // }
 
-        if (depart === undefined && arrive != undefined) {
-            zone.zonetitle = zone.depart + '-' + arrive;
-            zone.arrive = arrive;
+        // if (depart === undefined && arrive != undefined) {
+        //     zone.zonetitle = zone.depart + '-' + arrive;
+        //     zone.arrive = arrive;
 
-        }
+        // }
 
-        if (prix != undefined) {
-            zone.prix = prix;
-        }
+        // if (prix != undefined) {
+        //     zone.prix = prix;
+        // }
 
-        const zoneSave = await zone.save();
+        // const zoneSave = await zone.save();
 
-        return res.status(200).json({
-            message: 'update reussi',
-            status: 'OK',
-            data: zoneSave,
-            statusCode: 200
-        });
+        // return res.status(200).json({
+        //     message: 'update reussi',
+        //     status: 'OK',
+        //     data: zoneSave,
+        //     statusCode: 200
+        // });
 
     } catch (error) {
         return res.status(404).json({
