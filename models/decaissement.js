@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const decaissementModel = new Schema({
 
-    decaissementitle: {
+    title: {
         type: String,
         default: ''
     },

@@ -12,6 +12,8 @@ exports.add = async (req, res) => {
             title
         } = req.body;
 
+        const zone = zoneModel();
+
         const zoneF = await zoneModel.find().exec();
 
         if (zoneF.length > 0) {
@@ -19,15 +21,19 @@ exports.add = async (req, res) => {
                 const zoneFS = await zoneModel.findById(object.id).exec();
 
                 zoneFS.subZone.push({
-                    arrrive: title,
+                    arrive: title,
                     prix: 0
-                })
+                });
+
+                zone.subZone.push({
+                    arrive: zoneFS.title,
+                    prix: 0
+                });
 
                 const zoneFSS = await zoneFS.save();
             }
         }
 
-        const zone = zoneModel();
 
         zone.title = title;
 
@@ -110,43 +116,59 @@ exports.one = async (req, res) => {
 
 exports.update = async (req, res) => {
 
+
+
     try {
 
-        // let { depart, arrive, prix } = req.body;
+        let { title, subZone } = req.body;
 
-        // const zone = await zoneModel.findById(req.params.id).exec();
+        const zone = await zoneModel.findById(req.params.id).exec();
 
-        // if (depart != undefined && arrive != undefined) {
-        //     zone.zonetitle = depart + '-' + arrive;
-        //     zone.arrive = arrive;
-        //     zone.depart = depart;
-        // }
+        if (title != undefined) {
 
-        // if (depart != undefined && arrive == undefined) {
-        //     zone.zonetitle = depart + '-' + zone.arrive;
-        //     zone.depart = depart;
+            const zones = await zoneModel.find().exec();
 
-        // }
 
-        // if (depart === undefined && arrive != undefined) {
-        //     zone.zonetitle = zone.depart + '-' + arrive;
-        //     zone.arrive = arrive;
+            for (const iterator of zones) {
 
-        // }
+                const zoneF = await zoneModel.findById(iterator.id).exec();
 
-        // if (prix != undefined) {
-        //     zone.prix = prix;
-        // }
+                let b = zoneF.subZone.findIndex((value) => {
 
-        // const zoneSave = await zone.save();
+                    const object = Object.fromEntries(value);
 
-        // return res.status(200).json({
-        //     message: 'update reussi',
-        //     status: 'OK',
-        //     data: zoneSave,
-        //     statusCode: 200
-        // });
+                    return object.arrive == zone.title;
+                });
 
+                if (b > -1) {
+                    const c = zoneF.subZone.splice(b, 1);
+                    zoneF.subZone.push({
+                        arrive: title,
+                        prix: c[0].get('prix')
+                    })
+                }
+
+                await zoneF.save();
+
+            }
+
+            zone.title = title;
+
+        }
+
+        if (subZone != undefined) {
+            zone.subZone = subZone;
+        }
+
+
+        const zoneSave = await zone.save();
+
+        return res.status(200).json({
+            message: 'update reussi',
+            status: 'OK',
+            data: zoneSave,
+            statusCode: 200
+        });
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',
@@ -160,15 +182,49 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = async (req, res) => {
-    try {
-        const zone = await zoneModel.findByIdAndDelete(req.params.id).exec();
 
-        return res.status(200).json({
-            message: 'delete reussi',
-            status: 'OK',
-            data: zone,
-            statusCode: 200
+
+    const zone = await zoneModel.findById(req.params.id).exec();
+
+    const zones = await zoneModel.find().exec();
+
+
+    for (const iterator of zones) {
+
+        const zoneF = await zoneModel.findById(iterator.id).exec();
+
+        let b = zoneF.subZone.findIndex((value) => {
+
+            const object = Object.fromEntries(value);
+
+            return object.arrive == zone.title;
         });
+
+        if (b > -1) {
+
+            zoneF.subZone.splice(b, 1);
+
+        }
+
+        await zoneF.save();
+
+    }
+
+
+
+    const zoneSave = await zone.save();
+
+    const z = zoneModel.findByIdAndDelete(zoneSave.id).exec();
+
+    return res.status(200).json({
+        message: 'delete reussi',
+        status: 'OK',
+        data: z,
+        statusCode: 200
+    });
+
+    try {
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur serveur',

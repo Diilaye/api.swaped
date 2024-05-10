@@ -9,7 +9,7 @@ exports.add = async (req, res) => {
         let {
 
 
-            decaissementitle,
+            title,
 
             minPrice,
 
@@ -19,7 +19,7 @@ exports.add = async (req, res) => {
 
         const decaissement = decaissementModel();
 
-        decaissement.decaissementitle = decaissementitle;
+        decaissement.title = title;
 
         decaissement.minPrice = minPrice;
 
@@ -105,45 +105,45 @@ exports.one = async (req, res) => {
 
 exports.update = async (req, res) => {
 
-    let {
-
-        decaissementtitle,
-
-        minPrice,
-
-        maxPrice
-
-    } = req.body;
-
-    const decaissement = await decaissementModel.findById(req.params.id).exec();
-
-    if (decaissementtitle != undefined) {
-        decaissement.decaissementtitle = decaissementtitle;
-
-    }
-
-    if (minPrice != undefined) {
-        decaissement.minPrice = minPrice;
-
-    }
-
-    if (maxPrice != undefined) {
-        decaissement.maxPrice = maxPrice;
-
-    }
-
-
-    const decaissementSave = await decaissement.save();
-
-    return res.status(200).json({
-        message: 'update reussi',
-        status: 'OK',
-        data: decaissementSave,
-        statusCode: 200
-    });
 
     try {
 
+        let {
+
+            title,
+
+            minPrice,
+
+            maxPrice
+
+        } = req.body;
+
+        const decaissement = await decaissementModel.findById(req.params.id).exec();
+
+        if (title != undefined) {
+            decaissement.title = title;
+
+        }
+
+        if (minPrice != undefined) {
+            decaissement.minPrice = minPrice;
+
+        }
+
+        if (maxPrice != undefined) {
+            decaissement.maxPrice = maxPrice;
+
+        }
+
+
+        const decaissementSave = await decaissement.save();
+
+        return res.status(200).json({
+            message: 'update reussi',
+            status: 'OK',
+            data: decaissementSave,
+            statusCode: 200
+        });
 
 
     } catch (error) {
