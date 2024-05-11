@@ -234,3 +234,36 @@ exports.delete = async (req, res) => {
         });
     }
 }
+
+exports.addSubZone = async (req, res) => {
+    try {
+
+        let { arrive, prix } = req.body;
+
+        const zone = await zoneModel.findById(req.params.id).exec();
+
+
+        zone.subZone.push({
+            arrive: arrive,
+            prix: prix
+        });
+
+
+        const zoneSave = await zone.save();
+
+        return res.status(200).json({
+            message: 'update reussi',
+            status: 'OK',
+            data: zoneSave,
+            statusCode: 200
+        });
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur serveur',
+            status: 'NOT OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
+}
