@@ -64,6 +64,8 @@ const decaissementRoute = require('./routes/decaissement');
 
 const livraisonRoute = require('./routes/livraison-route');
 
+const depenseRoute = require('./routes/depenses-route');
+
 
 
 
@@ -147,7 +149,10 @@ app.use('/v1/api/reclamations', reclamationRoute);
 app.use('/v1/api/zones', zoneRoute);
 
 app.use('/v1/api/decaissements', decaissementRoute);
+
 app.use('/v1/api/livraisons', livraisonRoute);
+
+app.use('/v1/api/depenses', depenseRoute);
 
 
 
