@@ -572,7 +572,7 @@ exports.storeLivraison = async (req, res) => {
 
         walletTransaction.status = "SUCCESS";
 
-        walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');;
+        walletTransaction.dateTransactionSuccess = DateTime.now().toFormat('dd-MM-yyyy');
 
         walletTransaction.means = "SWAPED";
 
