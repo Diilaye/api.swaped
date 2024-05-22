@@ -190,6 +190,11 @@ exports.getDepenseOnePeriod = async (req, res) => {
 
 
 
-    return res.json(result);
+    return res.json({
+        message: 'livraison reussi ',
+        status: 'OK',
+        data: result,
+        statusCode: 200
+    });
 
 }
