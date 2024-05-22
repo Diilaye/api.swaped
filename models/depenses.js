@@ -8,9 +8,11 @@ const zoneModel = new Schema({
 
     mobilite: {
         type: Schema.Types.ObjectId,
-        ref: "mobilite",
+        ref: "user-admin",
         default: null
     },
+
+
 
 
     prix: {

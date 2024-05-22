@@ -9,6 +9,7 @@ const { checkRole } = require('../midleweares/auth');
 const depenseCtrl = require('../controllers/depense-controller');
 
 routes.post('/', checkRole("mobilite"), depenseCtrl.add);
+routes.get('/', checkRole("admin"), depenseCtrl.getDepenseOnePeriod);
 
 
 module.exports = routes;
