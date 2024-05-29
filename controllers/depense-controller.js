@@ -1,6 +1,7 @@
 const DepenseModel = require('../models/depenses');
 const VehiculeModel = require('../models/vehicule');
 const LivraisonModel = require('../models/livraison-model');
+const decaissementModel = require('../models/decaissement');
 const { DateTime } = require('luxon');
 
 const objectPopulate = [{
@@ -9,7 +10,12 @@ const objectPopulate = [{
 }];
 
 exports.add = async (req, res) => {
+
+
+
+
     try {
+
         let {
 
 
@@ -21,22 +27,49 @@ exports.add = async (req, res) => {
 
         } = req.body;
 
-        const depense = DepenseModel();
+        const depenses = await DepenseModel.find({
+            title: title,
+            dateCourses: DateTime.now().toFormat('dd-MM-yyyy')
+        }).exec();
 
-        depense.mobilite = req.user.id_user;
-        depense.title = title;
-        depense.prix = prix;
+        let som = 0;
 
-        depense.dateCourses = DateTime.now().toFormat('dd-MM-yyyy');
+        for (const iterator of depenses) {
+            som = som + iterator.prix;
+        }
 
-        const depenseSave = await depense.save();
-
-        return res.status(201).json({
-            message: 'creation réussi',
-            status: 'OK',
-            data: depenseSave,
-            statusCode: 201
+        const decaissement = await decaissementModel.findOne({
+            title: title
         });
+
+        if ((som + prix) <= decaissement.maxPrice) {
+            const depense = DepenseModel();
+
+            depense.mobilite = req.user.id_user;
+            depense.title = title;
+            depense.prix = prix;
+
+            depense.dateCourses = DateTime.now().toFormat('dd-MM-yyyy');
+
+            const depenseSave = await depense.save();
+
+            return res.status(201).json({
+                message: 'creation réussi',
+                status: 'OK',
+                data: depenseSave,
+                statusCode: 201
+            });
+        } else {
+            return res.status(403).json({
+                message: 'vous avez depasse le seuil autorisé',
+                status: 'OK',
+                data: {},
+                statusCode: 403
+            });
+        }
+
+
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur optenue',
@@ -196,5 +229,31 @@ exports.getDepenseOnePeriod = async (req, res) => {
         data: result,
         statusCode: 200
     });
+
+}
+
+
+exports.allDepenseByUser = async (req, res) => {
+
+    try {
+        const depenses = await DepenseModel.find({
+            mobilite: req.user.id_user
+        }).exec();
+
+        return res.status(200).json({
+            message: 'liste réussi',
+            status: 'OK',
+            data: depenses,
+            statusCode: 200
+        });
+    } catch (error) {
+        return res.status(404).json({
+            message: 'erreur optenue',
+            status: 'OK',
+            data: error,
+            statusCode: 404
+        });
+    }
+
 
 }

@@ -40,6 +40,11 @@ const LivraisonModel = new Schema({
     dateCourses: {
         type: String,
         default: ''
+    },
+
+    heuresCourses: {
+        type: String,
+        default: ''
     }
 
 
