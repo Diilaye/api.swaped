@@ -240,10 +240,47 @@ exports.allDepenseByUser = async (req, res) => {
             mobilite: req.user.id_user
         }).exec();
 
+        const livraisons = await LivraisonModel.find({
+            mobilite: req.user.id_user
+        }).exec();
+
+
+        const dArr = [];
+        let sumD = 0;
+
+        const lArr = [];
+        let sumL = 0;
+
+
+        for (const iterator of depenses) {
+
+            dArr.push(iterator);
+            sumD = sumD + iterator.prix;
+
+
+        }
+
+
+        for (const ite of livraisons) {
+
+            lArr.push(ite);
+            sumL = sumL + ite.prix_livraison;
+
+
+        }
+
+
         return res.status(200).json({
             message: 'liste réussi',
             status: 'OK',
-            data: depenses,
+            data: {
+                depenses: dArr,
+                livraison: lArr,
+                charge: sumD,
+                chiffreAffaire: sumL,
+                revenuNette: sumL - sumD,
+                salaire: (sumL - sumD) / 2
+            },
             statusCode: 200
         });
     } catch (error) {
