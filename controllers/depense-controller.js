@@ -256,8 +256,6 @@ exports.allDepenseByUser = async (req, res) => {
 
             dArr.push(iterator);
             sumD = sumD + iterator.prix;
-
-
         }
 
 

@@ -9,6 +9,7 @@ const { checkRole } = require('../midleweares/auth');
 const livraisonCtrl = require('../controllers/livraison-controller');
 
 routes.post('/', checkRole("mobilite"), livraisonCtrl.add);
+routes.post('/verif', checkRole("mobilite"), livraisonCtrl.validCourse);
 
 
 module.exports = routes;
