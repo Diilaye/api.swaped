@@ -18,10 +18,7 @@ exports.add = async (req, res) => {
 
         let {
 
-
-
             prix,
-
 
             title
 

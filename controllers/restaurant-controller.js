@@ -211,6 +211,8 @@ exports.update = async (req,res) => {
         gallerie ,
     
         commodite  ,
+
+        zone
     } = req.body;
 
     const restaurant = await restaurantModel.findOne({
@@ -280,6 +282,10 @@ exports.update = async (req,res) => {
         }
 
         if(commodite != undefined) {
+            restaurant.zone = zone;
+        }
+
+        if(zone != undefined) {
             restaurant.commodite = commodite;
         }
 

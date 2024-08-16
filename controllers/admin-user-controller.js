@@ -10,71 +10,71 @@ require('dotenv').config({
     path: './.env'
 });
 
-exports.store = async (req , res , next) => {
+exports.store = async (req, res, next) => {
 
 
     try {
         let {
             service,
-    
-            nom ,
-        
+
+            nom,
+
             prenom,
-        
+
             telephoneOM,
 
             telephoneMOMO,
-    
+
             email,
-        
-            identifiant ,
-        
-            password ,
-        
+
+            identifiant,
+
+            password,
+
         } = req.body;
 
-        if(service =="admin") {
-             return res.status(404).json({
+        if (service == "admin") {
+            return res.status(404).json({
                 message: 'erreur serveur ',
                 statusCode: 404,
                 data: "Vous pouvez pas enregister un admin",
                 status: 'NOT OK'
             });
         }
-    
-    
+
+
         const passwordCrypt = bcrytjs.hashSync(password, salt);
-    
+
         const user = userAdminModel();
-    
+
         user.service = service;
-    
+
         user.nom = nom;
-    
+
         user.prenom = prenom;
-    
+
         user.telephoneOM = telephoneOM;
 
         user.telephoneMOMO = telephoneMOMO;
-    
+
         user.password = passwordCrypt;
-    
+
         user.email = email;
-    
+
         user.identifiant = identifiant;
-    
+
         const token = jwt.sign({
             id_user: user.id,
-            service_user : user.service , 
-            identifiant_user : user.identifiant
+            service_user: user.service,
+            identifiant_user: user.identifiant
         }, process.env.JWT_SECRET, { expiresIn: '8784h' });
-    
+
         user.token = token;
-        
-        
+
+
         const userSave = await user.save();
-    
-        return  res.status(201).json({
+
+        return res.status(201).json({
             message: 'creation réussi',
             status: 'OK',
             data: userSave,
@@ -82,7 +82,7 @@ exports.store = async (req , res , next) => {
         });
 
     } catch (error) {
-        
+
         return res.status(404).json({
             message: 'erreur supréssion ',
             statusCode: 404,
@@ -94,14 +94,14 @@ exports.store = async (req , res , next) => {
 
 }
 
-exports.auth = async (req, res) =>{
+exports.auth = async (req, res) => {
 
     try {
 
-        let{password , identifiant} = req.body;
+        let { password, identifiant } = req.body;
 
         const findUserAdmin = await userAdminModel.findOne({
-            identifiant : identifiant
+            identifiant: identifiant
         }).exec();
 
         if (findUserAdmin != undefined) {
@@ -109,21 +109,21 @@ exports.auth = async (req, res) =>{
 
                 const token = jwt.sign({
                     id_user: findUserAdmin.id,
-                    service_user : findUserAdmin.service , 
-                    identifiant_user : findUserAdmin.identifiant
+                    service_user: findUserAdmin.service,
+                    identifiant_user: findUserAdmin.identifiant
                 }, process.env.JWT_SECRET, { expiresIn: '8784h' });
 
-                findUserAdmin.token = token ;
+                findUserAdmin.token = token;
 
                 const saveUserAdmin = await findUserAdmin.save();
 
                 return res.status(200).json({
                     message: 'Connection réussi',
                     status: 'OK',
-                    data:saveUserAdmin,
+                    data: saveUserAdmin,
                     statusCode: 200
                 });
-            }else {
+            } else {
                 return res.status(404).json({
                     message: 'Identifiant incorrect',
                     status: 'NOT OK',
@@ -131,7 +131,7 @@ exports.auth = async (req, res) =>{
                     statusCode: 404
                 });
             }
-        }else {
+        } else {
             return res.status(404).json({
                 message: 'Identifiant incorrect',
                 status: 'NOT OK',
@@ -151,72 +151,72 @@ exports.auth = async (req, res) =>{
 
 }
 
-exports.update = async (req,res) => {
+exports.update = async (req, res) => {
 
     try {
-        
+
         let {
             service,
-    
-            nom ,
-        
+
+            nom,
+
             prenom,
-        
+
             telephoneOM,
 
             telephoneMOMO,
-    
+
             email,
-        
-            password ,
-    
+
+            password,
+
             oldPassword,
-    
+
             photoProfile,
-    
+
             statusConexion,
 
             conditionAnulation,
-        
-    
+
+
         } = req.body;
-    
+
         const findUserAdmin = await userAdminModel.findById(req.user.id_user).exec();
-    
-        if (service !=undefined) {
-            findUserAdmin.service = service ;
-        }
-    
-        if (nom !=undefined) {
-            findUserAdmin.nom = nom ;
-        }
-    
-        if (prenom !=undefined) {
-            findUserAdmin.prenom = prenom ;
-        } 
-        
-        if (telephoneOM !=undefined) {
-            findUserAdmin.telephoneOM = telephoneOM ;
+
+        if (service != undefined) {
+            findUserAdmin.service = service;
         }
 
-        if (telephoneMOMO !=undefined) {
-            findUserAdmin.telephoneMOMO = telephoneMOMO ;
-        }
-    
-        if (email !=undefined) {
-            findUserAdmin.email = email ;
+        if (nom != undefined) {
+            findUserAdmin.nom = nom;
         }
 
-        if (conditionAnulation !=undefined) {
-            findUserAdmin.conditionAnulation = conditionAnulation ;
+        if (prenom != undefined) {
+            findUserAdmin.prenom = prenom;
         }
-    
-        if (password !=undefined) {
-    
-            if(bcrytjs.compareSync(oldPassword, findUserAdmin.password)){
+
+        if (telephoneOM != undefined) {
+            findUserAdmin.telephoneOM = telephoneOM;
+        }
+
+        if (telephoneMOMO != undefined) {
+            findUserAdmin.telephoneMOMO = telephoneMOMO;
+        }
+
+        if (email != undefined) {
+            findUserAdmin.email = email;
+        }
+
+        if (conditionAnulation != undefined) {
+            findUserAdmin.conditionAnulation = conditionAnulation;
+        }
+
+        if (password != undefined) {
+
+            if (bcrytjs.compareSync(oldPassword, findUserAdmin.password)) {
                 const passwordCrypt = bcrytjs.hashSync(password, salt);
-                findUserAdmin.password = passwordCrypt ;
-            }else {
+                findUserAdmin.password = passwordCrypt;
+            } else {
                 return res.status(404).json({
                     message: 'Mot de passe ne sont pas conforme ',
                     status: 'NOT OK',
@@ -224,19 +224,19 @@ exports.update = async (req,res) => {
                     statusCode: 404
                 });
             }
-    
+
         }
-    
-        if (photoProfile !=undefined) {
-            findUserAdmin.photoProfile = photoProfile ;
+
+        if (photoProfile != undefined) {
+            findUserAdmin.photoProfile = photoProfile;
         }
-    
-        if (statusConexion !=undefined) {
-            findUserAdmin.statusConexion = statusConexion ;
+
+        if (statusConexion != undefined) {
+            findUserAdmin.statusConexion = statusConexion;
         }
-    
-        const saveUserAdmin = findUserAdmin.save() ; 
-    
+
+        const saveUserAdmin = findUserAdmin.save();
+
         return res.status(200).json({
             message: 'modification reuissi',
             status: 'OK',
@@ -255,11 +255,11 @@ exports.update = async (req,res) => {
 
 }
 
-exports.all = async (req,res) => {
+exports.all = async (req, res) => {
 
     try {
 
-        const userAdmins = await  userAdminModel.find(req.query).exec();
+        const userAdmins = await userAdminModel.find(req.query).exec();
 
         return res.status(200).json({
             message: 'Mot de passe ne sont pas conforme ',
@@ -267,7 +267,7 @@ exports.all = async (req,res) => {
             data: userAdmins,
             statusCode: 200
         });
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur server',
@@ -282,7 +282,7 @@ exports.all = async (req,res) => {
 exports.getAuth = async (req, res) => {
     try {
 
-        const userAdmins = await  userAdminModel.findById(req.user.id_user).exec();
+        const userAdmins = await userAdminModel.findById(req.user.id_user).exec();
 
         return res.status(200).json({
             message: 'Mot de passe ne sont pas conforme ',
@@ -290,7 +290,7 @@ exports.getAuth = async (req, res) => {
             data: userAdmins,
             statusCode: 200
         });
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur server',
@@ -301,11 +301,11 @@ exports.getAuth = async (req, res) => {
     }
 }
 
-exports.one = async (req,res) => {
+exports.one = async (req, res) => {
 
     try {
 
-        const userAdmins = await  userAdminModel.findById(req.params.id).exec();
+        const userAdmins = await userAdminModel.findById(req.params.id).exec();
 
         return res.status(200).json({
             message: 'Mot de passe ne sont pas conforme ',
@@ -313,7 +313,7 @@ exports.one = async (req,res) => {
             data: userAdmins,
             statusCode: 200
         });
-        
+
     } catch (error) {
         return res.status(404).json({
             message: 'erreur server',

@@ -12,7 +12,8 @@ const zoneModel = new Schema({
 
     subZone: [{
         type: Map,
-    }]
+    }],
+    
 
 
 }, {

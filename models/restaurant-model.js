@@ -138,6 +138,11 @@ const RestaurantModel = new Schema({
         default :"active"
    },
 
+   zone : {
+    type: Schema.Types.ObjectId,
+    ref :'zones',
+   }
+
    
 
 },{
