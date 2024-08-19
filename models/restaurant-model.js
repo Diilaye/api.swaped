@@ -33,8 +33,8 @@ const RestaurantModel = new Schema({
     localisation : {
         type: Map,
         default : {
-            lat : 0,
-            lng :0
+            lat : 0.0,
+            lng :0.0
         }
     },
 
