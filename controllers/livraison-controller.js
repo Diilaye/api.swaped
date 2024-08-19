@@ -78,7 +78,7 @@ exports.add = async (req, res) => {
             });
         } else {
             return res.status(403).json({
-                message: 'erreur de creation  veuillez attendre au moins 5 minutes',
+                message: 'erreur de creation veuillez attendre au moins 5 minutes',
                 status: 'OK',
                 data: {},
                 statusCode: 403
