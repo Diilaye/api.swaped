@@ -15,6 +15,7 @@ exports.add = async (req, res) => {
 
             prix_repas,
 
+            restaurant,
 
             addresseDepart,
 
@@ -60,6 +61,7 @@ exports.add = async (req, res) => {
             livraison.clientPhone = clientPhone;
             livraison.mobilite = req.user.id_user;
             livraison.prix_livraison = prix_livraison;
+            livraison.restaurant = restaurant;
             livraison.prix_repas = prix_repas;
             livraison.addresseDepart = addresseDepart;
             livraison.addresseArrive = addresseArrive;

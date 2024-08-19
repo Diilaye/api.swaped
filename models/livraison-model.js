@@ -16,6 +16,11 @@ const LivraisonModel = new Schema({
         default: null
     },
 
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        ref: "restaurant",
+        default: null
+    },
 
 
     prix_livraison: {
