@@ -220,7 +220,7 @@ exports.livraisonDepart = async (req,res) => {
   
     result = await  utiilsFnc.getDistance(point1,point2);
     
-    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2.5)));
+    result["livraison"] = getPriceLivriason(Math.floor((result['distance']['value'] * 2)));
   
     result["depart"] = point1;
   
