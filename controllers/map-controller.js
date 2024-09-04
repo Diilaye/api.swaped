@@ -2,6 +2,8 @@ const axios = require('axios');
 
 const utiilsFnc = require('../utils/getLgLat');
 
+const ZoneModel = require('../models/zone');
+
 require('dotenv').config({
     path:'./.env'
 });
@@ -340,4 +342,27 @@ if (nuit =="1") {
     });
   }
 
+}
+
+
+exports.zone = async(req,res) => {
+  try {
+
+    const zones = await ZoneModel.find({ title: { $regex: new RegExp(`^${req.query.title}`, 'i') } }).exec();
+
+    return res.status(200).json({
+      message: 'zone trouves ',
+      status: 'OK',
+      data: zones,
+      statusCode: 200
+  });
+    
+  } catch (error) {
+    return res.status(404).json({
+      message: 'erreur server',
+      status: 'OK',
+      data: error,
+      statusCode: 404
+  });
+  }
 }

@@ -19,5 +19,7 @@ routes.get('/livraison', mapCtrl.livraison);
 routes.get('/livraison-depart', mapCtrl.livraisonDepart);
 routes.get('/livraison-depart-course', mapCtrl.livraisonDepartCourse);
 
+routes.get('/zone-livraison', mapCtrl.zone);
+
 module.exports = routes;
     
